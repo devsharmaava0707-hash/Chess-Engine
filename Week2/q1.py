@@ -157,31 +157,28 @@ def backward_induction(history_obj):
     # "0" was the one of the best actions for the current player/history.
     if history_obj.is_terminal_history():
         return history_obj.get_utility_given_terminal_history()
-    history_string=''.join(str(num) for num in history_obj.history)
+    history_string=''.join(str(nums) for nums in history_obj.history )
     if history_obj.current_player()=='x':
         max_val=-10
-        i_corrospond_to_max=None
+        i_opposite_to_maxval=None
         for i in history_obj.get_valid_actions():
             new_val=backward_induction(history_obj.update_history(i))
-            if new_val>max_val:
-                i_corrospond_to_max=str(i)
+            if max_val<new_val:
                 max_val=new_val
-    
+                i_opposite_to_maxval=str(i)
         strategy_dict_x[history_string]={'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0}
-        strategy_dict_x[history_string][i_corrospond_to_max]=1  
-    else :
+        strategy_dict_x[history_string][i_opposite_to_maxval]=1
+    else                    :
             max_val=10
-            i_corrospond_to_max=None
+            i_opposite_to_maxval=None
             for i in history_obj.get_valid_actions():
                 new_val=backward_induction(history_obj.update_history(i))
-                if new_val<max_val:
-                    i_corrospond_to_max=str(i)
+                if max_val>new_val:
                     max_val=new_val
-        
+                    i_opposite_to_maxval=str(i)
             strategy_dict_o[history_string]={'0':0,'1':0,'2':0,'3':0,'4':0,'5':0,'6':0,'7':0,'8':0}
-            strategy_dict_o[history_string][i_corrospond_to_max]=1    
-
-    return max_val
+            strategy_dict_o[history_string][i_opposite_to_maxval]=1 
+    return max_val   
     # TODO implement
 
 
