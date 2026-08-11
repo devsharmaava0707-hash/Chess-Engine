@@ -76,6 +76,7 @@ class History:
     def is_win(self):
         # check if the board position is a win for either players
         # Feel free to implement this in anyway if needed
+        
         pass
 
     def is_draw(self):
