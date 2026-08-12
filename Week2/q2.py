@@ -160,7 +160,7 @@ class History:
 
     def is_win(self):
         # Feel free to implement this in anyway if needed
-            for i in  self.check_active_boards().size():
+            for i in  self.check_active_boards():
                 if i!=0:
                     return False
             if self.get_current_player()==1:
@@ -213,9 +213,33 @@ def alpha_beta_pruning(history_obj, alpha, beta, max_player_flag):
     global visited_histories_list
     visited_histories_list.append(history_obj.history)
     # TODO implement
-    
+    if history_obj.is_terminal_history():
+        return history_obj.get_value_given_terminal_history()
+    if max_player_flag:
+        max_val=-10
+        for i in history_obj.get_valid_actions():
+            new_history=history_obj.history.copy()
+            new_history.append(i)
+            val=alpha_beta_pruning(History(history_obj.num_boards,new_history),alpha,beta,False)
+            if val>max_val:
+                max_val=val
+            alpha=max(alpha,max_val)
+            if(alpha>=beta):
+                break
+    else :
+        max_val=10
+        for i in history_obj.get_valid_actions():
+                    new_history=history_obj.history.copy()
+                    new_history.append(i)
+                    val=alpha_beta_pruning(History(history_obj.num_boards,new_history),alpha,beta,True)
+                    if val<max_val:
+                        max_val=val
+                    bita=min(beta,max_val)
+                    if(alpha>=beta):
+                        break
+    return max_val
 
-    return -2
+    # return -2
     # TODO implement
 
 
