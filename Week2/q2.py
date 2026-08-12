@@ -160,18 +160,41 @@ class History:
 
     def is_win(self):
         # Feel free to implement this in anyway if needed
-        pass
-
+            for i in  self.check_active_boards().size():
+                if i!=0:
+                    return False
+            if self.get_current_player()==1:
+                return 1
+            if self.get_current_player()==2:
+                return 2
+            return False
+     
     def get_valid_actions(self):
         # Feel free to implement this in anyway if needed
+        valid_actions=[]
+        for i in range(self.num_boards):
+            if self.is_board_win(self.boards[i]) !=True:
+                st=9*i
+                for j in self.boards[i]:
+                    if(j!='x'):
+                        valid_actions.append(st)
+                    st=st+1
+        return valid_actions
         pass
 
     def is_terminal_history(self):
         # Feel free to implement this in anyway if needed
+        if self.is_win():
+            return True
+        return False
         pass
 
     def get_value_given_terminal_history(self):
         # Feel free to implement this in anyway if needed
+        if self.is_win()==1:
+            return 1
+        else:
+            return -1
         pass
 
 
@@ -190,6 +213,8 @@ def alpha_beta_pruning(history_obj, alpha, beta, max_player_flag):
     global visited_histories_list
     visited_histories_list.append(history_obj.history)
     # TODO implement
+    
+
     return -2
     # TODO implement
 
@@ -207,7 +232,30 @@ def maxmin(history_obj, max_player_flag):
     # the key corresponding to self.boards.
     global board_positions_val_dict
     # TODO implement
-    return -2
+    if  history_obj.is_terminal_history():
+        return history_obj.get_value_given_terminal_history()
+    new_object_str=history_obj.history.get_boards_str()
+    if new_object_str in board_positions_val_dict:
+        return board_positions_val_dict[new_object_str]
+    if max_player_flag:
+        max_val=-10
+        for i in history_obj.get_valid_actions():
+            new_object=history_obj.history.copy()
+            new_object.append(i)
+            new_val=maxmin(History(history_obj.num_boards,new_object),False)
+            if new_val>max_val:
+                max_val=new_val
+        board_positions_val_dict[new_object_str]=max_val
+    else :
+            max_val=10
+            for i in history_obj.get_valid_actions():
+                new_object=history_obj.history.copy()
+                new_object.append(i)
+                new_val=maxmin(History(history_obj.num_boards,new_object),True)
+                if new_val<max_val:
+                    max_val=new_val
+            board_positions_val_dict[new_object_str]=max_val
+    return max_val
     # TODO implement
 
 
