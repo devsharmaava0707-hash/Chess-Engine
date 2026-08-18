@@ -1,0 +1,1 @@
+board.at(square).color()

@@ -28,3 +28,13 @@ Week2/policy_o.json
 # OS files
 .DS_Store
 Thumbs.db
+# External opening books
+/books/
+
+# External Syzygy tablebases
+/syzygy/
+
+# Build files
+*.exe
+*.o
+*.obj
