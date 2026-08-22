@@ -1,10 +1,12 @@
 #include "book.h"
 #include "zobrist_keys.hpp"
-#include<fstream>
+#include<fstream> // for stream or bascially to read files 
 #include<algorithm>
 #include<random>
 using namespace chess;
-
+/*
+in my random postioon selector i have a issue it chooses mose frequent postiotion only not all position so yeah keep that in mind
+*/
 namespace book
 {
     namespace
@@ -67,28 +69,19 @@ namespace book
         }
         auto cr = board.castlingRights();
 
-    if (cr.has(Color::WHITE, Board::CastlingRights::Side::KING_SIDE))
-            key ^= R[768];
+        if (cr.has(Color::WHITE, Board::CastlingRights::Side::KING_SIDE)) key ^= R[768];
+        if (cr.has(Color::WHITE, Board::CastlingRights::Side::QUEEN_SIDE)) key ^= R[769];
+        if (cr.has(Color::BLACK, Board::CastlingRights::Side::KING_SIDE)) key ^= R[770];
+        if (cr.has(Color::BLACK, Board::CastlingRights::Side::QUEEN_SIDE)) key ^= R[771];
 
-    if (cr.has(Color::WHITE, Board::CastlingRights::Side::QUEEN_SIDE))
-            key ^= R[769];
-
-    if (cr.has(Color::BLACK, Board::CastlingRights::Side::KING_SIDE))
-            key ^= R[770];
-
-    if (cr.has(Color::BLACK, Board::CastlingRights::Side::QUEEN_SIDE))
-            key ^= R[771];
-
-    Square epSq = board.enpassantSq();
-    if (epSq != Square::NO_SQ)
-    {
-        int file = epSq.index() % 8;
-        key ^= R[772 + file];
-    }
-    if (board.sideToMove() == Color::WHITE)
-    key ^= R[780];
-    return key;
+        Square epSq = board.enpassantSq();
+        if (epSq != Square::NO_SQ){
+            int file = epSq.index() % 8;
+            key ^= R[772 + file];
         }
+        if (board.sideToMove() == Color::WHITE) key ^= R[780];
+        return key;
+    }
     bool PolyglotBook::load(const std::string& path)
     {
         std::ifstream f(path, std::ios::binary);

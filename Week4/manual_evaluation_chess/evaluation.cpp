@@ -1662,10 +1662,11 @@ static int pawns_on_file(
 
     for (int rank = 0; rank < 8; ++rank)
     {
-        chess::Square sq{
-    chess::File(f),
-    chess::Rank(actual_rank)
-};
+//         chess::Square sq{
+//     chess::File(f),
+//     chess::Rank(actual_rank)
+// }; 
+        chess::Square sq(rank * 8 + file);
 
         if (board.at<chess::PieceType>(sq) ==
                 chess::PieceType::PAWN &&
@@ -1716,7 +1717,8 @@ static int king_shelter_strength(
                 actual_rank = 7 - r;
             
             
-            chess::Square sq(x * 8 + y);
+            // chess::Square sq(x * 8 + y);
+            chess::Square sq(actual_rank * 8 + f);
 
             if (board.at<chess::PieceType>(sq) ==
                     chess::PieceType::PAWN &&
@@ -1887,7 +1889,8 @@ static chess::Bitboard king_ring(
             if (x < 0 || x >= 8)
                 continue;
 
-            chess::Square sq(x * 8 + y);
+            // chess::Square sq(x * 8 + y);
+            chess::Square sq(forward * 8 + x);
 
             ring.set(sq.index());
         }
@@ -2028,7 +2031,12 @@ static int king_attack_weight(
     int total_weight = 0;
 
     chess::Bitboard pieces =
-        board.pieces(attacker);
+    board.pieces(chess::PieceType::PAWN,   attacker) |
+    board.pieces(chess::PieceType::KNIGHT, attacker) |
+    board.pieces(chess::PieceType::BISHOP, attacker) |
+    board.pieces(chess::PieceType::ROOK,   attacker) |
+    board.pieces(chess::PieceType::QUEEN,  attacker) |
+    board.pieces(chess::PieceType::KING,   attacker);
 
     while (!pieces.empty())
     {
@@ -2075,8 +2083,13 @@ static int king_attack_count(
 
     int count = 0;
 
-    chess::Bitboard pieces =
-        board.pieces(attacker);
+        chess::Bitboard pieces =
+    board.pieces(chess::PieceType::PAWN,   attacker) |
+    board.pieces(chess::PieceType::KNIGHT, attacker) |
+    board.pieces(chess::PieceType::BISHOP, attacker) |
+    board.pieces(chess::PieceType::ROOK,   attacker) |
+    board.pieces(chess::PieceType::QUEEN,  attacker) |
+    board.pieces(chess::PieceType::KING,   attacker);
 
     while (!pieces.empty())
     {
@@ -3043,7 +3056,7 @@ static int mobility_pin_direction(const chess::Board& board,
     {
         chess::Square sq(x * 8 + y);
 
-        if (board.at(s).color() != chess::Color::NONE)
+        if (board.at(sq).color() != chess::Color::NONE)
             return 0;
 
         x += sx;
@@ -3058,7 +3071,7 @@ static int mobility_pin_direction(const chess::Board& board,
     {
         chess::Square sq(x * 8 + y);
 
-        chess::Piece p = board.at(s);
+        chess::Piece p = board.at(sq);
 
         if (p.color() != chess::Color::NONE)
         {
@@ -3159,9 +3172,9 @@ static chess::Bitboard mobility_king_blockers(
         while (x >= 0 && x < 8 && y >= 0 && y < 8)
         {
             chess::Square sq(x * 8 + y);
-            if (board.at(s).color() != chess::Color::NONE)
+            if (board.at(sq).color() != chess::Color::NONE)
             {
-                blocker = s;
+                blocker = sq;
                 found_blocker = true;
                 break;
             }
@@ -3184,9 +3197,9 @@ static chess::Bitboard mobility_king_blockers(
         while (x >= 0 && x < 8 && y >= 0 && y < 8)
         {
             chess::Square sq(x * 8 + y);
-            if (board.at(s).color() != chess::Color::NONE)
+            if (board.at(sq).color() != chess::Color::NONE)
             {
-                chess::Piece p = board.at(s);
+                chess::Piece p = board.at(sq);
                 auto pt = p.type();
 
                 bool orthogonal =

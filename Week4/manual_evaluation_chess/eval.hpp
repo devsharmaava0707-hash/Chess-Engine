@@ -28,7 +28,8 @@ int middlegame_score(const chess::Board& board);
 int endgame_score(const chess::Board& board);
 
 // Phase
-int non_pawn_material(const chess::Board& board);
+// int non_pawn_material(const chess::Board& board);
+int non_pawn_material(chess::Board& board, chess::Color color);
 int phase(chess::Board& board);
 
 // Scale factor helpers
