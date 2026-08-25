@@ -12,4 +12,15 @@ namespace search::ordering
         const int history[64][64],
         const chess::Move& ttMove
     );
+    int lateMoveReduction(
+        int depth,
+        int moveIndex,
+        bool isPV,
+        bool isCapture,
+        bool isPromotion,
+        bool inCheck,
+        bool givesCheck,
+        bool isKillerOrCounter,
+        int historyScore
+    );
 }

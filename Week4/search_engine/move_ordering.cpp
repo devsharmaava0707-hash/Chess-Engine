@@ -1,8 +1,7 @@
 #include "move_ordering.h"
 #include "see.h"
-
-#include <algorithm>
-
+#include<cmath>
+#include<algorithm>
 namespace search::ordering
 {
     namespace
@@ -99,4 +98,49 @@ namespace search::ordering
                 std::swap(moves[i], moves[bestIndex]);
         }
     }
+    int lateMoveReduction(
+    int depth,
+    int moveIndex,
+    bool isPV,
+    bool isCapture,
+    bool isPromotion,
+    bool inCheck,
+    bool givesCheck,
+    bool isKillerOrCounter,
+    int historyScore)
+{
+    if (depth < 2 ||
+        moveIndex < 1 ||
+        isCapture ||
+        isPromotion ||
+        inCheck ||
+        givesCheck)
+    {
+        return 0;
+    }
+
+    double reduction =
+        0.4 +
+        std::log(static_cast<double>(depth)) *
+        std::log(static_cast<double>(moveIndex + 1)) /
+        2.0;
+
+    int r = static_cast<int>(reduction);
+
+    if (isPV && r > 0)
+        --r;
+
+    if (isKillerOrCounter && r > 0)
+        --r;
+
+    if (historyScore < -4000)
+        ++r;
+
+    int maxReduction = std::max(0, depth - 2);
+
+    return std::max(
+        0,
+        std::min(r, maxReduction)
+    );
+}
 }
