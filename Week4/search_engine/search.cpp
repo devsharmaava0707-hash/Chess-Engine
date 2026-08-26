@@ -1,6 +1,7 @@
 #include "search.h"
 #include<iostream>
-#include "../manual_evaluation_chess/eval.hpp"
+// #include "../manual_evaluation_chess/eval.hpp"
+#include "../arun_eval/eval.h"
 #include "see.h"
 #include "move_ordering.h"
 #include<algorithm>
@@ -93,7 +94,8 @@ bool timeUp(const SearchStats& stats)
 }
 int evaluateForSideToMove(chess::Board& board)
 {
-    int score = evaluate(board);
+    // int score = evaluate(board);
+    int score = eval::evaluate(board);
 
     return board.sideToMove() == chess::Color::WHITE
         ? score
@@ -134,12 +136,15 @@ if (stats.stop)
     // Delta pruning
     constexpr int DELTA_MARGIN = 200;
 
+    // if (standPat +
+    //     piece_value_bonus(
+    //         chess::PieceType::QUEEN,
+    //         true
+    //     ) +
+    //     DELTA_MARGIN < alpha)
     if (standPat +
-        piece_value_bonus(
-            chess::PieceType::QUEEN,
-            true
-        ) +
-        DELTA_MARGIN < alpha)
+    eval::materialValue(chess::PieceType::QUEEN) + // for arun evaluation 
+    DELTA_MARGIN < alpha)
     {
         return alpha;
     }
@@ -407,11 +412,92 @@ if (prevMove != chess::Move::NO_MOVE)
     board.makeMove(move);
 
     bool givesCheck = board.inCheck();
+// extension add
+    int extension = 0;
 
+//     if (givesCheck && depth >= 2) extension = 1;
+// // above is extension add
     int reduction = 0;
     int score;
 
     if (firstMove)
+    {
+        score = -negamax(
+            board,
+            searchDepth - 1+extension, // extension add
+            -beta,
+            -alpha,
+            stats,
+            ply + 1,
+            move,
+            true
+        );
+
+        firstMove = false;
+    }
+    // lmr implementation 
+    // else
+    // {
+    //     reduction =
+    //         search::ordering::lateMoveReduction(
+    //             searchDepth,
+    //             moveIndex,
+    //             isPV,
+    //             isCapture,
+    //             isPromotion,
+    //             inCheck,
+    //             givesCheck,
+    //             isKillerOrCounter,
+    //             historyScore
+    //         );
+    //         if (reduction > 0)
+    //     ++stats.lmrReductions;
+    //     score = -negamax(
+    //         board,
+    //         searchDepth - 1 -reduction +extension, // extension add
+    //         -alpha - 1,
+    //         -alpha,
+    //         stats,
+    //         ply + 1,
+    //         move,
+    //         true
+    //     );
+
+    //     if (score > alpha &&
+    //         (reduction > 0 || isPV))
+    //     {
+    //         if (reduction > 0)
+    // ++stats.lmrResearches;
+    //         score = -negamax(
+    //             board,
+    //             searchDepth - 1+extension, // extension add
+    //             -beta,
+    //             -alpha,
+    //             stats,
+    //             ply + 1,
+    //             move,
+    //             true
+    //         );
+    //     }
+    // }
+    // lmr implementation above 
+
+    // below this is without lmr for evaluation of our engine 
+    else
+{
+    // LMR OFF: pure PVS
+    score = -negamax(
+        board,
+        searchDepth - 1,
+        -alpha - 1,
+        -alpha,
+        stats,
+        ply + 1,
+        move,
+        true
+    );
+
+    if (score > alpha)
     {
         score = -negamax(
             board,
@@ -423,54 +509,9 @@ if (prevMove != chess::Move::NO_MOVE)
             move,
             true
         );
-
-        firstMove = false;
     }
-    else
-    {
-        reduction =
-            search::ordering::lateMoveReduction(
-                searchDepth,
-                moveIndex,
-                isPV,
-                isCapture,
-                isPromotion,
-                inCheck,
-                givesCheck,
-                isKillerOrCounter,
-                historyScore
-            );
-            if (reduction > 0)
-        ++stats.lmrReductions;
-        score = -negamax(
-            board,
-            searchDepth - 1 -reduction ,
-            -alpha - 1,
-            -alpha,
-            stats,
-            ply + 1,
-            move,
-            true
-        );
-
-        if (score > alpha &&
-            (reduction > 0 || isPV))
-        {
-            if (reduction > 0)
-    ++stats.lmrResearches;
-            score = -negamax(
-                board,
-                searchDepth - 1,
-                -beta,
-                -alpha,
-                stats,
-                ply + 1,
-                move,
-                true
-            );
-        }
-    }
-
+}
+ // above this is without lmr for evaluation of our engine 
     board.unmakeMove(move);
 
     if (stats.stop)
@@ -744,26 +785,26 @@ if (stats.optimalMs > 0 &&
             bestMove
         );
 
-        std::cout << "Depth: " << depth << '\n';
-        std::cout << "Score: " << bestScore << '\n';
-        std::cout << "Best move: "
+        std::cerr << "Depth: " << depth << '\n';
+        std::cerr << "Score: " << bestScore << '\n';
+        std::cerr << "Best move: "
                   << bestMove.from().index()
                   << " -> "
                   << bestMove.to().index()
                   << '\n';
-        std::cout << "Root TT hits: "
+        std::cerr << "Root TT hits: "
                   << stats.rootTTHits << '\n';
-        std::cout << "----------------\n";
-        std::cout << "Aspiration fail-low: "
+        std::cerr << "----------------\n";
+        std::cerr << "Aspiration fail-low: "
           << stats.aspirationFailLow << '\n';
 
-std::cout << "Aspiration fail-high: "
+std::cerr << "Aspiration fail-high: "
           << stats.aspirationFailHigh << '\n';
           
-          std::cout << "LMR reductions: "
+          std::cerr << "LMR reductions: "
           << stats.lmrReductions << '\n';
 
-std::cout << "LMR researches: "
+std::cerr << "LMR researches: "
           << stats.lmrResearches << '\n';
          
     }

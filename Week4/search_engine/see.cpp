@@ -1,5 +1,6 @@
 #include "see.h"
-#include "../manual_evaluation_chess/eval.hpp"
+// #include "../manual_evaluation_chess/eval.hpp"
+#include "../arun_eval/eval.h"
 #include<algorithm>
 namespace search::see
 {
@@ -7,7 +8,8 @@ namespace search::see
     {
         int pieceValue(chess::PieceType type)
         {
-            return piece_value_bonus(type, true);
+            // return piece_value_bonus(type, true);
+            return eval::materialValue(type);
         }
 
         bool leastValuableAttacker(

@@ -1,0 +1,501 @@
+fen,playing,score,mate,depth,opening,time_control,white_elo,black_elo,category
+8/1kp2pp1/p5p1/4p3/2n3P1/2P3rr/P3R3/5K2 b - - 3 29,g1f1,,7.0,49,King's Pawn Game: Leonardis Variation,60+0,1773.0,1774.0,endgame
+8/8/1q6/p7/K5k1/8/P2b4/8 b - - 23 71,a3a4,,1.0,245,Modern Defense,60+0,1607.0,1531.0,endgame
+8/4pp2/5bpk/Rrp5/2N1P1P1/2P2P2/PPK5/8 b - - 0 32,a7a5,-551.0,,26,Queen's Pawn,300+0,1783.0,1525.0,endgame
+1r1q2k1/b1p1n1p1/p2p1r1p/4p1p1/1PP1B1P1/P2PP2P/1B3P2/R2QK2R w KQ - 3 22,f8g8,235.0,,21,"English Opening: King's English Variation, Reversed Sicilian",60+0,1968.0,1952.0,other
+5rk1/1b5p/8/p2p1pp1/2pR4/4P3/P4PPP/1R4K1 b - - 1 31,d3d4,-236.0,,21,Englund Gambit Complex Declined,480+5,1617.0,1571.0,endgame
+r2qkbnr/ppp2ppp/2n1p3/3p1b2/3P1P2/4PN2/PPP3PP/RNBQKB1R w KQkq - 0 5,e7e6,0.0,,23,Queen's Pawn Game,300+0,1841.0,1758.0,middlegame
+r1b1k2r/pp1nbpp1/2p1pn1p/8/3P1B2/2N2N1P/PPP1BPP1/R3R1K1 b kq - 5 11,c1f4,-21.0,,24,Scandinavian Defense: Mieses-Kotroc Variation,480+5,1889.0,1661.0,middlegame
+8/8/3p4/2kP2R1/4PK2/5P2/8/5r2 w - - 3 52,c1f1,689.0,,33,Sicilian Defense: Loewenthal Variation,240+0,1764.0,1609.0,endgame
+r3k2r/p1pp1ppp/2n1p3/4Pb2/3P1N2/4K3/P2B1P2/R4B2 w kq - 5 19,e4f5,-519.0,,23,Polish Defense,240+0,1750.0,1612.0,other
+2n2rk1/5ppp/1R2p3/3p4/2pN4/4PP2/2P3PP/6K1 w - - 7 30,d6c8,-32.0,,22,Benoni Defense: Benoni Gambit Accepted,180+2,1585.0,1853.0,endgame
+rnbqkb1r/ppppp2p/5np1/5p2/3P4/5NP1/PPP1PP1P/RNBQKB1R w KQkq - 0 4,g7g6,56.0,,25,Dutch Defense,180+2,2052.0,1910.0,middlegame
+rnb1k1nr/pp3ppp/4p3/qBb5/4P3/2N2N2/PP1B1PPP/R2QK2R b KQkq - 4 10,f1b5,-119.0,,18,Queen's Pawn Game: Krause Variation,1800+2,1674.0,1619.0,middlegame
+r4rk1/ppp3pp/3q1p2/3PB3/8/P7/1P1Q1PPP/1R3RK1 b - - 0 19,d4e5,-15.0,,22,Queen's Gambit Refused: Baltic Defense,0+3,1550.0,1510.0,other
+4k3/8/4K3/3PB3/8/8/8/8 b - - 0 69,d4d5,,-8.0,65,Queen's Pawn,480+5,1655.0,1796.0,endgame
+r4rk1/1bqpbppp/ppn1pn2/8/3P1P2/P1NBPN2/1P1B2PP/2RQK2R w K - 6 12,e8g8,123.0,,21,Old Benoni Defense,300+10,1675.0,1734.0,middlegame
+8/8/pp6/8/1P1P1k2/4n1pp/8/6K1 b - - 0 52,d3d4,,4.0,245,Queen's Pawn Game,180+0,1793.0,1979.0,endgame
+r1bq1rk1/pp1n1p1p/2p1p1p1/2Pp2Pn/3P3P/P1N2Q1N/1P2PP2/R3KB1R b KQ - 1 13,g1h3,194.0,,23,Queen's Pawn Game: Mason Attack,900+8,1679.0,1574.0,middlegame
+r1bqk2r/pppp1pp1/2n2n1p/2b1p3/2B1P3/P2PBN2/1PP2PPP/RN1QK2R b KQkq - 2 6,c1e3,-10.0,,24,King's Knight Opening: Normal Variation,1200+0,1516.0,1679.0,middlegame
+r3kb1r/pbqppppp/1pn2n2/8/8/2P2NP1/PP2PPBP/RNBQ1RK1 b kq - 0 8,c2c3,-12.0,,21,Old Benoni Defense,180+0,1755.0,1542.0,middlegame
+2brr1k1/bpp2pp1/p1n2n1p/5P2/1PPp2P1/P2P1N1P/3B2B1/RN3RK1 w - - 3 22,b6a7,91.0,,23,Gedult's Opening,0+1,1500.0,1534.0,middlegame
+2b2k1Q/1p3p2/2qpp3/r1n5/8/1B6/PPP2P1P/2KR4 b - - 1 21,h5h8,321.0,,24,Sicilian Defense: Paulsen Variation,480+10,1624.0,1641.0,other
+8/p2bkp1R/1p4p1/6P1/5r1P/1B6/6K1/8 b - - 0 43,h8h7,468.0,,26,Queen's Gambit Refused: Marshall Defense,420+17,1682.0,1748.0,endgame
+2r5/1b4k1/p1p1p2p/1pq3p1/3pB1NP/3P2Q1/P1P3P1/R4rK1 w - - 0 25,f8f1,1207.0,,20,Scandinavian Defense,180+0,1695.0,1731.0,other
+r1br4/1pqn2bk/2p1p1p1/p3PpPp/1P1P1B2/2P1QN1P/P3B3/RR4K1 b - - 3 21,d2e3,57.0,,24,"Pirc Defense: Classical Variation, Quiet System, Czech Defense",1320+8,1919.0,1768.0,middlegame
+8/3Q4/5kp1/4b2p/8/3K4/6P1/8 w - - 3 41,f7f6,,15.0,38,"Caro-Kann Defense: Accelerated Panov Attack, Open Variation",900+0,1578.0,1679.0,endgame
+r1b1k2r/ppp1Qppp/2nb1n2/3p4/5P2/3P2P1/PPP3BP/RNB1K1NR b KQkq - 0 9,e2e7,51.0,,25,Gedult's Opening,0+1,1500.0,1534.0,middlegame
+r1b1k3/ppp2p2/2np2p1/3Np3/4Pb1q/3P1Q2/PPP2P1P/R3KB1R b KQq - 3 15,c3d5,471.0,,24,King's Pawn Game: Wayward Queen Attack,480+8,1807.0,1500.0,other
+rn1qk2r/pp3ppp/3p1b2/2pP1b2/8/2P2N2/PP3PPP/RN1QKB1R b KQkq - 0 9,c2c3,62.0,,25,Benoni Defense: Old Benoni,480+0,1698.0,1739.0,middlegame
+r2qkb1r/ppp2ppp/2n1bn2/3p4/8/4PNP1/PP1P1PBP/RNBQK2R w KQkq - 3 7,c8e6,-15.0,,23,English Opening: Agincourt Defense #2,300+1,1514.0,1642.0,middlegame
+rn3r2/ppk2Npp/2p5/8/4bK2/1P6/P2b2PP/R4B1R w - - 0 22,b4d2,-580.0,,24,Nimzo-Larsen Attack,0+1,1594.0,1534.0,other
+r4rk1/1Q1bqpp1/2n1p2p/2bp4/6P1/P1NP1P2/2P1N2P/2KR1B1R w - - 1 18,b8c6,-639.0,,24,Caro-Kann Defense,480+0,1523.0,1513.0,middlegame
+6rk/1ppb1p1p/1p1p4/4pP2/4P3/5R2/PPP3BP/R5K1 b - - 1 24,f2f3,-514.0,,25,Vienna Game: Paulsen Variation,60+1,1759.0,1599.0,endgame
+rnbqk2r/pp3ppp/2p2n2/2b1N3/Q1p5/6P1/PP1PPPBP/RNB1K2R w KQkq - 0 7,c7c6,140.0,,23,Reti Opening: Reti Accepted,120+0,1623.0,1592.0,middlegame
+6k1/1PK3pp/8/8/q5P1/7P/8/4q3 b - - 1 50,b8c7,,2.0,245,Scandinavian Defense,360+0,1750.0,1694.0,endgame
+3r2k1/pb2ppbp/2pq2p1/8/8/P1P1BPP1/1P3KBP/2Q4R w - - 0 21,f6d6,29.0,,23,"Sicilian Defense: Accelerated Dragon, Modern Variation",180+0,2022.0,1990.0,other
+8/4k2p/4q3/4Qp2/7P/8/8/5K2 w - - 21 53,f7e6,0.0,,47,French Defense: La Bourdonnais Variation,900+12,1633.0,1574.0,endgame
+8/ppp4k/2npp2p/4p3/5b2/1NP2N1P/PP2K3/6r1 w - - 0 24,g8g1,-534.0,,25,Bishop's Opening: Berlin Defense,300+5,1612.0,1500.0,endgame
+r1bq1rk1/pp3pbp/4p1p1/2pn4/8/P1P5/1PBPNPPP/RNB2RK1 w - - 0 12,e7d5,-660.0,,24,Modern Defense,300+0,1593.0,1674.0,middlegame
+rn3bk1/1b3p1p/4pnp1/1B6/p3PB2/P4N1P/2P1QPP1/2K4R b - - 0 18,b2a3,-518.0,,21,English Defense #2,300+8,1596.0,1516.0,other
+4Q3/7p/5Qpk/1KN5/1P6/8/r7/5B2 w - - 1 56,a1a2,,2.0,245,Sicilian Defense: Keres Variation,300+0,2027.0,1854.0,endgame
+8/5pkp/4p1p1/3p4/p1nr2PP/1p3P2/4K3/N3R3 b - - 1 51,b1e1,1157.0,,21,Queen's Gambit Declined,240+0,1654.0,1876.0,endgame
+r1b2rk1/ppp1bppp/5n2/4p1B1/2B1P3/2N5/PPP2PPP/R2R2K1 b - - 2 10,c1g5,-27.0,,23,Philidor Defense #4,600+0,1738.0,1909.0,other
+5rk1/ppR2p1p/6p1/8/8/PQ5P/1b3PP1/6K1 b - - 0 26,d5b3,-601.0,,24,King's Indian Defense: Orthodox Variation,180+3,1915.0,2044.0,endgame
+8/5N1p/6p1/2kpP3/1b1N1P2/3K2P1/7P/8 w - - 1 40,b6c5,675.0,,25,French Defense: Two Knights Variation,300+0,1778.0,1768.0,endgame
+2kr3r/pp3ppp/2pqpn2/8/2PP4/3Q1NP1/PP3P1P/R4RK1 w - - 3 17,e8c8,105.0,,20,Scandinavian Defense: Gubinsky-Melts Defense,240+2,1524.0,1848.0,other
+7k/6p1/5n1p/8/6P1/P1P2R1P/1q5K/1B6 w - - 0 42,b6b2,-536.0,,22,Sicilian Defense,300+8,1552.0,1660.0,endgame
+r4N2/2kn1Q2/2b1p2p/p3P3/2pP4/P1R5/1q3PPP/1BR3K1 b - - 0 31,g6f8,-608.0,,27,Semi-Slav Defense,600+5,1863.0,2150.0,other
+r1bqkbnr/1p1n1pp1/p1p1p2p/3pP3/2P5/1P6/PB1PBPPP/RN1QK1NR w KQkq - 2 7,b8d7,73.0,,22,Caro-Kann Defense: Accelerated Panov Attack,480+0,1722.0,1530.0,middlegame
+1rbq1rk1/1p2bpp1/p2ppn1p/8/2PQN3/1P4P1/PB2PPBP/3R1RK1 b - - 1 13,a1d1,-112.0,,23,English Opening: Symmetrical Variation,480+8,1843.0,1795.0,middlegame
+3r2k1/p4pp1/1pnqpn1p/8/7P/1BP2QP1/P1P1RPK1/8 w - - 0 23,b7b6,-579.0,,23,Scandinavian Defense: Main Line,300+8,1885.0,1831.0,other
+rn2kb2/p4q1r/2p1b2p/2Pp1p2/1P3N1B/P1NB4/3Q1P2/R3K2R b KQq - 0 25,d4c5,-605.0,,23,King's Indian Defense: 3.Nc3,480+4,1848.0,1717.0,middlegame
+5b2/5pk1/p7/4pPp1/3pP3/3P4/2q3P1/3B2K1 w - - 0 43,c1c2,-7.0,,33,Italian Game: Two Knights Defense,180+0,2114.0,2117.0,endgame
+r1bqk1nr/pppp1pp1/2nb3p/4p3/4P3/2P2N1P/PP1P1PP1/RNBQKB1R w KQkq - 0 5,h7h6,82.0,,22,King's Pawn Game: Macleod Attack,300+2,1633.0,1615.0,middlegame
+2r3k1/5pp1/2b2q2/1p3PR1/4pQ2/pP6/P1P5/2K5 w - - 0 38,a4a3,-1405.0,,20,"Sicilian Defense: Closed Variation, Traditional",1260+10,1538.0,1774.0,endgame
+r1b1kb1r/pp3pp1/2n1pq1p/3p4/8/1PPpPP2/P2NB1PP/R2QK1NR w KQkq - 0 10,c4d3,-467.0,,23,Nimzo-Larsen Attack: English Variation,60+0,1587.0,1517.0,middlegame
+rn2k2r/5pp1/2pp2q1/pp2p3/2P1P3/PP1P2P1/B3Q2P/R4RK1 b kq - 0 18,f2g3,90.0,,22,Vienna Game: Zhuravlev Countergambit #2,300+8,1632.0,1539.0,other
+8/7k/6pp/p7/P2Q4/6PP/5PK1/r7 w - - 1 53,c1a1,,14.0,31,Queen's Gambit Declined: Harrwitz Attack,180+0,1822.0,1585.0,endgame
+8/5p2/5bpp/3pp3/6P1/4PP1P/2k1K3/5N2 b - - 5 40,g3f1,546.0,,26,Queen's Gambit Refused: Marshall Defense,240+0,1657.0,1808.0,endgame
+r1b3k1/2q1bppp/p3pn2/2p5/1Q6/1P1rPNP1/PB1N1PBP/2R2RK1 b - - 0 16,c3b4,-516.0,,25,Nimzo-Larsen Attack,60+0,1682.0,1863.0,middlegame
+r3k2r/pq2nppp/2p1p3/3pP3/8/B4N2/P4PPP/RN3QK1 w kq - 2 14,b4b7,164.0,,22,"French Defense: Advance, Steinitz Variation",300+8,1658.0,1779.0,other
+1nr2rk1/p3qp1p/bpn1p1p1/1B1pP3/1P1P4/P4N2/2NQ1PPP/2R2RK1 w - - 3 22,b7a6,328.0,,25,Owen Defense,480+8,1719.0,1790.0,middlegame
+2bq1rk1/2n1ppbp/pr1p1np1/2pP4/2P1P3/2NBBP2/1P2N1PP/R2QK2R w KQ - 0 13,b8b6,103.0,,25,"King's Indian Defense: Saemisch Variation, Normal Defense",180+0,1892.0,1933.0,middlegame
+1n1r4/1bp4p/1p1b1k1P/1P1p1Br1/3P4/1N2PRP1/Q3N1K1/R7 w - - 1 32,e7f6,1399.0,,21,Nimzo-Larsen Attack: Symmetrical Variation,0+1,1585.0,1523.0,other
+r4rk1/1p1bbppp/pqn1p3/3pP3/1P1P2PN/P7/2N1BP1P/R1BQ1RK1 b - - 0 14,f3h4,-60.0,,24,"French Defense: Advance Variation, Paulsen Attack",300+8,1839.0,1525.0,middlegame
+3r4/8/p4k2/1pKP2pp/6b1/PP6/8/8 b - - 0 42,d4c5,,10.0,28,"King's Gambit Accepted, Schallopp Defense",1200+0,1507.0,1535.0,endgame
+r7/ppp1qkp1/2n2b1p/3Qp3/8/2PP4/PP3PPP/R1B2RK1 b - - 0 15,f3d5,-448.0,,24,Russian Game: Urusov Gambit,420+3,1650.0,1532.0,other
+3r1rk1/1p5p/p2qp1p1/P2n1p2/3P1P2/5Q1P/1PB3P1/R4R1K b - - 1 25,e4c2,27.0,,21,Bird Opening: Dutch Variation,120+0,2010.0,2135.0,other
+2rq1rk1/p2bbpp1/2n1p1p1/1p1pP1N1/2pP2Q1/P1P1B2P/1P1N1PP1/R4RK1 b - - 3 17,d1g4,-29.0,,23,French Defense: Knight Variation,120+2,1556.0,1884.0,middlegame
+7k/1Bp2ppp/2P5/8/4rKPP/4r3/8/8 w - - 1 41,e8e4,,-3.0,245,Englund Gambit,120+0,1620.0,1595.0,endgame
+rnb1kbnr/1pp1ppp1/p1q4p/8/1PBPP3/P1NQ1N2/5PPP/R1B1K2R b KQkq - 3 10,d1d3,-414.0,,23,English Opening: Anglo-Scandinavian Defense,540+1,1824.0,1634.0,middlegame
+r1bqkbnr/pp1ppppp/2n5/2p5/8/6P1/PPPPPPBP/RNBQK1NR w KQkq - 2 3,b8c6,17.0,,24,Hungarian Opening: Sicilian Invitation,1800+2,1593.0,1714.0,middlegame
+8/8/8/5K1p/p6P/k3Q3/8/8 b - - 1 54,b6e3,,-11.0,40,Sicilian Defense: Old Sicilian,720+3,1708.0,1732.0,endgame
+7k/1pq1n2p/2p1pp2/3p4/1b1PPP2/1P1P1NQP/7K/B7 b - - 2 31,g1g3,313.0,,25,Queen's Pawn Game: Zukertort Variation,60+1,2162.0,1989.0,endgame
+r2q1rk1/1pp2p2/p1n1b1p1/3p3p/1b1Pp2P/2N1PP2/PPP1Q1P1/1NKR1B1R b - - 0 14,f2f3,96.0,,21,Trompowsky Attack,300+0,1683.0,1828.0,middlegame
+8/5k1p/5Pp1/4P3/3K1P1P/8/b7/8 b - - 2 36,e3d4,0.0,,48,Italian Game,900+8,1731.0,1576.0,endgame
+r4rk1/3n1ppp/1pq1p3/2p4b/PQ1P4/4PN1P/1P2BPP1/2RR2K1 w - - 1 19,c7c6,332.0,,24,Slav Defense: Steiner Variation,300+0,1810.0,1812.0,other
+r1b2rk1/pp2ppbp/1q1p1np1/4n3/4P3/1PP1BP2/P1B1Q1PP/RN2K1NR b KQ - 2 11,c1e3,219.0,,22,Sicilian Defense: Smith-Morra Gambit #2,360+0,1774.0,1808.0,middlegame
+4qr2/1kpr4/pnNp3p/1p1PPpp1/8/PP4P1/2P1Q2P/1K1R1R2 b - - 0 27,e4e5,6.0,,21,Vienna Game: Max Lange Defense,120+2,1510.0,1722.0,other
+4rbk1/1p3p2/pNp3p1/2P5/1P1Bp3/P7/6PP/5RK1 w - - 0 27,f5e4,416.0,,26,English Opening: King's English Variation,300+0,1676.0,1686.0,endgame
+8/8/8/7R/P1pk4/8/1P6/7K b - - 0 44,a2a4,,-11.0,41,Queen's Gambit Accepted,120+0,1532.0,1542.0,endgame
+r2q1rk1/p4pbp/1p1pp1p1/1Pp1n3/2P1P3/P2PN3/4QPPP/1RB2RK1 b - - 0 16,b4b5,-16.0,,23,"English Opening: Anglo-Indian Defense, Queen's Knight Variation",300+8,1882.0,1982.0,other
+rnbqk1nr/1pp1ppbp/p5p1/8/2BP1B2/4PN2/PP3PPP/RN1QK2R b KQkq - 0 6,f1c4,-119.0,,21,Queen's Pawn Game: Mason Attack,300+2,1622.0,1612.0,middlegame
+3r4/2kr4/1p3p2/pPp1pP1p/2P1P1pP/3PK1P1/4B3/R4R2 w - - 9 44,b7c7,125.0,,31,French Defense: King's Indian Attack,180+3,1523.0,1548.0,endgame
+r2q1rk1/1p2bppp/p2p1n2/3Np3/3nP3/3B3P/PPP2PP1/R1BQ1RK1 w - - 7 13,e8g8,96.0,,21,Sicilian Defense: Najdorf Variation,300+15,1602.0,1670.0,middlegame
+rn1q1rk1/1pp2ppp/3p1n2/p1bPp3/2P3b1/PP1BPP2/6PP/RNBQK1NR b KQ - 0 8,f2f3,167.0,,23,Indian Game: Budapest Defense,240+0,1660.0,1818.0,middlegame
+r1bqk1nr/ppp2ppp/2np4/1Bb5/3NP3/2N5/PPP2PPP/R1BQK2R b KQkq - 0 6,f3d4,-19.0,,24,Three Knights Opening,60+0,1659.0,1521.0,middlegame
+6k1/5p2/p2p2p1/P2P4/6P1/5P2/6K1/4r3 b - - 1 36,g1g2,,41.0,32,"Nimzowitsch Defense, Declined Variation",300+8,1769.0,1586.0,endgame
+2r3k1/5ppp/2Nbp3/3p4/1P2n3/2BRPN2/1P2KPPP/8 b - - 0 22,e5c6,-116.0,,23,Polish Defense,300+0,1812.0,1824.0,other
+5r1k/1p1b4/2n4p/3B1pp1/1P1pp1P1/8/1P1B3P/R5K1 b - - 1 29,f4d2,487.0,,22,"English Opening: King's English Variation, Kramnik-Shirov Counterattack",300+0,1629.0,1871.0,endgame
+r5k1/5qp1/2p1p3/2PpP2p/rPb2P1P/1Q3RPB/5PK1/4R3 w - - 8 34,a6c4,233.0,,22,Queen's Pawn Game,180+0,1732.0,1579.0,other
+8/2k5/7R/8/4K3/8/8/8 b - - 7 67,d3e4,,-9.0,65,Russian Game: Three Knights Game,480+10,1618.0,1576.0,endgame
+r3k2r/ppp2pp1/2n1q3/4p1Nb/1b2Q2P/2NP4/PPP2P2/R1B1K1R1 b Qkq - 3 15,f3g5,345.0,,22,Bishop's Opening: Berlin Defense,420+3,1502.0,1602.0,middlegame
+8/2k5/8/pR1p1p2/3P1Pp1/4P1K1/1pq5/8 b - - 11 60,b6b5,,9.0,47,"Queen's Pawn Game: Veresov Attack, Classical Defense",300+0,1644.0,1777.0,endgame
+r1b2rk1/ppqn1pp1/2p2n1p/4p3/8/3B2P1/P1QBPPNP/1R1R2K1 b - - 1 19,g5d2,210.0,,21,"Semi-Slav Defense: Noteboom Variation, Anti-Noteboom Gambit",60+0,1872.0,1835.0,middlegame
+r1bq1rk1/2pp1pp1/p1n2n1p/1pb1p3/1P2P3/P1NP1N1P/B1P2PP1/R1BQK2R b KQ - 0 9,b2b4,-34.0,,22,Four Knights Game: Italian Variation,300+5,1527.0,1789.0,middlegame
+q5k1/5ppp/p1bQp3/P2p4/5P2/1r3PK1/7P/8 b - - 0 35,f2f3,,8.0,36,"Queen's Pawn Opening: Veresov Attack, Irish Gambit",180+2,1644.0,1838.0,endgame
+1r1q1rk1/p2n1bpp/Ppp1p3/1PPpPp2/3Pn3/1Q1BP3/3N2PP/R1B2RK1 b - - 0 18,a5a6,155.0,,23,Queen's Pawn Game,120+0,1542.0,1842.0,middlegame
+8/2k5/8/2Pp1pK1/5Pp1/4P3/p7/1q6 w - - 0 65,a3a2,,-5.0,72,"Queen's Pawn Game: Veresov Attack, Classical Defense",300+0,1644.0,1777.0,endgame
+r3k2r/pppq1pp1/2nb1n1p/3p1b2/3P4/2NBBN1P/PPPQ1PP1/R3K2R b KQkq - 6 10,b1c3,77.0,,25,French Defense: Exchange Variation,300+8,1544.0,1701.0,middlegame
+r2r2k1/1p2qppp/p1b1p3/P1N5/8/QP5P/2P1B1P1/3R3K w - - 7 23,f8d8,-581.0,,23,Sicilian Defense: Closed Variation,1560+30,1500.0,1540.0,other
+r1bqkb1r/pp3ppp/2n5/1N2p3/3p4/6B1/PPP1BPPP/R2QK2R b KQkq - 1 12,c3b5,367.0,,23,"French Defense: Classical Variation, Steinitz Variation",300+15,1584.0,1879.0,middlegame
+rnb1kb1r/ppp1pppp/5n2/8/1q6/2N1BQ2/PPP3PP/2KR1BNR b kq - 3 7,e1c1,72.0,,22,Blackmar-Diemer Gambit: Ryder Gambit,180+4,1702.0,1667.0,middlegame
+6k1/5ppp/2b5/1p2K3/8/1r5P/6P1/8 b - - 1 45,f4e5,,7.0,32,Van't Kruijs Opening,60+0,1619.0,1731.0,endgame
+2rr2k1/1p3pp1/pqn1bb1p/3pp3/8/1NPBP2P/PP3PP1/R2QNRK1 w - - 4 17,a8c8,-180.0,,22,Queen's Pawn,480+5,1683.0,1652.0,middlegame
+3K4/5P2/1p5R/8/P1k5/4r2p/8/8 b - - 6 69,e7d8,-393.0,,23,Ruy Lopez: Cozio Defense,240+8,1535.0,1608.0,endgame
+RQ6/8/2K5/5kpp/8/8/8/1r6 b - - 0 45,b7b8q,0.0,,46,Sicilian Defense: Scheveningen Variation,120+0,1822.0,1940.0,endgame
+r1bqkb1r/pp1nnppp/2p1p3/3pP3/3P4/2PB1N2/PP3PPP/RNBQK2R b KQkq - 2 6,f1d3,-94.0,,22,Caro-Kann Defense: Advance Variation,180+1,2180.0,2054.0,middlegame
+r4rk1/ppp4p/2npb1p1/4p3/5Pqb/1P1KP3/PBPP4/RN1Q1B2 b - - 1 15,e2d3,,6.0,56,Van't Kruijs Opening,60+0,1624.0,1825.0,other
+4r1k1/pp3p1p/2p3p1/8/2b2P2/P4B2/5KPP/3R4 w - - 0 23,g7g6,-243.0,,23,Queen's Gambit Refused: Marshall Defense,420+17,1682.0,1748.0,endgame
+r2q1rk1/ppp1bppp/2npbn2/3Bp3/4P3/2NPBN2/PPP2PPP/R2Q1RK1 b - - 5 8,c1e3,24.0,,24,Bishop's Opening: Berlin Defense,300+6,1690.0,1696.0,middlegame
+8/8/8/p1p5/1b2rp2/1P3Kp1/8/3k4 b - - 1 54,g2f3,,6.0,101,Sicilian Defense: Hyperaccelerated Fianchetto,60+1,1729.0,1726.0,endgame
+2kr3r/ppp3q1/3p2p1/3Pp2p/4nP2/1P5P/PBPP2P1/R2Q1RK1 w - - 1 16,c5e4,382.0,,24,Russian Game: Three Knights Game,300+8,1646.0,1524.0,other
+r1bqk1nr/ppp1bppp/2n5/4p3/2B1P3/5N2/PPP2PPP/RNBQK2R w KQkq - 0 6,d6e5,42.0,,23,Philidor Defense #4,660+3,1759.0,1651.0,middlegame
+7r/5p2/4k3/pp2PP2/1P1pbP2/P7/5K2/R3R3 b - - 0 38,g4f5,0.0,,36,French Defense: Normal Variation,300+5,1648.0,1694.0,endgame
+6k1/1R3p1p/p3p1p1/P2pP3/3r4/7P/6P1/7K b - - 0 33,b1b7,567.0,,26,Queen's Pawn Game: Stonewall Attack,900+0,1826.0,1720.0,endgame
+6k1/p4p1p/1p2bNp1/2p5/2P5/1P5P/P3rPP1/R5K1 b - - 3 25,e4f6,46.0,,22,Sicilian Defense: Staunton-Cochrane Variation,900+0,1663.0,1643.0,endgame
+r3k1nr/pp1qb1pp/2n2p2/3p4/2pP1P2/2N2NQ1/PPP3PP/R1B2RK1 b kq - 3 12,e1g3,24.0,,24,Bird Opening,900+0,1736.0,1614.0,middlegame
+3k4/p7/7p/2R1r3/BP6/6P1/P2N1P1P/6K1 b - - 0 30,c1c5,-925.0,,20,French Defense #2,300+8,1652.0,1533.0,endgame
+8/8/1p6/1P1p4/1P1k2pp/4p3/8/3K4 w - - 0 61,e4d4,,-7.0,93,Horwitz Defense,120+0,1706.0,1931.0,endgame
+6k1/R4bp1/1p4n1/8/6r1/3r4/PP3PK1/4R3 w - - 3 35,c4g4,-799.0,,23,Ruy Lopez: Bird Variation,180+2,1546.0,1619.0,endgame
+r1bqrnk1/p3ppbp/2p3p1/2Pp4/3P2n1/2N1PN2/P3BPPP/R1BQ1RK1 w - - 0 12,b7c6,118.0,,24,Slav Defense,240+0,1716.0,1826.0,middlegame
+r6b/pbq1k1r1/n1p4N/4p3/4P2Q/1BN1B3/PPP3PP/3R1RK1 b - - 2 26,g4h4,,-4.0,88,Owen Defense,300+8,1602.0,1602.0,middlegame
+8/pp2kpp1/2p4p/2P5/PP2K2P/8/5P1b/8 w - - 1 40,c7h2,-563.0,,22,Nimzo-Larsen Attack: Modern Variation #2,0+1,1591.0,1682.0,endgame
+6r1/pb2N1pk/1pq4p/2p1bP2/3p4/P2P3P/1PP2QP1/R4RK1 b - - 1 28,g6e7,-497.0,,23,Sicilian Defense,0+3,1513.0,1664.0,other
+2nR4/1kp5/3p4/Q2Pp2q/4P1bp/2N1B1p1/PP4P1/1K6 w - - 1 32,a8b7,,3.0,245,Dutch Defense: Classical Variation,180+3,1504.0,1617.0,other
+5k2/pp4p1/2p5/4b1KP/8/8/P5P1/8 w - - 0 36,d4e5,-573.0,,23,Caro-Kann Defense: Goldman Variation,60+1,1824.0,1973.0,endgame
+2k1r3/1b5p/p5p1/3p1P2/PP1q4/6Q1/1P4PP/R5K1 w - - 1 27,f6d4,-432.0,,22,"Sicilian Defense: Kan Variation, Knight Variation",1200+2,1632.0,1669.0,endgame
+2k4r/1p4p1/p1p2n1p/P3B3/3P4/8/P4PPP/1R3RK1 b - - 3 30,f4e5,-655.0,,24,Italian Game: Anti-Fried Liver Defense,480+5,1632.0,1676.0,endgame
+3rr1k1/pp4pp/2p3n1/4N1pb/4P3/4PNKP/PPP5/R4R2 w - - 5 21,f8e8,-203.0,,24,Sicilian Defense: Paulsen Variation,300+8,1633.0,2027.0,other
+2kr3r/ppp1bp1p/8/3q1Rp1/3P4/2PnB3/PP1N2PP/R5K1 w - - 0 16,e5d3,-568.0,,23,"King's Gambit Accepted, Schallopp Defense",1200+0,1513.0,1525.0,other
+8/5K2/4p3/3bk3/8/8/8/4q3 b - - 7 58,e7f7,,4.0,245,Modern Defense,180+0,1596.0,1690.0,endgame
+5r2/p7/1p1pkPp1/2p5/P1PbP2P/3P4/6K1/1R3R2 b - - 0 31,g5f6,-286.0,,27,"English Opening: King's English Variation, Reversed Sicilian",300+5,1711.0,1519.0,endgame
+r2q1rk1/5ppp/1p2p3/2ppnb2/8/2N1P1P1/PP1QKPBP/R1R5 w - - 0 18,c7c5,-283.0,,22,Indian Game: Tartakower Attack,120+0,1636.0,1958.0,other
+1r2r1k1/ppp2ppp/3p4/8/3P2P1/2PRn2P/P1P4K/8 w - - 1 27,f5e3,-946.0,,21,French Defense #2,420+8,1640.0,1793.0,endgame
+r1b2rk1/ppp2pp1/2np1n1p/1B2p3/1P2P3/B4N2/2qPQPPP/R3K2R w KQ - 0 13,a4c2,0.0,,44,Italian Game: Anti-Fried Liver Defense,360+0,1826.0,1754.0,middlegame
+rnbqkb1r/ppp2ppp/5n2/1B1p4/3P4/5N2/PPP2PPP/RNBQK2R b KQkq - 2 5,f1b5,0.0,,25,French Defense: Knight Variation,60+0,1715.0,1866.0,middlegame
+4rrk1/p6p/1p1p4/2pP2p1/1P1pPp2/P2P1P2/1R4PP/5RK1 w - - 0 21,b7b6,82.0,,23,"English Opening: King's English Variation, Two Knights Variation",120+2,1741.0,1575.0,endgame
+5k2/7p/6p1/1r1PPp2/8/5N2/P5PP/2R3K1 w - - 0 28,g8f8,829.0,,22,French Defense: Advance Variation #3,60+0,1996.0,1823.0,endgame
+Q7/2k4p/6p1/5p2/4p3/4P1P1/5P1P/1r4K1 w - - 0 38,b7b1,546.0,,21,Old Indian Defense,240+0,2063.0,1914.0,endgame
+rnbqkbnr/pppppp1p/8/6p1/3PP3/8/PPP2PPP/RNBQKBNR b KQkq - 0 2,d2d4,-179.0,,23,Borg Defense,300+5,1604.0,1534.0,middlegame
+r4rk1/p5pp/1p1p3n/2p4q/P1P1P3/1RP2p1P/3Q1P1B/1R3B1K w - - 4 26,b8a8,455.0,,24,Budapest Defense: Adler Variation,300+5,1705.0,1689.0,other
+2rq1rk1/bp1n1pp1/p3pn1p/5b2/1P1N4/P1N1P3/1B2BPPP/2RQ1RK1 b - - 1 14,f3d4,0.0,,22,Queen's Gambit Accepted: Normal Variation,240+0,1640.0,1553.0,middlegame
+2R2bk1/2P2ppp/4p3/8/4nPP1/3pN2P/7K/2r5 b - - 1 40,f1e3,576.0,,25,Caro-Kann Defense,300+8,1634.0,1813.0,endgame
+r2q1rk1/1p1bbppp/p1n1pn2/3pP3/3N1P2/2N5/PPP1B1PP/R1BQ1R1K b - - 0 12,e4e5,-36.0,,22,"Sicilian Defense: Paulsen Variation, Szen Variation",300+8,1829.0,1988.0,middlegame
+r1b1k1nr/pppp1pQp/2n2q2/8/4P3/8/PPP2PPP/RNB1KB1R w KQkq - 1 7,d8f6,328.0,,26,King's Pawn Game: Busch-Gass Gambit,120+2,1713.0,1694.0,middlegame
+r1b2k2/1pp3p1/p3p2p/6n1/4p3/7P/Pq2BKPB/RN6 w - - 0 20,c2b2,-1016.0,,22,Queen's Pawn Game: Zukertort Variation,180+0,1700.0,1747.0,other
+5r2/5pkp/2R3p1/8/1qp3P1/5R1P/6K1/8 b - - 1 41,a6c6,754.0,,25,Queen's Pawn Game: Chigorin Variation,300+0,1829.0,1747.0,endgame
+r4rk1/1p1bnpbp/1qn1p1p1/p2pP3/1p1P1PPB/3B1N2/P1P2Q1P/RN3RK1 w - - 4 15,c8d7,83.0,,23,Sicilian Defense: Wing Gambit,120+0,1791.0,2057.0,middlegame
+4k3/p1pR4/1b4p1/2N1P2p/1P3P1K/P5PP/8/4r3 w - - 7 47,e7e8,617.0,,23,"Queen's Gambit Refused: Chigorin Defense, Main Line",180+0,1927.0,1984.0,endgame
+rnb1k2B/p3qp1p/2p1pnp1/2P5/2p1P3/8/P1QP1PPP/RN2K1NR b KQq - 0 11,g7h8,-531.0,,23,Modern Defense,0+1,1586.0,1599.0,other
+rnb2rk1/ppb3p1/2pqp2p/4N3/5p2/1PNP2Pn/PBP2P1P/R2QRK2 w - - 0 17,f5f4,-353.0,,23,Scandinavian Defense: Mieses-Kotroc Variation,480+8,1541.0,1663.0,middlegame
+r3k1nr/ppbnq3/2p1p2p/6p1/3P1p2/2Q2N2/PP3NPP/R1B2RK1 b kq - 1 17,c4c3,289.0,,22,King's Pawn Game,300+2,1504.0,1609.0,middlegame
+r7/1R5p/p1rk2p1/P2p4/2pPp2P/4P1P1/5P2/2R3K1 b - - 5 34,b6b7,0.0,,42,Dutch Defense,240+0,1774.0,1772.0,endgame
+r2qk2r/pp1n1ppp/2pb4/3p1p2/2PPn3/1P2PN2/PB1N1PPP/R2QK2R w KQkq - 4 10,f8d6,-27.0,,21,Queen's Pawn Game #3,300+6,1564.0,1766.0,middlegame
+8/7p/p1b3k1/1p2pp2/8/2P5/PPB2KR1/2r5 b - - 5 37,h2g2,755.0,,24,"Danish Gambit Declined, Sorensen Defense",900+0,1763.0,1940.0,endgame
+2k1r3/7p/1p4p1/2pp1b2/6P1/1NP2P2/P2K3P/8 b - - 0 34,g2g4,603.0,,25,Scotch Game,420+3,1641.0,1517.0,endgame
+6rk/5Rp1/7p/pp6/4P3/P4PQ1/1P3P2/1K6 w - - 0 42,b7b5,,5.0,101,"English Opening: King's English Variation, Reversed Sicilian",60+2,1525.0,1556.0,endgame
+2kr3r/pbppb1qp/1p4p1/3N4/2P2p2/1P1P4/P3B1PP/R2QK1NR w KQ - 1 17,d4g7,89.0,,21,Owen Defense,0+1,1580.0,1520.0,other
+3qkb1r/2p1np2/1r1p2bp/3Pp1p1/P1Q1P3/7P/1P1N1PPN/R1B1R1K1 b k - 2 20,a6c4,-246.0,,25,Italian Game: Anti-Fried Liver Defense,300+10,1704.0,1643.0,middlegame
+6k1/1p3r1p/p3Q1p1/2p2n2/8/2Pq3P/PP3PP1/4R1K1 w - - 3 28,f8f7,-231.0,,25,Sicilian Defense: Old Sicilian,1200+5,1605.0,1566.0,endgame
+2r3k1/p4ppp/1p6/3pP3/b4P2/2P2B2/P5PP/2R3K1 b - - 1 24,e2f3,28.0,,25,Queen's Gambit Declined: Exchange Variation,180+0,2025.0,1987.0,endgame
+8/8/8/8/2kp1NKP/P7/6P1/8 w - - 1 53,c5c4,,14.0,39,Sicilian Defense: Delayed Alapin Variation,300+0,1876.0,1606.0,endgame
+4r1k1/pp3ppp/3Q4/5B1n/8/2P1qP2/PP3RPP/R5K1 w - - 1 18,f6h5,626.0,,24,Englund Gambit,300+0,1544.0,1740.0,other
+8/8/6K1/2k4p/1p4p1/3R4/8/8 b - - 3 64,f7g6,0.0,,48,Caro-Kann Defense: Exchange Variation,180+1,1665.0,1877.0,endgame
+8/8/2pN1p2/1p6/5K2/1Pk5/P1P5/8 w - - 5 48,d4c3,716.0,,26,Philidor Defense: Hanham Variation,300+0,1692.0,1655.0,endgame
+r2r2k1/pb3pbp/6p1/1pp1n3/8/1NP1P3/PPB3PP/R1B2RK1 b - - 3 16,d2b3,152.0,,21,Indian Game,180+0,1736.0,2162.0,other
+r3kbnr/pb4qp/1pnBpp2/2P3p1/3PP3/2N2N2/PP3PPP/R2QKB1R w KQkq - 1 10,e7g7,567.0,,22,English Defense #2,60+0,1607.0,1525.0,middlegame
+r1b2rk1/pp3ppp/2p5/4p3/4P1qP/1BP4N/P1P2Q2/R3K2R b KQ - 2 16,g1h3,505.0,,24,Bishop's Opening,600+0,1579.0,1563.0,other
+r2q1rk1/p4ppp/3p4/2p1b3/8/Q2B1P2/PPP3PP/R4RK1 b - - 1 19,c3a3,323.0,,25,Scotch Game: Ghulam-Kassim Variation,1320+8,1772.0,1581.0,other
+r1bq1rk1/ppp2ppp/3p4/4n3/1bP5/4P3/PP1NBPPP/R1BQ1RK1 w - - 0 10,c6e5,49.0,,21,Budapest Defense: Adler Variation,300+0,1790.0,1835.0,middlegame
+r7/pp3k1p/2p4n/2bp3n/8/2PP2BP/PPBNRPP1/R4K2 b - - 4 23,b3c2,-615.0,,23,Caro-Kann Defense: Hillbilly Attack,660+6,1525.0,1525.0,other
+rnb5/ppp1kpq1/3p4/1P2p3/P4P2/Q1NP1B2/2PKP3/R5NR w - - 0 31,e6e5,1133.0,,21,Nimzo-Larsen Attack,0+1,1672.0,1577.0,other
+r1bqr1k1/ppp2ppp/3b1n2/3Pn3/4P3/2N2N2/PP2B1PP/R1BQ1RK1 b - - 6 11,e1g1,88.0,,20,French Defense: Diemer-Duhm Gambit,120+0,1984.0,2025.0,middlegame
+8/6k1/8/7K/6PP/8/8/8 b - - 0 53,g2g4,,-13.0,56,Queen's Gambit Declined: Normal Defense,240+3,1674.0,1595.0,endgame
+r2qkb1r/1p2pppp/p1n2n2/1B1p1bB1/3P4/2N2N2/PPP2PPP/R2QK2R w KQkq - 0 8,a7a6,-1.0,,21,Caro-Kann Defense,60+0,1729.0,1856.0,middlegame
+r1bqkb1r/p4ppp/1p3n2/1NppB3/2PP4/P7/1P2PPPP/R2QKB1R b KQkq - 0 9,f4e5,-463.0,,22,Queen's Gambit Declined: Normal Defense,180+0,1743.0,1597.0,middlegame
+rn1qk2r/p4ppp/1ppbpn2/8/5P2/3B4/PPPPNP1P/R1B1QRK1 b kq - 0 11,f3f4,146.0,,20,Scandinavian Defense: Mieses-Kotroc Variation,480+8,1550.0,1654.0,middlegame
+r2q1rk1/ppp2ppp/3p1b2/3P4/4P3/2P5/PB2QPPP/R4RK1 b - - 2 14,c1b2,5.0,,22,Philidor Defense #3,420+8,1834.0,1520.0,other
+rn2k2r/pb3pp1/1qp1p2p/1N2P3/1bpP4/6P1/PP1N1PBP/R2QK2R w KQkq - 1 13,d8b6,34.0,,21,Semi-Slav Defense: Noteboom Variation,60+0,1833.0,1779.0,middlegame
+r3r1k1/1bppq2n/1p2pb2/4N2Q/3n1P2/3B2N1/PP4PP/R4RK1 b - - 0 22,f2f4,185.0,,21,"Alekhine Defense: Two Pawn Attack, Lasker Variation",180+0,1967.0,2046.0,middlegame
+8/8/p1k1p1p1/2p4P/2K1nP1P/PP2N3/8/8 b - - 0 47,g4h5,0.0,,39,Queen's Pawn Game: Zukertort Variation,300+2,1749.0,1719.0,endgame
+rn1qkb1r/pp3ppp/2p1p1n1/3pPb2/3P4/5N1P/PPP1BPP1/RNBQ1RK1 w kq - 1 8,g4f5,81.0,,21,Caro-Kann Defense,300+3,1622.0,1652.0,middlegame
+2rq1rk1/1p2bp1p/p4np1/3p1PN1/P5b1/2Pn3P/1P1Q2P1/RNB2RK1 w - - 0 18,b4d3,-369.0,,22,Sicilian Defense: McDonnell Attack,300+0,1568.0,1530.0,middlegame
+2Q5/6q1/1k2K3/6pp/8/6PP/2P5/8 b - - 2 54,d7e6,-279.0,,23,Vienna Game,300+8,1638.0,1534.0,endgame
+1r1q1rk1/pbp1bppp/1pnp1n2/8/3BP3/1QP2N2/PP1NBPPP/R4RK1 b - - 0 11,e3d4,80.0,,22,"Nimzowitsch Defense, Declined Variation",300+0,1547.0,1506.0,middlegame
+r5k1/5ppp/b3pb2/r1qp4/P7/2p2N2/R4PPP/2Q2RK1 b - - 1 28,e1c1,1117.0,,22,Alekhine Defense: Krejcik Variation,60+0,1585.0,1869.0,other
+rn1qk2r/pbppnpb1/1p5p/5pB1/3P4/3B1N2/PPP3PP/RN1Q1RK1 w kq - 0 10,h7h6,247.0,,22,Modern Defense: Three Pawns Attack,180+0,1973.0,1805.0,middlegame
+5rk1/p1q2rpp/1p3b2/2pB4/2Q5/1P6/P4PPP/2RR2K1 b - - 3 23,e2c4,-401.0,,23,English Opening: Agincourt Defense,60+0,1998.0,1839.0,other
+8/p3p1kp/3qprp1/2p5/8/1PP1Q2P/P5P1/4R2K w - - 3 27,g8g7,-21.0,,23,Sicilian Defense: Dragon Variation,300+3,1746.0,1669.0,endgame
+rnbqk3/ppp2p1p/6r1/3np3/3P4/P1P4Q/2P3PP/R1B1KBNR w KQq - 0 13,e6e5,2.0,,22,"French Defense: Winawer Variation, Winckelmann-Riemer Gambit",180+0,1952.0,2072.0,middlegame
+8/8/2B1pQpk/pp3p1p/7P/2P5/PP3P2/6K1 b - - 1 32,g2c6,,-4.0,206,King's Knight Opening,240+0,1528.0,1523.0,endgame
+8/6k1/6p1/pp5p/7P/1PR3K1/1r4P1/8 b - - 1 34,h2g3,352.0,,24,Semi-Slav Defense,300+0,1721.0,1658.0,endgame
+2r2r1k/p2b3p/1pn2n2/3pbP2/3P4/P2BP2P/1BR3P1/5RK1 w - - 0 27,d6e5,384.0,,24,Polish Opening,60+0,1976.0,1871.0,other
+r4rk1/pp3ppp/5n2/2b2B2/3p4/5N2/PP3PPP/2KR3R w - - 5 15,e8g8,-48.0,,21,Sicilian Defense: Alapin Variation,60+1,1560.0,1820.0,other
+4k2r/p1p2ppp/8/1p2P3/1P2n3/P1p3PK/2Pr3P/R4R2 w k - 1 21,d8d2,-575.0,,22,Nimzo-Larsen Attack: Classical Variation,540+5,1708.0,1903.0,endgame
+3Q3r/5pk1/2p1q1p1/4P3/p1pP1p2/P1P5/6PP/1R4K1 w - - 2 37,h5h8,15.0,,28,Modern Defense: Three Pawns Attack,1320+8,1670.0,1778.0,endgame
+r2q1rk1/ppp2ppp/2npb3/3N4/3bP3/2B3Q1/PPP2PPP/2KR1B1R w - - 8 13,c8e6,504.0,,23,Scotch Game,360+8,1519.0,1521.0,middlegame
+2r3k1/1p4pp/p4p2/4p3/3p4/B2Rn2P/P1r2RP1/2K5 w - - 0 27,c6c2,-673.0,,25,French Defense: Advance Variation #4,300+1,1500.0,1664.0,endgame
+rnbqkb1r/ppp1pppp/5n2/3P4/8/6P1/PPPP1P1P/RNBQKBNR b KQkq - 0 3,g2g3,36.0,,22,Scandinavian Defense: Modern Variation #2,480+8,1736.0,1566.0,middlegame
+3r2k1/5pp1/2PqN2p/3nR3/8/2P2Q1P/5PP1/4R1K1 b - - 0 33,d4e6,-645.0,,24,"Italian Game: Two Knights Defense, Modern Bishop's Opening",300+3,1746.0,1663.0,other
+r2qkbnr/pp3ppp/2n1p3/1BppP2b/3P4/5N1P/PPPN1PP1/R1BQ1RK1 b kq - 2 8,e1g1,38.0,,22,Caro-Kann Defense,300+5,1969.0,1656.0,middlegame
+3r4/6pp/2b1kp2/p1p1p3/p1P5/2N2P1P/P4KP1/2R5 b - - 3 33,b1c3,427.0,,24,"Sicilian Defense: Lasker-Pelikan Variation, Retreat Variation",180+3,1834.0,1833.0,endgame
+1B3rk1/3p1ppp/p3nb2/1p3N2/4P3/P7/2P3PP/4RRK1 b - - 0 24,f4b8,-213.0,,21,Sicilian Defense,600+8,1661.0,1500.0,other
+1r6/4kp1p/1P2p1p1/3qN3/3Qn3/4P1P1/5P1P/1R4K1 w - - 6 33,b7d5,638.0,,24,Queen's Pawn,180+0,1735.0,1776.0,endgame
+rn1qk2r/pb1pbppp/1p2p3/2pNP3/3P4/3B1N2/PPPB1PPP/R2QK2R b KQkq - 0 8,c3d5,-60.0,,22,Owen Defense,60+0,1840.0,1993.0,middlegame
+r3kbnr/4ppp1/p1n4p/1p1q1b2/2p1N3/P2P4/BPP2PPP/RNBQ1RK1 w kq - 1 11,c8f5,268.0,,23,Sicilian Defense: Old Sicilian,540+5,1681.0,1866.0,middlegame
+rn2k2r/p1pp1ppp/4p3/4P3/3PbN2/8/P2B1P2/R3KB2 w Qkq - 1 17,h1e4,-446.0,,25,Polish Defense,240+0,1750.0,1612.0,other
+8/2Q2k2/1P3P1p/3N4/3qn1p1/6P1/2K5/8 b - - 1 50,f4c7,-524.0,,22,Danish Gambit,300+8,1942.0,1882.0,endgame
+8/6pp/2p1k3/2P5/1P1P2PP/1r1K4/2N5/8 w - - 1 36,b2b3,-10.0,,24,Caro-Kann Defense,180+2,1865.0,1907.0,endgame
+1r1r2k1/p5p1/3P3p/2p2p2/1bPn4/2NB4/PP3PPP/R4RK1 w - - 4 19,f8d8,99.0,,25,Nimzo-Indian Defense: Leningrad Variation,180+3,1675.0,1869.0,other
+2r1kb1r/pp1bnppp/1qn1p3/3pP3/3p1P2/2P2N2/PPB3PP/RNBQ1RK1 w k - 0 10,c5d4,-57.0,,22,French Defense: Advance Variation,180+0,1820.0,1826.0,middlegame
+r2k1b2/1p2n3/2p1P1pr/p1Pp1p2/1n1P4/P1N2B1P/1P2Q1RP/R5K1 b - - 0 33,a2a3,-790.0,,22,Van't Kruijs Opening,0+1,1636.0,2025.0,other
+r2qR1k1/p1pb1ppp/3p1b2/2pP4/8/PB6/1PP2PPP/R1BQ2K1 b - - 0 17,e1e8,82.0,,23,Ruy Lopez: Steinitz Defense,300+8,1526.0,1814.0,other
+r1b1k2r/1p3ppp/p1nq1n2/2pp4/8/P2PPN2/1P3PPP/R1BQKB1R w KQkq - 0 10,d8d6,0.0,,24,Anderssen Opening,120+4,1580.0,1694.0,middlegame
+8/4pk1p/4P1p1/4Rn2/2p5/2P2B1P/1r3PP1/6K1 b - - 0 34,d5e6,12.0,,25,Caro-Kann Defense,120+0,2028.0,2109.0,endgame
+2k2r2/1p5R/p1p3P1/8/2P4P/2P5/P2K1p2/8 b - - 0 36,g5g6,,8.0,42,Caro-Kann Defense,300+2,1710.0,1782.0,endgame
+8/5p2/PPk4p/2P2P1P/1K4P1/8/8/8 w - - 1 62,b7c6,,7.0,73,Nimzo-Larsen Attack: Classical Variation,120+0,1712.0,1766.0,endgame
+rnbqk2r/ppp1bpp1/4pn1p/8/2BPP2B/2N5/PP3PPP/R2QK1NR b KQkq - 0 7,f1c4,67.0,,23,Queen's Gambit Declined: Modern Variation,180+1,1709.0,1811.0,middlegame
+r1b1r2k/3nNpbp/1p3np1/p2p4/P2P1P2/BPqBPN2/4Q1PP/5RK1 w - - 5 20,f8e8,-347.0,,22,Canard Opening,900+0,1681.0,1681.0,middlegame
+r2r2k1/bp3pn1/4p1pp/1P1qP3/1N1P1P2/3Q4/5BPP/R2R2K1 b - - 3 25,c2b4,-82.0,,19,French Defense: La Bourdonnais Variation,360+8,1697.0,1808.0,other
+r1bqk2r/ppp2ppp/2n5/3pp3/2B1n3/P1P2N2/2PPQPPP/R1B1K2R w KQkq - 0 8,d7d5,-73.0,,23,Four Knights Game: Italian Variation,300+13,1776.0,1540.0,middlegame
+4r1k1/2p2ppp/1r2b3/4N3/2p2p2/2b5/P1PP2PP/2KR3R b - - 1 25,b1c1,,5.0,95,King's Pawn Opening: 2.b3,60+2,1563.0,1706.0,other
+r4r1k/bp4p1/1n4Qp/p7/2P1P3/P4P2/1PK2P2/3BRR2 w - - 1 28,a4b6,,15.0,24,"English Opening: King's English Variation, Reversed Sicilian",60+2,1525.0,1556.0,other
+2r3k1/r3bppp/p4n2/2p5/PnB5/3P1N1P/1PP2PP1/R1B2RK1 w - - 0 17,e8c8,377.0,,24,Sicilian Defense: Closed,180+2,1748.0,1562.0,other
+2br3k/ppb2q1p/2p1p3/2Pn4/1P1PRp2/PQ5P/1B3PP1/5RK1 b - - 0 27,e1e4,279.0,,25,Horwitz Defense,300+2,1623.0,1865.0,other
+6k1/6p1/7p/4p3/2n3P1/7r/3K4/4R3 w - - 2 45,a3c4,-726.0,,28,Italian Game: Anti-Fried Liver Defense,660+6,1561.0,1569.0,endgame
+3r4/p3k3/2B2p2/2R3pp/4Pp2/1P3P2/P4PK1/8 b - - 0 31,a5c5,-469.0,,29,Queen's Pawn Game #2,240+0,2044.0,1812.0,endgame
+4RQ2/6pk/6pp/3p1b1q/1p3P2/2b5/6PK/8 w - - 6 38,d1h5,,-5.0,137,French Defense: Normal Variation,1200+0,1525.0,1737.0,endgame
+r2qr1k1/pp3ppp/2nbbn2/3p4/1P1P4/P1NBBN1P/5PP1/R2Q1RK1 b - - 0 14,b2b4,21.0,,22,"Queen's Gambit Declined: Exchange Variation, Positional Variation #2",60+0,1750.0,1863.0,middlegame
+r4rk1/p2b2pp/2pq4/3pp3/6nP/2N5/PP2P3/2KR1BQR w - - 0 20,f6g4,-448.0,,24,Slav Defense,480+8,1598.0,1665.0,other
+r4rk1/pp1Q1ppp/4p3/2q5/2P5/5N2/P4nPP/RN2R2K w - - 1 18,g4f2,,-3.0,245,"French Defense: Advance Variation, Nimzowitsch System",240+0,1637.0,1869.0,other
+r1b4r/ppp1k2p/3p1pPq/2b1p3/4P3/2PP1QN1/PP2B1PP/RN2KR2 b Q - 0 16,f5g6,-484.0,,22,King's Pawn Game: Leonardis Variation,300+11,1688.0,1822.0,other
+r1bqkb1r/1ppp1pp1/p1n2N1p/8/4P3/4Q3/PPP2PPP/R1B1KBNR b KQkq - 0 7,d5f6,-7.0,,23,Center Game: Berger Variation,480+8,1556.0,1525.0,middlegame
+rn3br1/p2k2pp/2pp1p2/8/1p1N4/1P4B1/P3KPPP/R3R3 b - - 3 16,f3d4,282.0,,23,Danish Gambit,900+0,1745.0,1780.0,other
+rnbqk2r/p1b2pp1/2p1pn1p/1pPp4/1P1P4/P1NBPN2/5PPP/R1BQK2R w KQkq - 0 10,b6b5,133.0,,22,Queen's Gambit Declined,180+15,1632.0,1563.0,middlegame
+2kr3r/4bp2/b1n1p1pp/3pP3/NP3q2/P6P/2P3B1/R2QR2K w - - 0 25,f2f4,-404.0,,22,Sicilian Defense: Closed #2,60+0,2279.0,1983.0,other
+7k/1p5p/pb1p1n2/1b1Pp2r/4Bp2/1N3P1P/PPQ3K1/6R1 w - - 6 37,c7b6,533.0,,23,Bishop's Opening,360+10,1626.0,1500.0,other
+1nkr3r/pb1q3p/1p6/2P2p2/3bp3/P7/2QNBPPP/3R1RK1 b - - 0 21,b4c5,453.0,,23,Owen Defense,60+0,1895.0,1832.0,other
+4r1k1/p2q2Pp/2R1pb2/1p6/3rp3/4Q1R1/PPP2PP1/6K1 w - - 2 27,f7d7,-528.0,,23,Russian Game: Three Knights Game,300+5,1859.0,1689.0,other
+r2qkb1r/ppp1pppp/2n2n2/3p3b/3P1B2/2N1PN1P/PPP2PP1/R2QKB1R b KQkq - 0 6,e2e3,3.0,,20,Queen's Pawn Game: Chigorin Variation,420+1,1567.0,1527.0,middlegame
+1r3rk1/1b1R2pp/pP1p2q1/3Pbp2/1P6/P4B2/3B1PPP/2Q2RK1 w - - 0 26,f7f5,447.0,,22,Nimzo-Indian Defense #2,60+0,1836.0,1744.0,other
+6Q1/5p2/p3q2p/5k2/4p3/P1Bp4/P2K1n2/R7 b - - 0 34,b8g8,556.0,,19,Center Game #2,1320+8,1760.0,1785.0,endgame
+7k/p2r1p1p/2p3r1/4p1p1/4P1R1/1P1BP2P/P1P4K/R7 b - - 0 31,g1g4,-484.0,,25,Scotch Game,600+8,1699.0,1628.0,endgame
+r1b3k1/pp5p/2pBP3/5Pn1/3Qp1p1/7q/PP2PP2/R4RK1 w - - 5 28,g7g8,,8.0,49,Dutch Defense: Nimzo-Dutch Variation,60+1,1774.0,1947.0,other
+4n1k1/1pp2q1p/p1P3p1/8/P1P5/5PQP/1B4P1/6K1 w - - 0 40,g7g6,1189.0,,22,Italian Game: Giuoco Pianissimo,60+2,1565.0,1763.0,endgame
+rn2k2r/pbp1q2p/1p2pppn/8/2P5/2Q1PN2/P3BPPP/BN2K2R w Kkq - 1 13,g8h6,-131.0,,23,Mieses Opening,120+2,1613.0,1500.0,middlegame
+r4r1k/1ppb2p1/p6p/6q1/4PP2/2NP3P/PP4P1/R2Q1R1K b - - 0 18,f2f4,-100.0,,22,Italian Game: Giuoco Pianissimo,660+6,1659.0,1628.0,other
+2Q5/rp3qkp/3P2p1/5p2/1P2p3/2P4P/P3NPP1/R4RK1 w - - 1 29,a3a7,1326.0,,21,King's Pawn Game: Wayward Queen Attack,600+10,1735.0,1643.0,endgame
+1r2k2r/2Bpqp2/p1n1pn1p/2P3p1/1pB5/5Q2/PPP2PPP/3RR1K1 b k - 0 17,g3c7,-386.0,,24,St. George Defense,300+8,1855.0,1816.0,other
+3r1rk1/pp3pb1/2p1p2p/6p1/2P5/6qP/P3Q1P1/5R1K w - - 0 28,e7e6,-1110.0,,22,Indian Game,180+0,1587.0,1942.0,endgame
+rnbqr1k1/ppp1bp2/4pnpp/3p4/5PPP/4P2N/PPPP1K2/RNBQ1B1R w - - 0 9,d7d5,-107.0,,23,Gedult's Opening,0+1,1505.0,1513.0,middlegame
+1r4k1/5ppp/2p1p3/2P5/1nBP4/1N2P1P1/p4P1P/6K1 w - - 0 26,a3a2,-547.0,,26,Slav Defense: Modern Line,600+5,1521.0,1568.0,endgame
+r1b1k2r/ppp2pp1/3p1n1p/2b5/2B1P3/5N2/PPP2PPP/R1B2RK1 b kq - 1 11,d2f3,128.0,,23,Italian Game: Anti-Fried Liver Defense,120+0,1525.0,1922.0,other
+3r1r2/1p1P2kp/5np1/pB2Q3/7P/1P6/1P4P1/4R1K1 w - - 5 36,h8g7,,26.0,24,Elephant Gambit: Paulsen Countergambit,300+3,1757.0,1725.0,endgame
+1R2r1k1/4bppp/p3bn2/8/N4B2/2p1P2P/5PP1/6K1 b - - 0 27,b1b8,933.0,,23,Queen's Gambit Declined,420+0,1615.0,1809.0,other
+r1bq1b1r/pppp1kpp/2n5/4p3/4N3/5N2/PPPP1PPP/R1BQK2R b KQ - 0 6,c3e4,151.0,,23,"Four Knights Game: Italian Variation, Noa Gambit",180+0,1936.0,2060.0,middlegame
+r2q1rk1/pb3pp1/1pnp1b1p/2p1p3/6P1/2PPPP2/PP1BB2P/RN1QKR2 b Q - 2 14,h1f1,431.0,,23,Van't Kruijs Opening,60+0,1637.0,1805.0,middlegame
+rn2kbnr/pppq1ppp/3p4/8/2B1Ppb1/5N2/PPPP2PP/RNBQ1RK1 w kq - 4 6,d8d7,13.0,,21,"King's Gambit Accepted, Fischer Defense",540+19,1605.0,1642.0,middlegame
+r1b2rk1/pp2b1p1/5n1p/2p2p2/1PP1p3/P1N3PN/1Bn1PPBP/3R1RK1 w - - 0 16,c6c5,0.0,,22,English Opening: King's English Variation,180+1,1796.0,1723.0,middlegame
+1r1q3r/5ppp/b2k4/p1p1p3/P1PpP3/3P1P2/1P2B1PP/1R3RK1 b - - 2 21,a1b1,710.0,,25,Owen Defense,60+0,1821.0,2013.0,other
+8/6pp/p3p3/1p6/1P2bPk1/P2pK1P1/7P/8 w - - 3 38,f5g4,-708.0,,24,Slav Defense #2,60+0,1509.0,1988.0,endgame
+rnbqk1nr/pppp2pp/8/2b4Q/4P3/2P5/P4PPP/RNB1K1NR b KQ - 3 8,d5h5,-65.0,,24,Danish Gambit,300+0,1702.0,1670.0,middlegame
+5rk1/p1qbb3/1pn1p3/3pP1P1/3P4/P1N2p2/1PBQ2K1/7R w - - 0 28,g4f3,0.0,,34,Caro-Kann Defense,60+2,1613.0,1682.0,other
+7r/6p1/2k1p2p/1p6/1P6/2PQ4/5PPP/6K1 w - - 1 30,c5c6,651.0,,23,Petrov: Modern Attack,120+0,1549.0,1556.0,endgame
+r1b2rk1/3n2pp/2p1p3/p2pPpN1/PpPb1Pq1/1P1BP3/4Q1PP/R4RK1 w - - 0 19,c5d4,186.0,,26,Queen's Pawn Game: Zukertort Variation,120+0,2086.0,2060.0,other
+rn3rk1/pp4pp/3p3b/2pP3Q/2q1B1K1/4P1N1/5PPP/7R w - - 0 21,a2c4,-605.0,,24,Dutch Defense,480+5,1675.0,1853.0,other
+8/1b6/8/p7/6k1/5pp1/8/7K b - - 1 56,g1h1,,1.0,245,Three Knights Opening #2,480+0,1730.0,1711.0,endgame
+1rr3k1/4qppp/1p1bpn2/1N1p4/1P1P4/P3PN2/4QPPP/2R2RK1 w - - 2 20,b7b8,176.0,,24,"Queen's Gambit Declined: Modern Variation, Normal Line",180+3,1696.0,1877.0,other
+6k1/pp3ppp/4b3/1P2Pp2/1B1p1P2/PK1p4/6PP/R4N2 w - - 0 29,d5d4,644.0,,24,French Defense: La Bourdonnais Variation,600+0,1768.0,1834.0,endgame
+4r1k1/1p4pp/8/7P/p2pP3/8/PPP2Q2/2K3RR w - - 3 36,h8g8,,4.0,122,Sicilian Defense: Bowdler Attack,120+0,1747.0,1745.0,endgame
+r1bk1r2/pppp4/2n5/8/7Q/8/PbP2PPP/RN2KBNR b KQ - 1 13,h7h4,-650.0,,23,Center Game: Berger Variation,480+8,1519.0,1751.0,other
+4R3/8/3b4/2p1P3/N2k4/1P4r1/P1P4p/7K b - - 0 42,e4e5,-168.0,,23,Sicilian Defense,420+4,1587.0,1590.0,endgame
+r1bq1k1r/1p1n1pp1/2n1p2p/p2pP3/5P2/2N3Q1/PPPB2PP/2KR1BR1 w - - 0 13,a7a5,265.0,,21,"French Defense: MacCutcheon Variation, Tartakower Variation",180+3,1859.0,1889.0,middlegame
+Nn1k2nr/1p3pp1/p5qp/2p5/3pP1PP/3Q1P2/PPP1B3/R3K2R b KQ - 1 22,d1d3,-551.0,,22,Philidor Defense #3,300+5,1537.0,1606.0,other
+8/6k1/1p1p4/p1pP1K2/P3P3/1P6/2B3b1/8 b - - 4 37,g5f5,0.0,,50,Scotch Game,300+3,1594.0,1592.0,endgame
+8/p7/3p4/1p2k2p/1P2P1pP/2PPKp2/5P2/8 w - - 0 41,b6b5,-15.0,,41,King's Pawn Game: Wayward Queen Attack,480+8,1807.0,1500.0,endgame
+1r2r3/3q1pk1/1p1p2pp/pPpN2B1/2BpP1R1/3P1P1P/P3K3/R7 w - - 0 28,h7h6,363.0,,20,Italian Game,300+8,1711.0,1541.0,other
+rnbqk2r/pp2ppbp/2p2np1/3p4/1PPP4/P1N1P3/5PPP/R1BQKBNR b KQkq - 0 6,b2b4,35.0,,22,Slav Defense #2,120+0,2072.0,2073.0,middlegame
+8/8/6p1/5kP1/4R2P/3p2K1/8/8 b - - 0 53,e8e4,9605.0,,44,Benoni Defense: Old Benoni,120+2,1571.0,1647.0,endgame
+3k4/1r1P1R2/8/P7/8/6P1/3R2K1/8 w - - 1 57,b4b7,,3.0,245,"Nimzowitsch Defense: Kennedy Variation, Paulsen Attack",180+0,1698.0,1609.0,endgame
+1k1r2nr/1bpnqpb1/pp1pp1pp/3P4/2P1PPP1/2NBB3/PP1QN2P/1K1R3R w - - 1 15,c8b8,137.0,,22,Modern Defense,180+0,2038.0,1796.0,middlegame
+8/pp3pk1/2p2pp1/3p2b1/P2P2P1/1Pq1PQ2/3NKP2/8 b - - 0 28,a2a4,102.0,,22,Hungarian Opening,180+0,1744.0,1935.0,endgame
+3rr3/ppp3pk/n2b1qpp/2P1N3/3PQBP1/7P/PP3P2/R4RK1 b - - 0 21,c4c5,48.0,,25,French Defense: Knight Variation,300+8,1527.0,1545.0,other
+r1bqk2r/1p1n1ppp/p3pb2/8/P2N4/1PN5/2P1B1PP/R2Q1RK1 b kq - 0 14,f3d4,418.0,,23,Sicilian Defense: Closed Variation,1560+30,1500.0,1540.0,middlegame
+3rk2r/pp3ppp/2p2nb1/2b1q3/4PQ2/2N2P1P/PP2B1P1/R1B1K2R b KQk - 4 15,e3f4,231.0,,24,"Slav Defense: Quiet Variation, Pin Defense",300+0,1591.0,1593.0,middlegame
+r1bqk2r/ppppbpp1/2n1pn1p/8/2PP3B/2N2N2/PP2PPPP/R2QKB1R b KQkq - 1 6,g5h4,-43.0,,25,Nimzo-Indian Defense #2,600+10,1591.0,1571.0,middlegame
+5r1k/2p4p/1p4P1/p3Pp2/3q4/1B6/P5Q1/1K4R1 b - - 4 31,b2b1,-617.0,,23,Queen's Gambit Declined: Queen's Knight Variation,600+0,1767.0,1720.0,endgame
+7k/8/5KP1/8/8/8/1p6/1B6 b - - 1 70,g5f6,,-4.0,245,Semi-Slav Defense: Normal Variation,240+0,2037.0,2212.0,endgame
+5rk1/p5p1/3b3p/4p3/3p1p2/1P3P1P/PBq3PK/1R5N b - - 2 39,g1h2,1572.0,,21,"French Defense: Advance Variation, Nimzowitsch System",180+1,1552.0,1874.0,endgame
+r1bqkbnr/pppnpppp/8/3p2B1/3P4/4P3/PPP2PPP/RN1QKBNR b KQkq - 0 3,e2e3,-35.0,,21,Queen's Pawn Game: Levitsky Attack,120+0,1870.0,1590.0,middlegame
+2k4r/p2p4/2p5/P1b1p2p/2p1P1pP/2P3P1/Pn3PK1/1R3R2 b - - 2 24,d1b1,427.0,,24,King's Knight Opening,120+0,1515.0,1502.0,endgame
+2rqk1nr/4bpp1/p1bpp2p/1pp5/4PP2/1P1P1N2/PBP3PP/RN1Q1RK1 b k - 3 12,e1g1,41.0,,22,Rat Defense: Harmonist,420+8,1776.0,1663.0,middlegame
+r4r2/p4pk1/1n1bpp1p/7q/1P1PN3/P3PN2/2Q2PPP/R4RK1 b - - 0 18,c3e4,-308.0,,24,Semi-Slav Defense,300+5,1713.0,1614.0,other
+r1bqk2r/ppp2p1p/3p1np1/4p3/2BbP3/3P1Q1P/PPP2PP1/RNB1K2R w KQkq - 0 9,c5d4,440.0,,24,King's Pawn Game: Wayward Queen Attack,300+8,1509.0,1590.0,middlegame
+1r4k1/2q2ppp/4p3/3p4/P1p5/R1Q1PP1P/6P1/6K1 w - - 0 25,c5c4,-130.0,,22,Slav Defense,240+0,1651.0,1711.0,endgame
+r1bq1rk1/4bppp/p1np1n2/1pp1p3/4P3/2PP1N1P/PPB2PP1/RNBQR1K1 w - - 1 12,a5c6,39.0,,24,"Ruy Lopez: Closed Variations, Closed Defense",180+0,1940.0,1788.0,middlegame
+r1bq1r2/pp4pk/1b5p/2ppPp2/3P3P/2P3Q1/P1B2PP1/1RB1R1K1 w - - 0 20,c6c5,378.0,,23,Ruy Lopez: Bird Variation,540+5,1906.0,1646.0,other
+r2qk2r/pbpp1ppp/1p3n2/n2P4/1b2P3/2N2N2/PP1B1PPP/R2QKB1R w KQkq - 5 9,f8b4,251.0,,22,Ponziani Opening,120+1,1830.0,1527.0,middlegame
+2R5/r3kp2/p3p3/4P1p1/4b1Pp/R6P/1r4PK/8 w - - 8 40,b6b2,-1065.0,,22,"Caro-Kann Defense: Panov Attack, Modern Defense, Mieses Line",120+0,1598.0,2101.0,endgame
+r2qk2r/pb1pnpb1/1pn1p1pp/2p5/2B1P3/2NPBN2/PPPQ1PPP/1R2K2R w Kkq - 2 10,c8b7,-64.0,,22,Sicilian Defense: Old Sicilian,240+0,1577.0,1642.0,middlegame
+r1q2rk1/1p3ppp/5n2/p1b1n3/3p4/2PP2PP/PP1BQPB1/R4RK1 w - - 0 17,c6e5,207.0,,22,Caro-Kann Defense,1200+2,1656.0,1644.0,other
+r1bqkbnr/ppp3pp/2n1p3/5p2/3PP3/2N1B3/PPP3PP/R2QKBNR b KQkq - 0 6,f3e4,-45.0,,22,Blackmar-Diemer Gambit,300+2,1565.0,1583.0,middlegame
+2r3k1/1b3p2/p1q1p1pp/1p2B3/1P6/P1nQ4/5PPP/1B2R1K1 w - - 1 34,d5c3,-47.0,,22,Scandinavian Defense: Mieses-Kotroc Variation,180+0,1858.0,1699.0,other
+3r4/1bk2pr1/p1n1pq2/2N3Np/2PPR2P/1P5n/P4QB1/3R2K1 w - - 3 27,f4h3,575.0,,22,"Sicilian Defense: French Variation, Westerinen Attack",60+1,2024.0,2003.0,middlegame
+2r2rk1/2pbq1pp/p1n1pp2/1p6/1P1PPB2/P1Q1N3/5PPP/R4RK1 b - - 1 18,c4e3,-96.0,,21,Queen's Pawn Game: Zukertort Variation,840+8,1641.0,1527.0,other
+8/8/3Kp3/3b4/4q3/8/1k6/8 b - - 7 58,e5d6,,5.0,92,Sicilian Defense: Old Sicilian,300+0,1500.0,1862.0,endgame
+R1q5/4r1k1/2p5/2P1p2p/3n4/3P3P/5PP1/6K1 w - - 0 43,f5c8,-347.0,,23,King's Pawn Game: Tayler Opening,180+3,1520.0,1629.0,endgame
+r3k2r/pppqbppp/3p1n2/7b/2P5/1PNBP1QP/PB3PP1/R3K2R b KQkq - 2 12,f1d3,-130.0,,20,"Rat Defense: English Rat, Lisbon Gambit",120+0,2099.0,1841.0,middlegame
+1R6/8/8/4N3/P1p5/1nk3K1/1p3P2/8 b - - 3 59,c6e5,517.0,,21,Queen's Pawn,60+3,1662.0,1584.0,endgame
+r2qkb1r/pp2pppp/8/2pnPb2/8/N4N2/PP2B1PP/R1BQK2R w KQkq - 0 12,b6d5,647.0,,24,"Alekhine Defense: Four Pawns Attack, Trifunovic Variation",60+2,1683.0,1630.0,middlegame
+2rr2k1/5ppp/p7/1p1pP3/3b4/P6P/1P3PP1/3RR1K1 w - - 0 25,c5d4,0.0,,30,Sicilian Defense,300+2,1640.0,1613.0,endgame
+r1bqkb1r/p2pnppp/1pn1p3/8/3NP3/2N1B3/PPP2PPP/R2QKB1R w KQkq - 0 7,b7b6,211.0,,24,"Sicilian Defense: Paulsen Variation, Normal Variation",180+3,1685.0,1549.0,middlegame
+1r6/2p3pp/3k1n2/4B3/8/2P5/b1K2P1P/4R3 b - - 1 33,d4e5,470.0,,23,Ruy Lopez: Classical Variation,300+13,1687.0,1796.0,endgame
+r5k1/pb3ppp/3b4/2p4r/8/2N1B2P/PPP2PP1/3R1RK1 b - - 1 18,a1d1,-91.0,,22,Russian Game: Damiano Variation,900+0,1782.0,1584.0,other
+6k1/4Qp2/4p1p1/3pPb1p/3P1P2/6KP/6P1/8 w - - 5 36,g7g8,,13.0,42,Queen's Pawn,120+17,1534.0,1651.0,endgame
+3r2k1/1b2b1pp/4pp2/p1p5/2P2P2/PP1qBN2/5QPP/1R4K1 b - - 1 25,e2f2,650.0,,23,Sicilian Defense: McDonnell Attack,420+0,1796.0,1804.0,other
+3rk2r/p1p2pbp/3p2p1/2p5/4P3/6N1/PPP2PPP/RN1b1RK1 w k - 0 13,a8d8,121.0,,24,Ruy Lopez: Steinitz Defense,420+0,1845.0,1758.0,other
+r4b1k/p1p3p1/bp1pB1qp/3P4/4P3/2N4Q/PP3RPP/6K1 w - - 1 25,e8g6,232.0,,21,English Defense #2,300+0,1883.0,1730.0,other
+7k/4Npp1/p2P3p/8/q4P2/6P1/1r1K2P1/3R3R w - - 5 31,b8b2,-552.0,,24,Benoni Defense: King's Pawn Line,240+0,1746.0,1775.0,endgame
+rn1qk2r/pp3ppp/2p1pn2/2b2b2/8/2NP2P1/PPP2PBP/R1BQK1NR w KQkq - 2 8,f8c5,-10.0,,23,Caro-Kann Defense,300+15,1889.0,1874.0,middlegame
+2k5/2P5/1K5p/6p1/6P1/7P/5P2/8 b - - 0 52,c6c7,,-13.0,41,"Italian Game: Two Knights Defense, Modern Bishop's Opening",300+3,1746.0,1663.0,endgame
+5rk1/5ppp/2p1p3/3R4/1P6/5P2/2P3PP/6K1 b - - 0 26,d1d5,561.0,,25,Guatemala Defense,300+10,1613.0,1532.0,endgame
+rn1qkbnr/2p1pppp/p3b3/8/PppPP3/5N2/1P2NPPP/R1BQKB1R b KQkq - 1 7,c3e2,-213.0,,23,Queen's Gambit,900+0,1670.0,1587.0,middlegame
+2b5/1pk3p1/4rn1p/2p5/4P2N/1PPR1P1P/2B3P1/6K1 b - - 0 31,d1d3,-259.0,,22,Italian Game: Anti-Fried Liver Defense,300+20,1897.0,1525.0,endgame
+6k1/6p1/3B2p1/8/p5rp/P7/1P6/1K6 w - - 0 42,h5h4,-1063.0,,25,Alekhine Defense,1200+0,1745.0,1744.0,endgame
+8/8/7p/1k1p2p1/3P2P1/1KP3P1/8/8 b - - 0 49,b2b3,-3644.0,,36,French Defense: King's Indian Attack,60+0,1760.0,1908.0,endgame
+8/3P4/1B3bpk/7p/2P1p2P/6P1/5P2/6K1 b - - 0 42,d6d7,-1164.0,,20,Sicilian Defense: Myers Attack #2,840+8,1674.0,1681.0,endgame
+r5k1/1q1bb1pp/3pp3/p4r1B/1p3P2/4B3/PPPQ1N2/1KR5 w - - 1 25,f8f5,-365.0,,22,"Sicilian Defense: Scheveningen Variation, Classical Variation",300+0,1537.0,1567.0,other
+r3r1k1/1bqn1p1p/p3p1pQ/1pppP2n/1P1P4/P1NB1N1P/2P1RPP1/4R1K1 w - - 0 19,c6c5,419.0,,24,Owen Defense,300+8,1561.0,1556.0,middlegame
+r1bqkb1r/2ppnppp/p7/1p1P4/3p4/5N2/PPP2PPP/RNBQ1RK1 w kq - 1 9,c6e7,257.0,,23,Scotch Game: Relfsson Gambit,420+0,1854.0,1575.0,middlegame
+r3kbnr/2pb1ppp/p3p3/1B6/P2QP3/2p1N3/5PPP/R1B1K2R b KQkq - 0 13,d1d4,-565.0,,25,"Queen's Gambit Accepted: Central Variation, Modern Defense",300+8,1550.0,1640.0,other
+1B6/8/8/1p3pkp/3P1p2/5P2/5KPP/1R6 w - - 0 32,f7f5,,11.0,29,Queen's Gambit Declined: Queen's Knight Variation,120+0,2082.0,1568.0,endgame
+8/3R2p1/5pkp/4p3/1p1n2P1/8/7K/1r6 w - - 1 51,f5d4,-921.0,,23,Philidor Defense #2,1200+0,1538.0,1509.0,endgame
+8/R7/6p1/8/5Pk1/8/5K2/5n2 b - - 5 53,e3f2,-15.0,,40,Owen Defense,180+3,1551.0,1545.0,endgame
+r1bqk2r/p3bppp/2p1p3/np2P3/3PB3/2P5/PP3PPP/R1BQK1NR b KQkq - 0 11,c2e4,-234.0,,23,"French Defense: Classical Variation, Steinitz Variation",600+0,1687.0,1520.0,middlegame
+4r1k1/2p2ppp/1r2b3/4b3/2pP1p2/8/P1P3PP/2KR3R b - d3 0 26,d2d4,1200.0,,21,King's Pawn Opening: 2.b3,60+2,1563.0,1706.0,endgame
+rnbq1rk1/ppppb1pp/4p3/8/3PN3/3B1N2/PPP2PPP/R2Q1RK1 b - - 5 9,e1g1,-50.0,,20,Dutch Defense: Raphael Variation,300+0,1740.0,1790.0,middlegame
+7r/4R3/1p2p1k1/3p3p/4p3/8/6PP/5R1K w - - 0 40,e5e4,610.0,,24,Sicilian Defense: Staunton-Cochrane Variation,600+5,1679.0,1657.0,endgame
+r2qkb1r/pp3ppp/2np1n2/2p1p3/4PP2/2NP1B2/PPP3PP/R1BQ1RK1 b kq - 0 8,e2f3,-75.0,,23,Sicilian Defense: Closed Variation,300+8,1783.0,1622.0,middlegame
+3r1k2/ppp4Q/6p1/8/3r4/8/PP2b1P1/2K4R w - - 1 24,g8f8,438.0,,23,Blackmar-Diemer Gambit,300+2,1595.0,1678.0,endgame
+8/5pp1/4k2p/5r1P/2K2P2/6P1/8/8 w - - 3 52,f6f5,-3421.0,,28,Sicilian Defense: Old Sicilian,300+8,1628.0,1751.0,endgame
+3r2k1/ppp2ppp/4bn2/2b1N3/2P1P3/1P6/P3BPPP/5RK1 b - - 0 19,f3e5,555.0,,25,Nimzo-Larsen Attack: Modern Variation #2,0+1,1591.0,1682.0,other
+8/3R1pkp/2r3p1/4Pp2/N1p2P2/6P1/7P/2b2K2 b - - 3 36,b6a4,373.0,,25,"Caro-Kann Defense: Advance Variation, Bronstein Variation",300+0,1771.0,1704.0,endgame
+8/5k2/p3p1p1/1pprP2p/5P2/PPKR2PP/8/8 b - - 1 38,e3d3,0.0,,35,Semi-Slav Defense: Accelerated Move Order,60+0,1940.0,1980.0,endgame
+rnbqkbnr/pp3ppp/4p3/3p4/1Pp5/P7/1BPPPPPP/RN1QKBNR w KQkq - 0 5,c5c4,-11.0,,22,Nimzo-Larsen Attack,0+1,1692.0,1588.0,middlegame
+2N2k2/5ppn/5n2/1p6/p7/P2r3P/BPP2R2/2K4R b - - 0 29,e7c8,-623.0,,23,Philidor Defense #3,660+6,1649.0,1669.0,other
+rn1qk2r/p1ppppbp/1p4p1/3bP3/3P4/4BN2/PPP2PPP/R2QKB1R w KQkq - 0 8,b7d5,113.0,,22,Owen Defense,600+2,1653.0,1504.0,middlegame
+rn1qkb1r/pb1p1ppp/1p3n2/4p3/3NP3/2N2P2/PPP3PP/R1BQKB1R w KQkq - 0 7,e7e5,173.0,,21,Sicilian Defense: Katalimov Variation,180+3,1892.0,1668.0,middlegame
+3k1r2/8/4Q2K/8/8/8/8/8 w - - 7 58,e8d8,,32.0,38,Vienna Game: Zhuravlev Countergambit #2,420+4,1540.0,1501.0,endgame
+r5k1/pp1b1p1p/3p4/3P3p/3n4/4N2P/PPP3P1/4RRK1 b - - 0 20,h2h3,-530.0,,24,Petrov's Defense #2,480+0,1963.0,1727.0,endgame
+7B/p4k1p/1pB3p1/2p5/8/8/PP4PP/2KR4 w - - 1 23,e7f7,1348.0,,21,Queen's Gambit Accepted: Old Variation,600+5,1731.0,1500.0,endgame
+r5k1/5rp1/bp2n2p/p2p1p2/5P1P/2PN1P1R/1P1K1P2/6R1 w - - 2 25,c8a6,-561.0,,26,Dutch Defense: Fianchetto Attack,180+0,1804.0,1708.0,other
+r7/p5pp/4bk2/R7/2r1p3/2P5/2K3PP/8 w - - 2 29,e7f6,-1084.0,,18,"French Defense: Advance Variation, Nimzowitsch System",600+10,1558.0,1506.0,endgame
+r2q1rk1/2p3pp/p3pbn1/1p2p3/1P3n2/P1PP4/B2N1PPP/R1BQ1RK1 w - - 3 16,d5f4,236.0,,23,"Italian Game: Two Knights Defense, Knight Attack, Normal Variation",180+1,1526.0,1717.0,middlegame
+r4r2/ppp1k2p/2nppp2/8/3pP3/P1NP4/1PP1K1PP/5R1R w - - 0 17,e5d4,-169.0,,22,Bishop's Opening: Berlin Defense,120+2,1762.0,1798.0,endgame
+7r/4b1k1/1p1p2n1/p1p1pb2/P1P1Np2/1P1P3P/4K1P1/2B2R1N w - - 4 33,d7f5,-57.0,,23,"English Opening: King's English Variation, Reversed Sicilian",300+5,1691.0,1589.0,other
+7B/8/8/8/k7/1p1n4/8/1K6 b - - 52 82,g7h8,0.0,,48,English Opening: King's English Variation,180+2,1858.0,1598.0,endgame
+3r2k1/2p1R3/b1P2p1p/Pp1R2p1/5p2/P4P2/2K1N1P1/8 b - - 0 41,d1d5,-403.0,,20,Indian Game: Normal Variation,240+0,1623.0,1650.0,endgame
+1rbq1br1/4nR1p/pknN1Np1/1p1pP3/4Q3/P2BB2P/1P4P1/2R3K1 b - - 1 25,g5e3,,-5.0,54,French Defense: Advance Variation #2,60+0,2058.0,1823.0,middlegame
+2kr1b1r/p1pnpBpp/1p3n2/8/3P1B2/5N2/PPP2PPP/R3K2R b KQ - 0 10,c4f7,-387.0,,23,Owen Defense,660+6,1739.0,1629.0,other
+r1bqk1nr/pp1pppbp/2n3p1/2p5/2B1P3/2P2N2/PP1P1PPP/RNBQK2R w KQkq - 1 5,f8g7,64.0,,21,Sicilian Defense: Bowdler Attack,180+0,1940.0,1913.0,middlegame
+1r3rk1/R4ppp/8/2Pn4/1P6/4P3/P2B2PP/R5K1 b - - 0 26,d4c5,-471.0,,24,"Slav Defense: Quiet Variation, Pin Defense",600+8,1550.0,1592.0,endgame
+r1bq1rk1/1p2bpp1/p1np1n1p/2p1p1B1/2P1P3/P1NP1N2/1P2BPPP/R2Q1RK1 w - - 0 10,h7h6,-9.0,,22,English Opening: The Whale,420+8,1611.0,1557.0,middlegame
+2kr1b1Q/1ppb1p1p/p1n1p1p1/6P1/4N3/3B3P/PPP5/3KB1q1 b - - 1 22,d2e1,977.0,,21,Blackmar-Diemer Gambit: Ryder Gambit,300+11,1945.0,1797.0,other
+2rq1rk1/1p3pp1/p2pbb1p/2n5/3QP3/P1N2PPP/1PP5/2KR1BNR w - - 1 18,e7f6,-412.0,,24,Sicilian Defense: Smith-Morra Gambit #2,360+0,1779.0,1642.0,middlegame
+8/8/2k4p/3p2p1/3P2P1/1KP3P1/8/8 w - - 1 50,b5c6,4307.0,,32,French Defense: King's Indian Attack,60+0,1760.0,1908.0,endgame
+r4rk1/ppp2ppp/2npb3/3P2q1/2P1P3/P4N1P/1B2RPP1/R5K1 w - - 0 19,g6g5,401.0,,26,English Opening: The Whale,900+13,1698.0,1500.0,other
+rnbqk1r1/ppp1p1bp/6p1/4p3/3P4/8/PPP3PP/RNBQK1NR w KQq - 0 8,h8g8,-232.0,,20,Robatsch (Modern) Defense,300+8,1802.0,1734.0,middlegame
+r1bqk2r/ppp2ppp/3b1n2/1N1pB3/8/8/PPP1PPPP/R2QKBNR w KQkq - 1 7,f8d6,579.0,,22,Queen's Pawn Game: Chigorin Variation,180+0,1776.0,1606.0,middlegame
+r2qkb1r/pp1b1ppp/2n1p3/1B1pPn2/3p1P2/2P2N2/PP4PP/RNBQ1RK1 w kq - 0 9,c5d4,-91.0,,22,French Defense: La Bourdonnais Variation,600+5,1835.0,1845.0,middlegame
+8/8/p2r4/KP1Pk1p1/p6p/8/8/3b4 b - - 0 47,b4b5,,6.0,64,"King's Gambit Accepted, Schallopp Defense",1200+0,1507.0,1535.0,endgame
+r5k1/3q1ppp/4p1n1/2Rp4/p7/B4Q1P/5PP1/6K1 b - - 3 31,c1c5,488.0,,23,Queen's Gambit Refused: Chigorin Defense #3,180+15,1708.0,1542.0,endgame
+2kr3r/1pp1b1B1/1n1p3p/8/4q3/8/PP3PP1/RN2R1K1 w - - 0 27,h4e4,0.0,,25,Italian Game,480+8,1550.0,1556.0,other
+r1bqkbnr/ppp1ppp1/1n1p3p/8/3PP3/1B3N2/PPP2PPP/RNBQK2R b KQkq - 2 5,c4b3,-117.0,,22,Pirc Defense #4,600+0,1749.0,1500.0,middlegame
+2rq1rk1/1b1nn1b1/1p2p1p1/pP1p1p1p/P2P4/2NBPP2/1B3NPP/R2QR1K1 w - - 0 19,f7f5,99.0,,22,Queen's Gambit Declined,240+0,1772.0,1630.0,middlegame
+q4rk1/1p1b1pb1/3p2pp/1B1PN3/p7/P6P/4QPP1/3RR1K1 b - - 0 23,f3e5,-308.0,,24,"Sicilian Defense: Modern Variations, Tartakower",240+0,2064.0,1953.0,other
+1r4k1/4nppp/4p3/r2pP3/2pP1PP1/P1R4P/5K2/2BR4 w - - 0 35,a8a5,-217.0,,21,Queen's Pawn Game: Stonewall Attack,300+0,1814.0,1858.0,endgame
+2b5/4kp1p/p5p1/1p1B4/3P1PP1/1P5P/P5K1/8 b - - 0 30,f2f4,-140.0,,20,Nimzo-Larsen Attack: Indian Variation,300+0,1829.0,2006.0,endgame
+5k1r/pp3p2/5ppp/5N2/8/3r3P/5PP1/4R1K1 w - - 0 26,g7g6,-582.0,,25,Scandinavian Defense,60+2,1587.0,1596.0,endgame
+r3kbnr/ppp2ppb/2n1p2p/4P2P/P2p1PP1/1R1P4/q1PBN3/3QKB1R b Kkq - 5 16,g1e2,359.0,,22,Scandinavian Defense,240+0,1500.0,1533.0,middlegame
+8/5pR1/8/4p2k/3r1r1p/8/2K5/8 b - - 0 49,g2g7,,9.0,60,Queen's Pawn Game: Colle System,360+6,1696.0,1560.0,endgame
+rn2kb1r/pb3ppp/1ppp1q2/4p3/2B1P3/3P1N2/PPP2PPP/R1BQK2R w KQkq - 0 8,d8f6,80.0,,22,Vienna Game,240+3,1535.0,1585.0,middlegame
+r1bqkb1r/pp2nppp/2n1p3/2ppP3/8/2PPBN2/PP3PPP/RN1QKB1R b KQkq - 2 6,c1e3,102.0,,22,French Defense: Knight Variation,120+2,1556.0,1884.0,middlegame
+k6r/1pb2pp1/p1n2P1p/8/4P3/1NP1B1P1/PP4BP/2KbR3 b - - 0 25,e5f6,-426.0,,26,Queen's Pawn Game: Krause Variation,180+3,1650.0,1554.0,other
+1rbq1rk1/p3npbp/2pp1np1/4p1B1/4P3/2NB1N1P/PPP1QPP1/R4RK1 w - - 4 12,a8b8,-3.0,,21,"Nimzowitsch Defense: Kennedy Variation, Linksspringer Variation",60+2,1529.0,1641.0,middlegame
+r2qr2k/pp2p2p/3p2p1/3Nn3/4P1QP/1BP5/PP1R2P1/2K5 w - - 1 22,f7e5,-159.0,,25,Sicilian Defense: Accelerated Dragon,300+5,1737.0,1570.0,other
+r2qk2r/1ppbnp2/pn1p1b1p/8/2PP1Pp1/P1NP2P1/1PQBB2P/4RRK1 w kq - 3 16,g8e7,-238.0,,22,English Opening: Agincourt Defense,180+3,1545.0,1541.0,middlegame
+r2q1rk1/1b3ppp/p1nb4/1p1pp3/1PpP4/P1P1P1P1/1BQ1NPBP/2KR3R b - - 1 15,d2d1,211.0,,22,Saragossa Opening,0+1,1700.0,1826.0,middlegame
+r2q1rk1/1p2bpp1/1np1pn1p/p6b/3P3B/P1NBPN1P/1PQ2PP1/2KR3R w - - 1 14,g4h5,221.0,,24,Slav Defense: Two Knights Attack,60+0,1851.0,1740.0,middlegame
+2k3r1/1bp5/8/1p4pp/pP1pP3/P2P1R2/5PPP/3R2K1 b - - 1 33,e3f3,-510.0,,24,Nimzowitsch Defense,300+10,1642.0,1590.0,endgame
+r3r1k1/p4ppp/2n1p3/3pPnP1/1P1PbP2/BN5P/P4K2/4R1R1 b - - 0 21,c3b4,553.0,,24,Sicilian Defense: Smith-Morra Gambit #2,480+0,1968.0,1713.0,other
+r1bq1rk1/1p1p1pbp/p1n2np1/2p1p1B1/2P1P2P/N2P1N2/PP3PP1/R2QKB1R b KQ - 0 9,h2h4,68.0,,21,Sicilian Defense: Staunton-Cochrane Variation,300+8,1531.0,1529.0,middlegame
+r4rk1/pppn1ppp/3p1qb1/3Pp3/2P4b/P1B1PN1P/1P2BPP1/2RQ1RK1 b - - 9 17,b4c3,-69.0,,21,Old Indian Defense: Tartakower-Indian,180+3,1677.0,1508.0,middlegame
+8/8/5Pk1/6P1/8/8/1R1K1r2/8 w - - 1 60,f4f2,0.0,,42,Philidor Defense #2,120+3,1615.0,1587.0,endgame
+rn1qkb1r/pb1p1ppp/4pn2/2pP4/2B1P3/P1N5/1P3PPP/R1BQK1NR b KQkq - 0 7,f1c4,-91.0,,23,Polish Defense,120+0,1754.0,1578.0,middlegame
+rnbqkbnr/ppp5/3p1p2/4p1pp/8/P2PP2P/1PP2PPN/RNBQKB1R b KQkq - 1 6,f3h2,16.0,,21,Mieses Opening: Reversed Rat,180+3,1579.0,1525.0,middlegame
+r1bqkb1r/ppp2ppp/2n5/1N1pP2n/5B2/8/PPP1PPPP/R2QKBNR w KQkq - 1 6,f6h5,99.0,,23,Queen's Pawn Game: Chigorin Variation,180+0,1649.0,1506.0,middlegame
+r1bqkbnr/1p1p1ppp/p1n1p3/2p5/2B1P3/2PP4/PP3PPP/RNBQK1NR w KQkq - 0 5,a7a6,-2.0,,21,Sicilian Defense: Bowdler Attack,540+8,1650.0,1624.0,middlegame
+r2k4/ppp1rR1p/7p/2P5/7P/2NN4/PPn3P1/6K1 w - - 1 18,e8e7,-17.0,,23,"King's Gambit Accepted, MacLeod Defense",60+1,1641.0,1500.0,endgame
+8/1p6/1P3k1p/3b4/2p1p3/4P3/4N1P1/5K2 b - - 1 39,g1e2,368.0,,34,Polish Opening,480+5,1637.0,1500.0,endgame
+r1b1r1k1/2b2ppp/2pqpn2/3p4/Np3P2/P2P3P/1BP1N1P1/R2Q1RK1 w - - 0 17,a5b4,-32.0,,24,Caro-Kann Defense: Hillbilly Attack,420+1,1684.0,1692.0,middlegame
+1r3k2/pp1R1p2/4p1p1/P3P1P1/5PP1/3K2n1/8/B7 w - - 1 38,g7f8,269.0,,28,Semi-Slav Defense: Main Line,300+20,1907.0,1896.0,endgame
+r5k1/3q3p/6pQ/3p4/2pBp3/Pb2P1PP/8/5RK1 w - - 4 35,e6d7,551.0,,23,Queen's Pawn Game,240+0,1769.0,1889.0,endgame
+r4rk1/pp3pp1/3b1n1p/8/3p4/3B1bRP/PP3P1K/RNB5 b - - 5 20,g1g3,594.0,,25,Ruy Lopez: Steinitz Defense,240+2,1600.0,1541.0,other
+3q1rk1/p4pbp/p2P2pn/2BQp3/1P2P3/P7/2r1KPPP/R6R w - - 1 17,c3c2,48.0,,22,Modern Defense: Averbakh Variation,240+0,1802.0,1535.0,other
+4R1nr/ppBkbQ1p/2n5/8/3q4/5p2/PP4PP/R6K b - - 1 21,g1h1,775.0,,22,"King's Gambit Accepted, King's Knight Gambit",120+1,1665.0,1779.0,other
+6k1/5qpp/3pN3/p2Pb1Q1/1p6/1Pr5/P5PP/3R3K b - - 1 33,d2g5,84.0,,23,Sicilian Defense: Open #3,180+3,1833.0,1734.0,endgame
+8/1p1rk1Rp/p3p2B/4Pp2/3P4/2P5/P4KR1/8 b - - 1 40,g8g7,-1115.0,,24,French Defense #2,420+0,1524.0,1606.0,endgame
+2q5/5k1p/P3pp2/3p2p1/1QnP4/4P2P/1P3PP1/6K1 w - - 0 29,d7c8,551.0,,24,Slav Defense #2,840+0,1657.0,1649.0,endgame
+1q1r2k1/5pbp/3Nbnp1/2B1p3/PP2P3/5P2/4B1PP/2QR2K1 b - - 0 25,a3a4,-287.0,,23,"Sicilian Defense: Accelerated Dragon, Maroczy Bind",180+0,2071.0,1966.0,other
+r5k1/ppp3p1/2nb3p/3pp3/8/P2P1rNP/1PPB1PK1/R4R2 b - - 1 16,g1g2,317.0,,25,"Four Knights Game: Italian Variation, Noa Gambit",180+0,1936.0,2060.0,other
+8/8/8/2k5/1N5r/2K5/8/8 w - - 46 76,d5c5,0.0,,82,Queen's Gambit Refused: Baltic Defense,600+10,1727.0,1751.0,endgame
+8/8/1p6/8/3n4/4kp2/6pK/8 b - - 0 58,h1h2,,4.0,245,"Queen's Gambit Accepted: Central Variation, Rubinstein Defense",240+0,1758.0,1857.0,endgame
+r5k1/1p5p/5p2/5q2/3n1P2/6P1/P4K1P/8 b - - 4 34,g2f2,,3.0,245,Old Benoni Defense #2,60+0,1788.0,1777.0,endgame
+4k3/5p2/4pb2/3p2pP/6n1/1P6/2K5/4B3 w - - 0 44,e5g4,-592.0,,24,Caro-Kann Defense,600+10,1780.0,1751.0,endgame
+N2k3r/p2nb1pp/1pQ5/2n5/8/5N2/PP3PPP/R3K2R w KQ - 4 20,c8d8,,16.0,23,Queen's Gambit Declined: Queen's Knight Variation,60+0,1840.0,1599.0,other
+2b2rk1/1p3pp1/2p2q1p/3p2r1/4B3/8/2QP1PPP/1R3RK1 w - - 0 25,d6d5,-382.0,,26,Italian Game: Anti-Fried Liver Defense,360+0,1826.0,1754.0,other
+7Q/8/1p4K1/8/k7/8/7p/8 b - - 0 78,g7g6,,-11.0,45,Ruy Lopez: Cozio Defense,240+8,1535.0,1608.0,endgame
+1b2r1k1/3N2p1/p6p/1p1n4/1P2pR1P/P1B3P1/6K1/8 w - - 2 37,c7d5,-546.0,,25,Queen's Pawn Game: Liedmann Gambit,120+4,1656.0,1651.0,endgame
+rn1qkb1r/pp3ppp/2p1p1b1/3p4/2PPnPP1/3BPN1P/PP1N4/R1BQK2R w KQkq - 1 10,h5g6,89.0,,23,Slav Defense,600+3,1517.0,1661.0,middlegame
+7R/8/8/3Pp3/2K5/3Bk3/7R/8 w - - 3 54,d2e3,,2.0,245,Nimzo-Larsen Attack: Modern Variation,0+1,1635.0,1574.0,endgame
+rnbqk1nr/4bppp/4p3/pp1p4/3P4/1B3N2/PPP2PPP/RNBQ1RK1 w kq - 0 9,a7a5,38.0,,25,Rat Defense: Small Center Defense,300+3,1725.0,1684.0,middlegame
+5rk1/pp1nR1b1/n1p3r1/5pN1/2PP1B1P/1P6/P5P1/5RK1 b - - 2 26,e1e7,155.0,,22,Rat Defense: Harmonist,60+0,1705.0,1723.0,other
+r2qkb1r/pp3ppp/4pnn1/1N1p4/8/4B3/PPP1QPPP/RN3RK1 b kq - 2 11,h5e2,229.0,,23,"French Defense: Advance Variation, Nimzowitsch System",540+14,1691.0,1551.0,middlegame
+r1bq1rk1/p2n1ppp/2p1pn2/2P5/P1p5/B2BPN2/5PPP/R2Q1RK1 w - - 0 14,d5c4,122.0,,22,Semi-Slav Defense: Main Line,900+0,1664.0,1592.0,middlegame
+8/4B2p/6p1/5p2/p1k2P2/6P1/5K1P/8 b - - 5 38,b4e7,-572.0,,25,Scandinavian Defense: Boehnke Gambit,60+0,1762.0,1790.0,endgame
+r2q1rk1/pp1bbpp1/3p1n1p/2p1pP2/2PnP3/2NPB2P/PP2B1PN/R2Q1RK1 b - - 1 12,b1c3,21.0,,21,King's Pawn Game: Leonardis Variation,240+1,1749.0,1781.0,middlegame
+rn2k2r/pp3ppp/3b4/2pq4/8/3PBP2/PP3P1P/R2QKB1R w KQkq - 1 11,f8d6,-16.0,,21,French Defense: King's Indian Attack,60+0,1882.0,1849.0,other
+r4rk1/ppp2ppp/8/5b2/3qB3/1Q4P1/P2b1K1P/B5NR w - - 0 21,d8d4,301.0,,23,Queen's Pawn Game,180+3,1555.0,1705.0,other
+r1bqk1r1/p1p2p2/2p5/2p5/4Ppp1/3P3P/PPP3PN/R2Q1RK1 w q - 0 17,e5f4,81.0,,21,Italian Game: Giuoco Pianissimo,60+15,1618.0,1556.0,other
+3k4/1p6/p1p5/2P5/1P2QN2/2q2K2/8/8 w - - 18 78,g7c3,782.0,,27,Queen's Gambit Refused: Baltic Defense,180+3,1549.0,1744.0,endgame
+6k1/5np1/4p2p/3pP3/3P2P1/5Nq1/1P5N/3Q3K w - - 0 29,h7h6,514.0,,25,Scandinavian Defense,240+0,1869.0,1635.0,endgame
+8/8/8/8/p1pR4/P1P5/1KPr4/3k4 b - - 4 59,d5d4,-632.0,,30,King's Pawn Game: Wayward Queen Attack,300+8,1873.0,1503.0,endgame
+5b1r/pp2k2p/3p2p1/3Pp3/8/8/PPrP1PPP/R1B2RK1 b - - 1 15,e1g1,64.0,,23,King's Pawn Game: Wayward Queen Attack,720+8,1684.0,1653.0,endgame
+r4rk1/1Q3pp1/7p/1p6/pp6/3P4/2PK4/5R2 w - - 0 29,a5a4,419.0,,27,Vienna Game: Stanley Variation,480+0,1510.0,1520.0,endgame
+r5k1/2q1bppp/3ppn2/1Np5/rp6/P5P1/1BRPPPBP/Q1R3K1 b - - 3 20,d4b5,-223.0,,22,English Opening: Symmetrical Variation,120+5,1684.0,1628.0,other
+r5k1/2R2p1p/4p1p1/1r1pP3/1n3P2/3P4/p2R2PP/K7 b - - 1 27,c1c7,,2.0,245,"French Defense: Classical Variation, Steinitz Variation",300+20,1892.0,1929.0,endgame
+r7/2p2kpp/4p3/8/p6P/P2P2P1/1PK5/4R3 b - - 3 31,c1c2,-9.0,,28,Scandinavian Defense,300+0,1757.0,1851.0,endgame
+r2qk2r/pb2ppbp/1pn3p1/4Pn2/3P4/2N2N2/PP2B1PP/R1BQ1RK1 w kq - 3 12,h6f5,-17.0,,23,Sicilian Defense: McDonnell Attack,60+2,1628.0,1524.0,middlegame
+r1bqr1k1/pp3ppp/2n2n2/2bp4/5P2/2PQ1N2/PP1BB1PP/RN2K2R b KQ - 6 10,c1d2,622.0,,24,Sicilian Defense: McDonnell Attack,60+0,1731.0,1830.0,middlegame
+7R/8/6R1/3Pp3/2K5/3B3p/5k2/8 w - - 1 51,g3f2,,3.0,245,Nimzo-Larsen Attack: Modern Variation,0+1,1635.0,1574.0,endgame
+q4rk1/4bppp/2bppP2/1pp5/8/2NPBB1P/1PP2PP1/2Q1R1K1 b - - 0 16,e5f6,-364.0,,25,"Sicilian Defense: Closed Variation, Traditional",720+12,1546.0,1594.0,other
+r4rk1/1pq2ppp/p7/3P1nb1/2P5/PP3P1R/3R1PK1/8 w - - 6 24,f6g5,-1007.0,,23,Horwitz Defense,60+0,2097.0,1854.0,other
+3Nb3/6pk/p6p/1p6/1PpPp3/P3P3/5PPP/R5K1 w - - 0 39,d5c4,652.0,,25,Queen's Pawn Game: Chigorin Variation,180+0,1663.0,1538.0,endgame
+4Q3/3P4/3k4/8/P3Pp2/5P2/1KP4P/8 w - - 3 47,c7d6,,2.0,245,Vienna Game: Zhuravlev Countergambit #2,660+3,1767.0,1678.0,endgame
+2k2br1/3bnp1p/2p2p2/2P5/Bp3p2/3r1P2/PP1N2PP/3R1RNK b - - 0 25,c4c5,19.0,,23,Bishop's Opening: Berlin Defense,300+10,1651.0,1566.0,other
+2k5/1pp2pp1/Nnb1p2p/P3P3/8/P4P2/3r2PP/2R3K1 w - - 0 26,d8d2,-179.0,,24,Scandinavian Defense,420+0,1863.0,1657.0,endgame
+7k/1p4p1/p4p1p/2q5/8/8/6PK/5R2 b - - 3 44,f2f1,867.0,,22,Slav Defense #2,60+0,2017.0,1926.0,endgame
+5rk1/Q2R1pp1/4p3/3p2p1/P7/6P1/5P1P/4q1K1 w - - 13 34,e4e1,0.0,,245,Queen's Pawn Game: Zukertort Variation,60+0,1921.0,1749.0,endgame
+2rqr1k1/1p1nppbp/p1npb1p1/8/2PNP3/1PN1BP2/P2QB1PP/2R2RK1 w - - 1 14,f6d7,114.0,,24,Sicilian Defense: Keres Variation,180+0,2051.0,2005.0,middlegame
+8/8/8/1p6/pkpp4/5RK1/5P1P/1R6 b - - 1 56,d1b1,,-18.0,33,Slav Defense #2,60+5,1611.0,1844.0,endgame
+8/6k1/p6p/2pPp1p1/2P3P1/PR3K1P/2r5/8 w - - 2 41,e2c2,456.0,,24,Modern Defense,240+0,1648.0,1565.0,endgame
+8/ppkb3p/1b2p3/1P1pn3/P7/2N5/3B2PP/2K2B2 b - - 0 26,a3a4,200.0,,20,French Defense: Advance Variation #3,60+0,1656.0,1868.0,endgame
+r2q1k1r/2n3pp/p2Q1p2/1pnPpN2/4P3/5B1P/PP3PP1/R4RK1 b - - 0 21,c6d6,-370.0,,23,Philidor Defense,300+8,1523.0,1566.0,other
+r3k2r/pp3p2/1qppbp1p/4b2Q/4P2B/3B4/PPP2PPP/R4RK1 w kq - 2 14,d8b6,124.0,,23,Three Knights Opening,180+0,1995.0,2035.0,other
+1k6/p2p1r2/1p1p4/8/5q1p/PKN4P/1P3P2/5Q2 w - - 2 34,g7f7,-510.0,,22,English Defense #2,480+5,1647.0,1500.0,endgame
+8/1R3pp1/4p1kp/2rpP3/6PP/5N2/r4PK1/2q5 b - - 1 32,g1g2,,7.0,65,"French Defense: Advance, Steinitz Variation",300+8,1658.0,1779.0,endgame
+r2qk2r/bb1p1ppp/p1n1p3/1p1n4/1P3B2/PNP1PN1P/5PP1/R2QKB1R w KQkq - 7 14,f6d5,-103.0,,24,Horwitz Defense,480+5,1671.0,1719.0,middlegame
+7r/b2rkpp1/p3pn1p/1p2B3/1P6/P4NP1/2P2P1P/R4K1R b - - 5 19,e1f1,260.0,,22,Caro-Kann Defense,300+7,1524.0,1520.0,other
+8/8/4p3/5pkp/2Nb4/6P1/r4PK1/5R2 b - - 1 44,f3g2,400.0,,25,Queen's Pawn Game,480+5,1641.0,1761.0,endgame
+5k1N/8/3p4/2p3K1/p7/6r1/8/5q2 w - - 2 47,h3g3,,-1.0,245,Owen Defense,120+0,1591.0,1582.0,endgame
+r2q1rk1/3b1pp1/p6p/1p1Pp3/2P1P1Pb/P1NBQ2P/2P5/2KR2R1 b - - 0 23,b3c4,664.0,,24,Scotch Game,300+8,1711.0,1693.0,other
+rn2kbnr/pp1bpppp/8/2P5/2p5/2N5/PP2PPPP/R1B1KBNR b KQkq - 2 7,a4c3,5.0,,29,Queen's Gambit Refused: Austrian Defense,300+8,1797.0,1884.0,middlegame
+R7/1pp5/1bkp4/p3p3/2P5/3P1K2/8/r7 w - - 2 57,e1a1,-817.0,,23,English Opening: The Whale,900+0,1558.0,1798.0,endgame
+4Q3/8/5R2/6k1/1BN5/4P3/4K3/8 w - - 5 69,g4g5,,3.0,245,Queen's Pawn Game: Zukertort Variation,300+0,1830.0,1972.0,endgame
+2kr2r1/pp2b1q1/n1p1Rn1p/3p4/3P3B/1BP3P1/PP3P1P/RN1Q2K1 w - - 1 16,f8e7,457.0,,24,French Defense #2,300+8,1652.0,1533.0,middlegame
+r4b1r/p1pk1p1p/2pp1pb1/4P3/6P1/8/PPPN3N/2K1R3 b - - 0 18,d4e5,755.0,,20,"King's Gambit Declined, Queen's Knight Defense",120+0,1826.0,1787.0,other
+r4rk1/6pp/p5q1/8/P2pp3/3N1bPP/2P2P2/1Q3RK1 w - - 0 30,e5e4,-643.0,,24,French Defense #2,60+0,1582.0,1910.0,other
+3R4/p3q1k1/5p1p/4r1p1/3QB3/6P1/8/5R1K w - - 0 35,f7f6,,8.0,48,Sicilian Defense: Lasker-Dunne Attack,180+0,1554.0,1647.0,endgame
+r3kb1r/pp1npp2/2p3p1/3p2Np/bP1P4/2P4P/P2B1PP1/2R1KB1R w Kkq - 1 17,c2a4,-179.0,,23,Modern Defense,600+8,1644.0,1544.0,other
+rn1qkbnr/pbp2ppp/1p1p4/3P4/2B5/2N2N2/PPP2PPP/R1BQK2R w KQkq - 0 8,d7d6,219.0,,23,"Englund Gambit Declined, Reversed French",120+0,1795.0,1945.0,middlegame
+rn2r1k1/pbp2B1p/1p1p3B/8/3P4/2N5/PPP3PP/R4RK1 b - - 0 18,h5f7,,-9.0,55,Owen Defense,60+0,2046.0,1626.0,other
+r3kn1r/pbpqb2p/1p2pp1p/3pP3/2PP4/P1NB1N1P/1P1Q1PP1/R3K2R w KQkq - 4 12,d8d7,278.0,,23,French Defense: Advance Variation #3,180+3,1588.0,1549.0,middlegame
+r2qkbnr/1p2pppp/p1Bp4/2p5/4PP2/5Q1P/PPPP2P1/RNB1K2R b KQkq - 0 7,b5c6,-154.0,,23,Sicilian Defense: McDonnell Attack,300+2,1734.0,1549.0,other
+2r2rk1/pp1b1ppp/1q2p3/2bpP3/1P1N1Pn1/P2B4/4N1PP/1R1QK1BR b K - 0 16,b2b4,-548.0,,25,French Defense: Advance Variation,180+0,2154.0,1798.0,middlegame
+8/1k6/5RK1/P5B1/1PP5/2n5/8/8 b - - 0 47,a4a5,,-8.0,60,Zukertort Opening: Black Mustang Defense,300+20,1580.0,1702.0,endgame
+r1b2rk1/p1q2pbp/1p2nnp1/8/2P5/1BN5/P1QB1PPP/R4RK1 b - - 1 18,d1c2,584.0,,22,Indian Game: West Indian Defense,240+0,1727.0,1794.0,middlegame
+3R2k1/5p1p/6p1/8/P7/6r1/8/2K5 b - - 1 42,d5d8,597.0,,26,Mieses Opening,0+1,1513.0,1907.0,endgame
+rr4k1/5ppp/p7/1pqPp3/2p1P3/2P2Q2/R4PPP/R5K1 w - - 0 24,b6c5,4.0,,27,Semi-Slav Defense: Noteboom Variation,180+0,1769.0,1820.0,endgame
+rnbqkbnr/1pp2ppp/p2p4/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4,e7e5,81.0,,22,Pirc Defense #4,300+0,1512.0,1508.0,middlegame
+8/3PR1p1/2P5/p2q2kp/8/5PPK/8/4R3 w - - 1 46,d4d5,,7.0,52,"Benoni Defense: Benoni-Indian Defense, Kingside Move Order",300+2,1761.0,1712.0,endgame
+r3nrk1/bppq1ppp/p2p4/2nPp1B1/2P1P3/P1N2b1P/1PBQ1PP1/R3R1K1 w - - 0 17,h5f3,-120.0,,26,Indian Game: Budapest Defense,300+0,1785.0,1667.0,middlegame
+8/1p3pk1/4p1p1/1P1pP1p1/p2P4/PnK1N2P/1R4P1/8 b - - 0 37,b4b5,-606.0,,24,Caro-Kann Defense: Advance Variation,120+1,1806.0,1738.0,endgame
+r2q1rk1/pp1n1ppp/2pbpn2/8/8/1PNP1BP1/PB2PP1P/2RQ1RK1 b - - 4 12,a1c1,-47.0,,23,English Opening: Anglo-Scandinavian Defense,60+0,1949.0,1657.0,middlegame
+rn1qkb1r/pp3ppp/2p1pn2/2Pp1b2/1P1P4/2N1P3/P4PPP/R1BQKBNR b KQkq - 0 6,c4c5,6.0,,24,Slav Defense,240+0,1651.0,1711.0,middlegame
+8/8/4R3/8/4p3/5r2/3pk1K1/8 b - - 3 66,d6e6,,6.0,108,King's Pawn Game: Maroczy Defense,300+8,1515.0,1691.0,endgame
+rn2k2r/pq2nppp/1p6/2p2b2/2PP4/3BPN2/P1QB1PPP/R4RK1 b kq - 2 14,e2d3,-287.0,,24,Queen's Gambit Declined: Queen's Knight Variation,60+0,1858.0,1851.0,middlegame
+Q4b1r/p2n1kpp/3qpp2/8/3p4/4PP1N/P2B2PP/R4RK1 b - - 1 16,e1g1,-505.0,,23,Slav Defense,420+10,1651.0,1515.0,other
+rn1qkb1r/pp2pppp/2p2n2/3p1bB1/2PP4/2N2N2/PP2PPPP/R2QKB1R b KQkq - 4 5,c1g5,-17.0,,20,Slav Defense: Modern Line,180+0,2177.0,1795.0,middlegame
+2R5/3n2r1/4p2p/pk1bP3/3P4/P4P2/2B2KPP/8 b - - 6 38,b1c2,-5.0,,24,Semi-Slav Defense,600+5,1863.0,2150.0,endgame
+rnb1k2r/1pp2ppp/p2p1q1n/2b1p1B1/2B1P3/3P1N1P/PPP2PP1/RN1Q1RK1 b kq - 1 7,c1g5,-108.0,,20,Bishop's Opening,360+10,1626.0,1500.0,middlegame
+rnb1k2r/4bppp/p2p3n/2p5/2P1P3/R1NB1N2/1P1P1PPP/2B1K2R b Kkq - 1 11,b1c3,-228.0,,23,Bishop's Opening,600+3,1544.0,1562.0,middlegame
+r7/p3k3/1ppNpnB1/3p3p/3P2PP/5P2/PPP5/2K2R2 b - - 0 26,g2g4,-230.0,,24,Owen Defense,300+0,1721.0,1516.0,endgame
+r7/pp4R1/6p1/2kp1bN1/8/1P6/P1P4P/6K1 w - - 1 28,g4f5,-4.0,,27,French Defense: Advance Variation #4,900+0,1757.0,1776.0,endgame
+rn2kb1r/pp3ppp/8/2pq4/8/3PBP2/PP3P1P/R2QKB1R b KQkq - 0 10,g2f3,30.0,,22,French Defense: King's Indian Attack,60+0,1882.0,1849.0,other
+1rb1r1k1/1p2p2p/3p2p1/2p3N1/2P1P1P1/1P2KP2/3N3P/R7 w - - 5 29,f8e8,-239.0,,23,Pirc Defense #4,180+0,1513.0,1805.0,endgame
+r1bq1rk1/ppppbppp/2n2n2/1B2p3/4P3/5N2/PPPP1PPP/RNBQR1K1 w - - 8 6,e8g8,117.0,,23,Ruy Lopez: Berlin Defense,300+5,1600.0,1550.0,middlegame
+r1bqkbnr/ppp1pppp/2n5/8/2pP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 0 4,d5c4,81.0,,22,"Queen's Gambit Refused: Chigorin Defense, Janowski Variation",60+0,1886.0,1829.0,middlegame
+1r6/pPp1Rrk1/1n5p/6p1/8/2NP4/PPP2PPP/4R1K1 b - - 4 23,a1e1,-551.0,,25,Bishop's Opening,300+6,1721.0,1824.0,endgame
+r4rk1/p1qn1pbp/1pb1pnp1/3p4/2P5/1P2PN2/PBQNBPPP/2RR2K1 b - - 3 14,a1c1,-63.0,,22,"King's Indian Defense: Normal Variation, King's Knight Variation",360+6,1892.0,1882.0,middlegame
