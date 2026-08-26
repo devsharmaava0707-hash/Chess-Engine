@@ -119,28 +119,34 @@ namespace search::ordering
         return 0;
     }
 
-    double reduction =
+    double lr =
         0.4 +
         std::log(static_cast<double>(depth)) *
         std::log(static_cast<double>(moveIndex + 1)) /
         2.0;
 
-    int r = static_cast<int>(reduction);
+    int reduction =
+        static_cast<int>(lr);
 
-    if (isPV && r > 0)
-        --r;
+    if (isPV && reduction > 0)
+        --reduction;
 
-    if (isKillerOrCounter && r > 0)
-        --r;
+    if (isKillerOrCounter)
+    {
+        if (reduction > 0)
+            --reduction;
+    }
+    else if (historyScore < -4000)
+    {
+        ++reduction;
+    }
 
-    if (historyScore < -4000)
-        ++r;
-
-    int maxReduction = std::max(0, depth - 2);
+    int maxReduction =
+        std::max(0, depth - 2);
 
     return std::max(
         0,
-        std::min(r, maxReduction)
+        std::min(reduction, maxReduction)
     );
 }
 }

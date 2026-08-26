@@ -377,54 +377,41 @@ if (prevMove != chess::Move::NO_MOVE)
     chess::Move quietsTried[MAX_QUIETS];
     int quietCount = 0;
     bool firstMove=true;
+    bool inCheck = board.inCheck();
+    int moveIndex=0;
     for (const auto& move : moves)
-    {
-        bool isCapture =
-            move.typeOf() == chess::Move::ENPASSANT ||
-            (move.typeOf() != chess::Move::CASTLING &&
-             board.at(move.to()) != chess::Piece::NONE);
-
-        bool isQuiet =
-            !isCapture &&
-            move.typeOf() != chess::Move::PROMOTION;
-
-        board.makeMove(move);
-
-int score;
-
-if (firstMove)
 {
-    // First move: full-window search
-    score = -negamax(
-        board,
-        searchDepth - 1,
-        -beta,
-        -alpha,
-        stats,
-        ply + 1,
-        move,
-        true
-    );
+    bool isCapture =
+        move.typeOf() == chess::Move::ENPASSANT ||
+        (move.typeOf() != chess::Move::CASTLING &&
+         board.at(move.to()) != chess::Piece::NONE);
 
-    firstMove = false;
-}
-else
-{
-    // Later moves: zero-window search
-    score = -negamax(
-        board,
-        searchDepth - 1,
-        -alpha - 1,
-        -alpha,
-        stats,
-        ply + 1,
-        move,
-        true
-    );
+    bool isQuiet =
+        !isCapture &&
+        move.typeOf() != chess::Move::PROMOTION;
 
-    // Move unexpectedly beats alpha:
-    // search it again with the full window.
-    if (score > alpha && score < beta)
+    bool isPromotion =
+        move.typeOf() == chess::Move::PROMOTION;
+
+    bool isKillerOrCounter =
+        move == stats.killers[safePly][0] ||
+        move == stats.killers[safePly][1] ||
+        (counterMove != chess::Move::NO_MOVE &&
+         move == counterMove);
+
+    int historyScore =
+        stats.history[side]
+                    [move.from().index()]
+                    [move.to().index()];
+
+    board.makeMove(move);
+
+    bool givesCheck = board.inCheck();
+
+    int reduction = 0;
+    int score;
+
+    if (firstMove)
     {
         score = -negamax(
             board,
@@ -436,70 +423,120 @@ else
             move,
             true
         );
+
+        firstMove = false;
     }
-}
+    else
+    {
+        reduction =
+            search::ordering::lateMoveReduction(
+                searchDepth,
+                moveIndex,
+                isPV,
+                isCapture,
+                isPromotion,
+                inCheck,
+                givesCheck,
+                isKillerOrCounter,
+                historyScore
+            );
+            if (reduction > 0)
+        ++stats.lmrReductions;
+        score = -negamax(
+            board,
+            searchDepth - 1 -reduction ,
+            -alpha - 1,
+            -alpha,
+            stats,
+            ply + 1,
+            move,
+            true
+        );
 
-board.unmakeMove(move);
-
-        if (score > bestScore) { bestScore = score;bestMove = move;}
-            // bestScore = score;bestMove = move;
-
-        if (score > alpha)
-            alpha = score;
-
-        if (isQuiet &&
-            alpha < beta &&
-            quietCount < MAX_QUIETS)
+        if (score > alpha &&
+            (reduction > 0 || isPV))
         {
-            quietsTried[quietCount++] = move;
+            if (reduction > 0)
+    ++stats.lmrResearches;
+            score = -negamax(
+                board,
+                searchDepth - 1,
+                -beta,
+                -alpha,
+                stats,
+                ply + 1,
+                move,
+                true
+            );
         }
+    }
 
-        if (alpha >= beta)
+    board.unmakeMove(move);
+
+    if (stats.stop)
+        break;
+
+    if (score > bestScore)
+    {
+        bestScore = score;
+        bestMove = move;
+    }
+
+    if (score > alpha)
+        alpha = score;
+
+    if (isQuiet &&
+        alpha < beta &&
+        quietCount < MAX_QUIETS)
+    {
+        quietsTried[quietCount++] = move;
+    }
+
+    if (alpha >= beta)
+    {
+        if (isQuiet)
         {
-            if (isQuiet)
+            int safePly =
+                std::min(ply, MAX_PLY - 1);
+
+            stats.killers[safePly][1] =
+                stats.killers[safePly][0];
+
+            stats.killers[safePly][0] =
+                move;
+
+            int& h =
+                stats.history[side]
+                            [move.from().index()]
+                            [move.to().index()];
+
+            h += depth * depth;
+
+            if (h > 30000)
+                h = 30000;
+
+            for (int i = 0; i < quietCount; ++i)
             {
-                int safePly =
-                    std::min(ply, MAX_PLY - 1);
+                const chess::Move& qm =
+                    quietsTried[i];
 
-                stats.killers[safePly][1] =
-                    stats.killers[safePly][0];
-
-                stats.killers[safePly][0] =
-                    move;
-
-                int side =
-                    static_cast<int>(board.sideToMove());
-
-                int& h =
+                int& hq =
                     stats.history[side]
-                                [move.from().index()]
-                                [move.to().index()];
+                                [qm.from().index()]
+                                [qm.to().index()];
 
-                h += depth * depth;
+                hq -= depth * depth / 2;
 
-                if (h > 30000)
-                    h = 30000;
-
-                for (int i = 0; i < quietCount; ++i)
-                {
-                    const chess::Move& qm =
-                        quietsTried[i];
-
-                    int& hq =
-                        stats.history[side]
-                                    [qm.from().index()]
-                                    [qm.to().index()];
-
-                    hq -= depth * depth / 2;
-
-                    if (hq < -30000)
-                        hq = -30000;
-                }
+                if (hq < -30000)
+                    hq = -30000;
             }
-
-            break;
         }
+
+        break;
     }
+
+    ++moveIndex;
+}
 
     tt::Bound bound = tt::Bound::EXACT;
 
@@ -722,6 +759,13 @@ if (stats.optimalMs > 0 &&
 
 std::cout << "Aspiration fail-high: "
           << stats.aspirationFailHigh << '\n';
+          
+          std::cout << "LMR reductions: "
+          << stats.lmrReductions << '\n';
+
+std::cout << "LMR researches: "
+          << stats.lmrResearches << '\n';
+         
     }
 
     return bestMove;

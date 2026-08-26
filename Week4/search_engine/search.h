@@ -41,8 +41,10 @@ namespace search
         int64_t maximumMs = 0;
         bool stop = false;
         bool stable = true;
-int previousScore = 0;
-chess::Move previousBestMove = chess::Move::NO_MOVE;
+        int previousScore = 0;
+        chess::Move previousBestMove = chess::Move::NO_MOVE;
+        uint64_t lmrReductions = 0;
+        uint64_t lmrResearches = 0;
     };
     int64_t elapsedMs(const SearchStats& stats);
     bool timeUp(const SearchStats& stats);

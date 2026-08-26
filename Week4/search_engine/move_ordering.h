@@ -13,14 +13,14 @@ namespace search::ordering
         const chess::Move& ttMove
     );
     int lateMoveReduction(
-        int depth,
-        int moveIndex,
-        bool isPV,
-        bool isCapture,
-        bool isPromotion,
-        bool inCheck,
-        bool givesCheck,
-        bool isKillerOrCounter,
-        int historyScore
-    );
+    int depth,
+    int moveIndex,
+    bool isPV,
+    bool isCapture,
+    bool isPromotion,
+    bool inCheck,
+    bool givesCheck,
+    bool isKillerOrCounter,
+    int historyScore
+);
 }
