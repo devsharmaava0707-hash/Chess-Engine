@@ -94,12 +94,13 @@ bool timeUp(const SearchStats& stats)
 }
 int evaluateForSideToMove(chess::Board& board)
 {
-    // int score = evaluate(board);
+    int score = evaluate(board);
     int score = eval::evaluate(board);
 
     return board.sideToMove() == chess::Color::WHITE
         ? score
         : -score;
+    // return eval::evaluate(board);
 }
 int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply){
     ++stats.nodes;
@@ -146,7 +147,7 @@ if (stats.stop)
     eval::materialValue(chess::PieceType::QUEEN) + // for arun evaluation 
     DELTA_MARGIN < alpha)
     {
-        return alpha;
+        return alphaPat;
     }
 }
 
@@ -331,7 +332,7 @@ if (entry != nullptr)
         alpha,
         beta,
         stats,
-        ply,
+        ply+1,
         prevMove,
         false
     );
@@ -436,81 +437,81 @@ if (prevMove != chess::Move::NO_MOVE)
         firstMove = false;
     }
     // lmr implementation 
-    // else
-    // {
-    //     reduction =
-    //         search::ordering::lateMoveReduction(
-    //             searchDepth,
-    //             moveIndex,
-    //             isPV,
-    //             isCapture,
-    //             isPromotion,
-    //             inCheck,
-    //             givesCheck,
-    //             isKillerOrCounter,
-    //             historyScore
-    //         );
-    //         if (reduction > 0)
-    //     ++stats.lmrReductions;
-    //     score = -negamax(
-    //         board,
-    //         searchDepth - 1 -reduction +extension, // extension add
-    //         -alpha - 1,
-    //         -alpha,
-    //         stats,
-    //         ply + 1,
-    //         move,
-    //         true
-    //     );
-
-    //     if (score > alpha &&
-    //         (reduction > 0 || isPV))
-    //     {
-    //         if (reduction > 0)
-    // ++stats.lmrResearches;
-    //         score = -negamax(
-    //             board,
-    //             searchDepth - 1+extension, // extension add
-    //             -beta,
-    //             -alpha,
-    //             stats,
-    //             ply + 1,
-    //             move,
-    //             true
-    //         );
-    //     }
-    // }
-    // lmr implementation above 
-
-    // below this is without lmr for evaluation of our engine 
     else
-{
-    // LMR OFF: pure PVS
-    score = -negamax(
-        board,
-        searchDepth - 1,
-        -alpha - 1,
-        -alpha,
-        stats,
-        ply + 1,
-        move,
-        true
-    );
-
-    if (score > alpha)
     {
+        reduction =
+            search::ordering::lateMoveReduction(
+                searchDepth,
+                moveIndex,
+                isPV,
+                isCapture,
+                isPromotion,
+                inCheck,
+                givesCheck,
+                isKillerOrCounter,
+                historyScore
+            );
+            if (reduction > 0)
+        ++stats.lmrReductions;
         score = -negamax(
             board,
-            searchDepth - 1,
-            -beta,
+            searchDepth - 1 -reduction +extension, // extension add
+            -alpha - 1,
             -alpha,
             stats,
             ply + 1,
             move,
             true
         );
+
+        if (score > alpha &&
+            (reduction > 0 || isPV))
+        {
+            if (reduction > 0)
+    ++stats.lmrResearches;
+            score = -negamax(
+                board,
+                searchDepth - 1+extension, // extension add
+                -beta,
+                -alpha,
+                stats,
+                ply + 1,
+                move,
+                true
+            );
+        }
     }
-}
+    // lmr implementation above 
+
+    // below this is without lmr for evaluation of our engine 
+//     else
+// {
+//     // LMR OFF: pure PVS
+//     score = -negamax(
+//         board,
+//         searchDepth - 1,
+//         -alpha - 1,
+//         -alpha,
+//         stats,
+//         ply + 1,
+//         move,
+//         true
+//     );
+
+//     if (score > alpha)
+//     {
+//         score = -negamax(
+//             board,
+//             searchDepth - 1,
+//             -beta,
+//             -alpha,
+//             stats,
+//             ply + 1,
+//             move,
+//             true
+//         );
+//     }
+// }
  // above this is without lmr for evaluation of our engine 
     board.unmakeMove(move);
 
