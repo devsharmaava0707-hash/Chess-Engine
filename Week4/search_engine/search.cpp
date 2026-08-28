@@ -14,21 +14,35 @@ namespace search
 };
 int estimateMovesToGo(int moveNumber)
 {
+    if (moveNumber <= 0)
+        return 40;
+
     int mtg = 45 - moveNumber / 2;
 
-    return std::clamp(mtg, 15, 45);
+    return std::clamp(
+        mtg,
+        15,
+        45
+    );
 }
 TimeBudget computeTimeBudget(
     const SearchLimits& limits,
     int moveNumber)
 {
-    if (limits.infinite)
-    return {0, 0}; 
-    // Explicit movetime.
+    constexpr int64_t COMMUNICATION_MARGIN_MS = 50;
+
+    // --------------------------------------------------------
+    // Explicit per-move time.
+    // --------------------------------------------------------
+
     if (limits.moveTimeMs > 0)
     {
-        int64_t usable =
-            std::max<int64_t>(1, limits.moveTimeMs - 50);
+        const int64_t usable =
+            std::max<int64_t>(
+                1,
+                limits.moveTimeMs -
+                COMMUNICATION_MARGIN_MS
+            );
 
         return {
             usable,
@@ -36,47 +50,169 @@ TimeBudget computeTimeBudget(
         };
     }
 
+    // --------------------------------------------------------
+    // Infinite search.
+    // --------------------------------------------------------
+
+    if (limits.infinite)
+        return {0, 0};
+
+    // --------------------------------------------------------
     // No clock information.
+    // --------------------------------------------------------
+
     if (limits.myTimeMs <= 0)
         return {0, 0};
 
-    int movesToGo = limits.movesToGo;
+    const int64_t timeLeft =
+        limits.myTimeMs;
+
+    // --------------------------------------------------------
+    // Moves remaining.
+    // --------------------------------------------------------
+
+    int movesToGo =
+        limits.movesToGo;
 
     if (movesToGo <= 0)
-        movesToGo = estimateMovesToGo(moveNumber);
+        movesToGo =
+            estimateMovesToGo(moveNumber);
 
-    // Reference-style basic allocation:
-    // remaining time / moves to go + increment.
-    int64_t optimal =
-        limits.myTimeMs / movesToGo +
-        limits.incrementMs;
+    movesToGo =
+        std::clamp(
+            movesToGo,
+            1,
+            100
+        );
 
-    // Don't plan to spend more than 85% of the remaining clock.
-    int64_t hardCap =
-        (limits.myTimeMs * 85) / 100;
+    // --------------------------------------------------------
+    // Reserve time for GUI/UCI overhead.
+    //
+    // More time => slightly larger absolute reserve.
+    // --------------------------------------------------------
 
-    optimal = std::min(optimal, hardCap);
+    int64_t overhead =
+        COMMUNICATION_MARGIN_MS;
 
-    // Keep 50 ms for communication / overhead.
-    if (limits.myTimeMs > 50)
-        optimal =
-            std::min(optimal, limits.myTimeMs - 50);
+    if (timeLeft >= 10000)
+        overhead = 75;
 
-    optimal = std::max<int64_t>(1, optimal);
+    if (timeLeft >= 30000)
+        overhead = 100;
 
-    int64_t maximum =
-        std::min(optimal * 3, hardCap);
+    const int64_t usable =
+        std::max<int64_t>(
+            1,
+            timeLeft - overhead
+        );
 
-    if (limits.myTimeMs > 50)
-        maximum =
-            std::min(maximum, limits.myTimeMs - 50);
+    // --------------------------------------------------------
+    // Increment is not fully spent every move.
+    //
+    // Using most, but not all, of the increment reduces
+    // long-term drift and still allows the clock to grow.
+    // --------------------------------------------------------
 
-    maximum =
-        std::max(maximum, optimal);
+    const int64_t effectiveIncrement =
+        std::max<int64_t>(
+            0,
+            (limits.incrementMs * 80) / 100
+        );
+
+    // --------------------------------------------------------
+    // Base allocation.
+    // --------------------------------------------------------
+
+    int64_t base =
+        usable / movesToGo;
+
+    base += effectiveIncrement;
+
+    // --------------------------------------------------------
+    // Give ourselves a little more time when the clock is
+    // comfortable, but never spend too much of the bank.
+    // --------------------------------------------------------
+
+    int64_t soft =
+        base;
+
+    if (timeLeft > 30000)
+        soft += usable / 20;      // +5%
+
+    else if (timeLeft > 10000)
+        soft += usable / 30;      // +3.3%
+
+    // --------------------------------------------------------
+    // Safety rails.
+    // --------------------------------------------------------
+
+    const int64_t reserve =
+        std::max<int64_t>(
+            overhead,
+            100
+        );
+
+    const int64_t hardAvailable =
+        std::max<int64_t>(
+            1,
+            timeLeft - reserve
+        );
+
+    // Never plan to consume more than 85% of the clock.
+    const int64_t hardCap =
+        std::max<int64_t>(
+            1,
+            (timeLeft * 85) / 100
+        );
+
+    soft =
+        std::min(
+            soft,
+            hardCap
+        );
+
+    soft =
+        std::min(
+            soft,
+            hardAvailable
+        );
+
+    soft =
+        std::max<int64_t>(
+            1,
+            soft
+        );
+
+    // --------------------------------------------------------
+    // Hard limit starts around 2.5x soft allocation.
+    //
+    // It is still constrained by the 85% rail.
+    // --------------------------------------------------------
+
+    int64_t hard =
+        soft * 5 / 2;
+
+    hard =
+        std::min(
+            hard,
+            hardCap
+        );
+
+    hard =
+        std::min(
+            hard,
+            hardAvailable
+        );
+
+    hard =
+        std::max(
+            hard,
+            soft
+        );
 
     return {
-        optimal,
-        maximum
+        soft,
+        hard
     };
 }
 int64_t elapsedMs(const SearchStats& stats)
@@ -94,7 +230,7 @@ bool timeUp(const SearchStats& stats)
 }
 int evaluateForSideToMove(chess::Board& board)
 {
-    int score = evaluate(board);
+    // int score = eval::evaluate(board);
     int score = eval::evaluate(board);
 
     return board.sideToMove() == chess::Color::WHITE
@@ -105,15 +241,22 @@ int evaluateForSideToMove(chess::Board& board)
 int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply){
     ++stats.nodes;
 
-if ((stats.nodes & 2047) == 0 &&
-    timeUp(stats))
+if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 {
-    stats.stop = true;
+    if (timeUp(stats))
+        stats.stop = true;
 }
 
 if (stats.stop)
     return 0;
+if (board.isRepetition(1))
+    return 0;
 
+if (board.isHalfMoveDraw())
+    return 0;
+
+if (board.isInsufficientMaterial())
+    return 0;
     // Safety limit for the tactical search.
     if (qply >= MAX_QPLY)
         return evaluateForSideToMove(board);
@@ -147,7 +290,7 @@ if (stats.stop)
     eval::materialValue(chess::PieceType::QUEEN) + // for arun evaluation 
     DELTA_MARGIN < alpha)
     {
-        return alphaPat;
+        return standPat;
     }
 }
 
@@ -213,14 +356,27 @@ if (stats.stop)
 {
     ++stats.nodes;
 
-if ((stats.nodes & 2047) == 0 &&
-    timeUp(stats))
+if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 {
-    stats.stop = true;
+    if (timeUp(stats))
+        stats.stop = true;
 }
 
 if (stats.stop)
     return 0;
+// Draw detection.
+// Do not apply this at the root.
+if (ply > 0)
+{
+    if (board.isRepetition(1))
+        return 0;
+
+    if (board.isHalfMoveDraw())
+        return 0;
+
+    if (board.isInsufficientMaterial())
+        return 0;
+}
     int alphaOriginal = alpha;
     uint64_t key = board.hash();
     tt::Entry* entry = stats.table.probe(key);
@@ -546,6 +702,13 @@ if (prevMove != chess::Move::NO_MOVE)
 
             stats.killers[safePly][0] =
                 move;
+            if (prevMove != chess::Move::NO_MOVE)
+{
+    stats.counterMoves[side]
+                        [prevMove.from().index()]
+                        [prevMove.to().index()] =
+        move;
+}
 
             int& h =
                 stats.history[side]
@@ -613,24 +776,49 @@ chess::Move findBestMove(
     stats.stop = false;
 
     TimeBudget budget =
-    computeTimeBudget(limits, -1);
+    computeTimeBudget(
+        limits,
+        static_cast<int>(
+            board.fullMoveNumber()
+        )
+    );
 
 stats.optimalMs = budget.optimalMs;
 stats.maximumMs = budget.maximumMs;
-    chess::Move bestMove = chess::Move::NO_MOVE;
-    int bestScore = -INF;
+stats.softStopMs =
+    stats.optimalMs;
 
-    constexpr int ASPIRATION_WINDOW = 50;
+stats.hardStopMs =
+    stats.maximumMs;
 
+stats.timeCheckPeriod = 1024;
+    // chess::Move bestMove = chess::Move::NO_MOVE;
+    // int bestScore = -INF;
+
+    // constexpr int ASPIRATION_WINDOW = 50;
+
+    // // Root legal-move check
+    // chess::Movelist rootMoves;
+    // chess::movegen::legalmoves(rootMoves, board);
+
+    // if (rootMoves.empty())
+    //     return chess::Move::NO_MOVE;
     // Root legal-move check
-    chess::Movelist rootMoves;
-    chess::movegen::legalmoves(rootMoves, board);
+chess::Movelist rootMoves;
+chess::movegen::legalmoves(rootMoves, board);
+constexpr int ASPIRATION_WINDOW = 50;
+if (rootMoves.empty())
+    return chess::Move::NO_MOVE;
 
-    if (rootMoves.empty())
-        return chess::Move::NO_MOVE;
+// Always have a legal fallback move.
+chess::Move bestMove = rootMoves[0];
+
+int bestScore = -INF;
 
     for (int depth = 1; depth <= maxDepth; ++depth)
     {
+        const int64_t iterationStartMs =elapsedMs(stats);
+        const uint64_t iterationStartNodes =stats.nodes;
         // Generate fresh root move list for this iteration.
         chess::Movelist moves;
         chess::movegen::legalmoves(moves, board);
@@ -649,33 +837,52 @@ stats.maximumMs = budget.maximumMs;
             ttMove = entry->bestMove;
         }
 
-        // Put previous iteration's best move first.
-        if (ttMove != chess::Move::NO_MOVE)
-        {
-            for (int i = 0;
-                 i < static_cast<int>(moves.size());
-                 ++i)
-            {
-                if (moves[i] == ttMove)
-                {
-                    if (i != 0)
-                        std::swap(moves[0], moves[i]);
+        // // Put previous iteration's best move first.
+        // if (ttMove != chess::Move::NO_MOVE)
+        // {
+        //     for (int i = 0;
+        //          i < static_cast<int>(moves.size()); //risky
+        //          ++i)
+        //     {
+        //         if (moves[i] == ttMove)
+        //         {
+        //             if (i != 0)
+        //                 std::swap(moves[0], moves[i]);
 
-                    break;
-                }
-            }
-        }
+        //             break;
+        //         }
+        //     }
+        // }
+        search::ordering::orderMoves(
+    board,
+    moves,
+    stats.killers[0],
+    chess::Move::NO_MOVE,
+    stats.history[                              // risky
+        static_cast<int>(board.sideToMove())
+    ],
+    ttMove
+);
 
         // Depth 1 uses the full window.
+        // int alpha = -INF; // risky
+        // int beta = INF;
+
+        // if (depth > 1)
+        // {
+        //     alpha = bestScore - ASPIRATION_WINDOW;
+        //     beta = bestScore + ASPIRATION_WINDOW;
+        // }
         int alpha = -INF;
-        int beta = INF;
+int beta = INF;
 
-        if (depth > 1)
-        {
-            alpha = bestScore - ASPIRATION_WINDOW;
-            beta = bestScore + ASPIRATION_WINDOW;
-        }
+if (depth > 1)
+{
+    int delta = ASPIRATION_WINDOW; // risky entire till beta=bestcore
 
+    alpha = bestScore - delta;
+    beta = bestScore + delta;
+}
         chess::Move iterationBestMove = chess::Move::NO_MOVE;
         int iterationBestScore = -INF;
 
@@ -686,53 +893,138 @@ stats.maximumMs = budget.maximumMs;
 
             iterationBestMove = chess::Move::NO_MOVE;
             iterationBestScore = -INF;
-            for (const auto& move : moves)
-            {
-                if (stats.stop)break;
-                board.makeMove(move);
+            // for (const auto& move : moves)  // risky
+            // {
+            //     if (stats.stop)break;
+            //     board.makeMove(move);
 
-                int score = -negamax(
-                    board,
-                    depth - 1,
-                    -windowBeta,
-                    -windowAlpha,
-                    stats,
-                    1,
-                    move,
-                    true
-                );
+            //     int score = -negamax(
+            //         board,
+            //         depth - 1,
+            //         -windowBeta,
+            //         -windowAlpha,
+            //         stats,
+            //         1,
+            //         move,
+            //         true
+            //     );
 
-                board.unmakeMove(move);
-                if (stats.stop){
-                    break;
-                    }
-                if (score > iterationBestScore)
-                {
-                    iterationBestScore = score;
-                    iterationBestMove = move;
-                }
+            //     board.unmakeMove(move);
+            //     if (stats.stop){
+            //         break;
+            //         }
+            //     if (score > iterationBestScore)
+            //     {
+            //         iterationBestScore = score;
+            //         iterationBestMove = move;
+            //     }
 
-                if (score > windowAlpha)
-                    windowAlpha = score;
-            }
+            //     if (score > windowAlpha)
+            //         windowAlpha = score;
+            // }
+            for (int i = 0; // risky entire loop
+     i < static_cast<int>(moves.size());
+     ++i)
+{
+    const chess::Move& move = moves[i];
+
+    if (stats.stop)
+        break;
+
+    board.makeMove(move);
+
+    int score;
+
+    if (i == 0)
+    {
+        // First/root PV move gets the full aspiration window.
+        score = -negamax(
+            board,
+            depth - 1,
+            -windowBeta,
+            -windowAlpha,
+            stats,
+            1,
+            move,
+            true
+        );
+    }
+    else
+    {
+        // Later moves get a null-window search first.
+        score = -negamax(
+            board,
+            depth - 1,
+            -windowAlpha - 1,
+            -windowAlpha,
+            stats,
+            1,
+            move,
+            true
+        );
+
+        // It beat alpha, so we need the real score.
+        if (score > windowAlpha)
+        {
+            score = -negamax(
+                board,
+                depth - 1,
+                -windowBeta,
+                -windowAlpha,
+                stats,
+                1,
+                move,
+                true
+            );
+        }
+    }
+
+    board.unmakeMove(move);
+
+    if (stats.stop)
+        break;
+
+    if (score > iterationBestScore)
+    {
+        iterationBestScore = score;
+        iterationBestMove = move;
+    }
+
+    if (score > windowAlpha)
+        windowAlpha = score;
+}
             if (stats.stop)break;
 
             // Fail-low: score is outside the lower bound.
+            // if (iterationBestScore <= alpha) //risky
+            // {
+            //     ++stats.aspirationFailLow;
+            //     alpha = -INF;
+            //     continue;
+            // }
+
+            // // Fail-high: score is outside the upper bound.
+            // if (iterationBestScore >= beta)
+            // {
+            //     ++stats.aspirationFailHigh;
+            //     beta = INF;
+            //     continue;
+            // }
             if (iterationBestScore <= alpha)
-            {
-                ++stats.aspirationFailLow;
-                alpha = -INF;
-                continue;
-            }
+{
+    ++stats.aspirationFailLow;
 
-            // Fail-high: score is outside the upper bound.
-            if (iterationBestScore >= beta)
-            {
-                ++stats.aspirationFailHigh;
-                beta = INF;
-                continue;
-            }
+    alpha = -INF;  //risky
+    continue;
+}
 
+if (iterationBestScore >= beta)
+{
+    ++stats.aspirationFailHigh;
+
+    beta = INF;
+    continue;
+}
             // Score is inside the aspiration window.
             break;
         }
@@ -754,15 +1046,63 @@ stats.stable =
 
 bestMove = iterationBestMove;
 bestScore = iterationBestScore;
+const int64_t iterationTime =
+    elapsedMs(stats) - iterationStartMs;
+
+const uint64_t iterationNodes =
+    stats.nodes - iterationStartNodes;
+
+stats.previousIterationMs =
+    stats.lastIterationMs;
+
+stats.previousIterationNodes =
+    stats.lastIterationNodes;
+
+stats.lastIterationMs =
+    iterationTime;
+
+stats.lastIterationNodes =
+    static_cast<int64_t>(iterationNodes);
+
+stats.completedDepth =
+    depth;
 int64_t softLimit = stats.optimalMs;
 
 if (!stats.stable)
 {
-    softLimit = std::min(
-        stats.maximumMs,
-        stats.optimalMs * 2
-    );
+    softLimit =
+        std::min(
+            stats.maximumMs,
+            stats.optimalMs * 2
+        );
 }
+
+// // If the last iteration was unexpectedly cheap,
+// // allow another iteration rather than stopping too early.
+// if (stats.completedDepth >= 2 &&
+//     stats.lastIterationMs > 0)
+// {
+//     const int64_t estimatedNextIteration =
+//         stats.lastIterationMs * 3 / 2;
+
+//     const int64_t elapsed =
+//         elapsedMs(stats);
+
+//     if (elapsed + estimatedNextIteration <
+//         stats.maximumMs)
+//     {
+//         if (softLimit <
+//             elapsed + estimatedNextIteration)
+//         {
+//             softLimit =
+//                 std::min(
+//                     stats.maximumMs,
+//                     elapsed +
+//                     estimatedNextIteration
+//                 );
+//         }
+//     }
+// }
 std::cout << "Stable: "
           << (stats.stable ? "yes" : "no")
           << '\n';

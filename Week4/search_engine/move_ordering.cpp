@@ -19,11 +19,25 @@ namespace search::ordering
                  board.at(move.to()) != chess::Piece::NONE);
             if (move == ttMove)return 200000;
             // 1. Captures
+            // if (isCapture)
+            // {
+            //     return 100000 +
+            //            search::see::evaluate(board, move);
+            // }
             if (isCapture)
-            {
-                return 100000 +
-                       search::see::evaluate(board, move);
-            }
+{
+    int seeScore =
+        search::see::evaluate(board, move);
+
+    if (seeScore >= 0)
+    {
+        // Winning/equal captures stay above killers.
+        return 100000 + seeScore;
+    }
+
+    // Losing captures go below quiet heuristics.
+    return -100000 + seeScore;
+}
 
             // 2. Killer 1
             if (move == killers[0])

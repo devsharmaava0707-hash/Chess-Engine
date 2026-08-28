@@ -34,23 +34,35 @@ namespace search
         uint64_t rootTTHits = 0;
         uint64_t aspirationFailLow = 0;
         uint64_t aspirationFailHigh = 0;
-        // constexpr int NMP_VERIFICATION_MIN_DEPTH = 7;
-        // time related
-        std::chrono::steady_clock::time_point startTime;
-        int64_t optimalMs = 0;
-        int64_t maximumMs = 0;
+        
         bool stop = false;
         bool stable = true;
         int previousScore = 0;
         chess::Move previousBestMove = chess::Move::NO_MOVE;
         uint64_t lmrReductions = 0;
         uint64_t lmrResearches = 0;
+
+        // constexpr int NMP_VERIFICATION_MIN_DEPTH = 7;
+        // time related
+        std::chrono::steady_clock::time_point startTime;
+        int completedDepth = 0;
+        int64_t optimalMs = 0;
+        int64_t maximumMs = 0;
+        int64_t softStopMs = 0;
+        int64_t hardStopMs = 0;
+        int64_t lastIterationMs = 0;
+        int64_t lastIterationNodes = 0;
+        int64_t previousIterationMs = 0;
+        int64_t previousIterationNodes = 0;
+        int timeCheckPeriod = 1024;
+
     };
     int64_t elapsedMs(const SearchStats& stats);
     bool timeUp(const SearchStats& stats);
     int evaluateForSideToMove(chess::Board& board);
     int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply = 0);
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats &stats,chess::Move prevMove);
+    // int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats &stats,chess::Move prevMove);
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe);
 
     chess::Move findBestMove(chess::Board& board,int depth,SearchStats &stats,const SearchLimits & limits);
 }
