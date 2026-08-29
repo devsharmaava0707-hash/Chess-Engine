@@ -3,6 +3,7 @@
 // #include "../manual_evaluation_chess/eval.hpp"
 #include "../arun_eval/eval.h"
 #include "see.h"
+#include "../tablebase/tbprobe.h"
 #include "move_ordering.h"
 #include<algorithm>
 namespace search
@@ -41,7 +42,8 @@ TimeBudget computeTimeBudget(
             std::max<int64_t>(
                 1,
                 limits.moveTimeMs -
-                COMMUNICATION_MARGIN_MS
+                // COMMUNICATION_MARGIN_MS
+                limits.moveOverheadMs
             );
 
         return {
@@ -91,8 +93,8 @@ TimeBudget computeTimeBudget(
     // More time => slightly larger absolute reserve.
     // --------------------------------------------------------
 
-    int64_t overhead =
-        COMMUNICATION_MARGIN_MS;
+    int64_t overhead =limits.moveOverheadMs;
+        // COMMUNICATION_MARGIN_MS; 
 
     if (timeLeft >= 10000)
         overhead = 75;
@@ -245,10 +247,18 @@ if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 {
     if (timeUp(stats))
         stats.stop = true;
+
+    if (stats.maxNodes > 0 &&
+        stats.nodes >= stats.maxNodes)
+    {
+        stats.stop = true;
+    }
 }
 
 if (stats.stop)
     return 0;
+if (qply > stats.seldepth)
+    stats.seldepth = qply;
 if (board.isRepetition(1))
     return 0;
 
@@ -354,16 +364,24 @@ if (board.isInsufficientMaterial())
 
     int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed)
 {
-    ++stats.nodes;
+   ++stats.nodes;
 
 if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 {
     if (timeUp(stats))
         stats.stop = true;
+
+    if (stats.maxNodes > 0 &&
+        stats.nodes >= stats.maxNodes)
+    {
+        stats.stop = true;
+    }
 }
 
 if (stats.stop)
     return 0;
+if (ply > stats.seldepth)
+    stats.seldepth = ply;
 // Draw detection.
 // Do not apply this at the root.
 if (ply > 0)
@@ -412,7 +430,7 @@ if (entry != nullptr)
     }
 }
 
-    if (depth <= 0)return quiescence(board, alpha, beta, stats);
+    if (depth <= 0)return quiescence(board, alpha, beta, stats,ply);
     // REF
     bool isPV = (beta - alpha > 1);
     int staticEval = evaluateForSideToMove(board);
@@ -428,7 +446,7 @@ if (entry != nullptr)
     depth <= 3 &&
     staticEval + 200 * depth < alpha)
     {
-        return quiescence(board, alpha, beta, stats);
+        return quiescence(board, alpha, beta, stats,ply);
     }  
     // IIR
     // Internal Iterative Reduction
@@ -460,7 +478,43 @@ if (entry != nullptr)
         if (staticEval - beta >= 200)
             ++R;
 
-        board.makeNullMove();
+    //     board.makeNullMove();
+
+    //     int nullScore = -negamax(
+    //         board,
+    //         depth - 1 - R,
+    //         -beta,
+    //         -beta + 1,
+    //         stats,
+    //         ply + 1,
+    //         chess::Move::NO_MOVE,
+    //         false
+    //     );
+
+    //     board.unmakeNullMove();
+
+    //     if (nullScore >= beta)
+    //     {
+    //         // For now, simple cutoff.
+    //          ++stats.nullMoveCutoffs; // temp
+    //          if (depth < NMP_VERIFICATION_MIN_DEPTH)
+    //     return beta;
+
+    // int verifyScore = negamax(
+    //     board,
+    //     depth - R,
+    //     alpha,
+    //     beta,
+    //     stats,
+    //     ply+1,
+    //     prevMove,
+    //     false
+    // );
+    // if (verifyScore >= beta)
+    //         return beta;
+    //     }
+    // }
+            board.makeNullMove();
 
         int nullScore = -negamax(
             board,
@@ -475,25 +529,32 @@ if (entry != nullptr)
 
         board.unmakeNullMove();
 
+        if (stats.stop)
+            return 0;
+
         if (nullScore >= beta)
         {
-            // For now, simple cutoff.
-             ++stats.nullMoveCutoffs; // temp
-             if (depth < NMP_VERIFICATION_MIN_DEPTH)
-        return beta;
+            ++stats.nullMoveCutoffs;
 
-    int verifyScore = negamax(
-        board,
-        depth - R,
-        alpha,
-        beta,
-        stats,
-        ply+1,
-        prevMove,
-        false
-    );
-    if (verifyScore >= beta)
-            return beta;
+            if (depth < NMP_VERIFICATION_MIN_DEPTH)
+                return beta;
+
+            int verifyScore = negamax(
+                board,
+                depth - R,
+                beta - 1,
+                beta,
+                stats,
+                ply + 1,
+                prevMove,
+                false
+            );
+
+            if (stats.stop)
+                return 0;
+
+            if (verifyScore >= beta)
+                return beta;
         }
     }
 }
@@ -762,7 +823,50 @@ stats.table.store(
 return bestScore;
 }
 
+std::vector<chess::Move> extractPV(
+    chess::Board board,
+    SearchStats& stats,
+    int maxLength)
+{
+    std::vector<chess::Move> pv;
 
+    for (int i = 0; i < maxLength; ++i)
+    {
+        uint64_t key = board.hash();
+        tt::Entry* entry = stats.table.probe(key);
+
+        if (entry == nullptr ||
+            entry->bestMove == chess::Move::NO_MOVE)
+        {
+            break;
+        }
+
+        chess::Movelist legalMoves;
+        chess::movegen::legalmoves(legalMoves, board);
+
+        bool isLegal = false;
+
+        for (const auto& m : legalMoves)
+        {
+            if (m == entry->bestMove)
+            {
+                isLegal = true;
+                break;
+            }
+        }
+
+        if (!isLegal)
+            break;
+
+        pv.push_back(entry->bestMove);
+        board.makeMove(entry->bestMove);
+
+        if (board.isRepetition(1) || board.isHalfMoveDraw())
+            break;
+    }
+
+    return pv;
+}
 // 
 chess::Move findBestMove(
     
@@ -775,6 +879,33 @@ chess::Move findBestMove(
 
     stats.stop = false;
 
+stats.nodes = 0;
+stats.seldepth = 0;
+
+stats.ttHits = 0;
+stats.ttCutoffs = 0;
+stats.nullMoveCutoffs = 0;
+stats.nullMoveAttempts = 0;
+stats.rootTTHits = 0;
+
+stats.aspirationFailLow = 0;
+stats.aspirationFailHigh = 0;
+
+stats.lmrReductions = 0;
+stats.lmrResearches = 0;
+
+stats.maxNodes =
+    limits.maxNodes > 0
+        ? static_cast<uint64_t>(limits.maxNodes)
+        : 0;
+stats.table.newSearch();
+chess::Move bookMove =
+    stats.book.probe(board);
+
+if (bookMove != chess::Move::NO_MOVE)
+{
+    return bookMove;
+}
     TimeBudget budget =
     computeTimeBudget(
         limits,
@@ -875,10 +1006,10 @@ int bestScore = -INF;
         // }
         int alpha = -INF;
 int beta = INF;
-
+int delta = ASPIRATION_WINDOW; // risky entire till beta=bestcore
 if (depth > 1)
 {
-    int delta = ASPIRATION_WINDOW; // risky entire till beta=bestcore
+    
 
     alpha = bestScore - delta;
     beta = bestScore + delta;
@@ -1010,21 +1141,39 @@ if (depth > 1)
             //     beta = INF;
             //     continue;
             // }
+//             if (iterationBestScore <= alpha)
+// {
+//     ++stats.aspirationFailLow;
+
+//     alpha = -INF;  //risky
+//     continue;
+// }
+
+// if (iterationBestScore >= beta)
+// {
+//     ++stats.aspirationFailHigh;
+
+//     beta = INF;
+//     continue;
+// }
             if (iterationBestScore <= alpha)
-{
-    ++stats.aspirationFailLow;
+            {
+                ++stats.aspirationFailLow;
 
-    alpha = -INF;  //risky
-    continue;
-}
+                beta  = (alpha + beta) / 2;
+                alpha = std::max(iterationBestScore - delta, -INF);
+                delta += delta / 2;
+                continue;
+            }
 
-if (iterationBestScore >= beta)
-{
-    ++stats.aspirationFailHigh;
+            if (iterationBestScore >= beta)
+            {
+                ++stats.aspirationFailHigh;
 
-    beta = INF;
-    continue;
-}
+                beta = std::min(iterationBestScore + delta, INF);
+                delta += delta / 2;
+                continue;
+            }
             // Score is inside the aspiration window.
             break;
         }
@@ -1066,6 +1215,7 @@ stats.lastIterationNodes =
 
 stats.completedDepth =
     depth;
+    stats.previousScore = bestScore;
 int64_t softLimit = stats.optimalMs;
 
 if (!stats.stable)
@@ -1103,12 +1253,46 @@ if (!stats.stable)
 //         }
 //     }
 // }
-std::cout << "Stable: "
+std::cerr << "Stable: "
           << (stats.stable ? "yes" : "no")
           << '\n';
 
-std::cout << "Soft limit: "
+std::cerr << "Soft limit: "
           << softLimit << '\n';
+
+if (stats.onIteration)
+{
+    SearchInfo info;
+    info.depth = depth;
+    info.seldepth = stats.seldepth;
+    info.nodes = stats.nodes;
+    info.timeMs = elapsedMs(stats);
+    info.nps = info.timeMs > 0
+        ? (info.nodes * 1000ULL) / static_cast<uint64_t>(info.timeMs)
+        : info.nodes;
+    info.hashfull = stats.table.hashfull();
+
+    if (bestScore > MATE_SCORE - MAX_PLY ||
+        bestScore < -(MATE_SCORE - MAX_PLY))
+    {
+        info.isMate = true;
+        int pliesToMate = MATE_SCORE -
+            (bestScore > 0 ? bestScore : -bestScore);
+        int movesToMate = (pliesToMate + 1) / 2;
+        info.mateIn = bestScore > 0 ? movesToMate : -movesToMate;
+        info.score = 0;
+    }
+    else
+    {
+        info.isMate = false;
+        info.score = bestScore;
+        info.mateIn = 0;
+    }
+
+    info.pv = extractPV(board, stats, depth);
+
+    stats.onIteration(info);
+}
 
 int64_t elapsed = elapsedMs(stats);
 

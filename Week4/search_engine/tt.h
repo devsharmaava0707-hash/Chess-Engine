@@ -24,6 +24,7 @@ namespace search::tt
         uint64_t key = 0;
         int16_t score = 0;
         int8_t depth = -1;
+        uint8_t generation = 0;
 
         Bound bound = Bound::EXACT;
 
@@ -36,6 +37,8 @@ namespace search::tt
         explicit Table(size_t megabytes = 16);
 
         void clear();
+        void resize(size_t megabytes);
+        int hashfull() const;
 
         Entry* probe(uint64_t key);
 
@@ -44,8 +47,11 @@ namespace search::tt
                    int score,
                    Bound bound,
                    chess::Move bestMove);
+        void newSearch();
+        uint8_t generation() const;
 
     private:
         std::vector<Entry> entries;
+        uint8_t currentGeneration = 0;
     };
 }

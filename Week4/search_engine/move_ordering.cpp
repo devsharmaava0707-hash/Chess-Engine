@@ -37,7 +37,20 @@ namespace search::ordering
 
     // Losing captures go below quiet heuristics.
     return -100000 + seeScore;
-}
+}   
+                bool isPromotion =
+                move.typeOf() == chess::Move::PROMOTION;
+
+            if (isPromotion)
+            {
+                // Queen promotions are almost always strong;
+                // under-promotions are rare/tactical, still worth
+                // ranking above ordinary quiets.
+                if (move.promotionType() == chess::PieceType::QUEEN)
+                    return 95000;
+
+                return 60000;
+            }
 
             // 2. Killer 1
             if (move == killers[0])
@@ -63,55 +76,87 @@ namespace search::ordering
         }
     }
 
+//     void orderMoves(
+//     const chess::Board& board,
+//     chess::Movelist& moves,
+//     const chess::Move killers[2],
+//     const chess::Move& counterMove,
+//     const int history[64][64],
+//     const chess::Move& ttMove)
+// {
+//     const int n = static_cast<int>(moves.size());
+
+//     std::vector<int> scores(n);
+//     for (int i = 0; i < n; ++i)
+//     {
+//         scores[i] = moveScore(
+//             board, moves[i], killers, counterMove, history, ttMove
+//         );
+//     }
+
+//     std::vector<int> order(n);
+//     for (int i = 0; i < n; ++i) order[i] = i;
+
+//     std::stable_sort(order.begin(), order.end(),
+//         [&scores](int a, int b) { return scores[a] > scores[b]; });
+
+//     chess::Movelist sorted;
+//     for (int i = 0; i < n; ++i)
+//         sorted.add(moves[order[i]]);
+
+//     for (int i = 0; i < n; ++i)
+//         moves[i] = sorted[i];
+// }
     void orderMoves(
-        const chess::Board& board,
-        chess::Movelist& moves,
-        const chess::Move killers[2],
-        const chess::Move& counterMove,
-        const int history[64][64],
-        const chess:: Move& ttMove)
+    const chess::Board& board,
+    chess::Movelist& moves,
+    const chess::Move killers[2],
+    const chess::Move& counterMove,
+    const int history[64][64],
+    const chess::Move& ttMove)
+{
+    const int n = static_cast<int>(moves.size());
+
+    static thread_local int scores[256];
+    static thread_local int order[256];
+
+    for (int i = 0; i < n; ++i)
     {
-        for (int i = 0;
-             i < static_cast<int>(moves.size());
-             ++i)
+        scores[i] = moveScore(
+            board, moves[i], killers, counterMove, history, ttMove
+        );
+        order[i] = i;
+    }
+
+    std::stable_sort(order, order + n,
+        [](int a, int b) { return scores[a] > scores[b]; });
+
+    // Apply permutation in place.
+    std::vector<bool> placed(n, false);
+    for (int i = 0; i < n; ++i)
+    {
+        if (placed[i] || order[i] == i)
+            continue;
+
+        chess::Move temp = moves[i];
+        int j = i;
+
+        while (!placed[j])
         {
-            int bestIndex = i;
+            placed[j] = true;
+            int next = order[j];
 
-            int bestScore =
-                moveScore(
-                    board,
-                    moves[i],
-                    killers,
-                    counterMove,
-                    history,
-                    ttMove
-                );
-
-            for (int j = i + 1;
-                 j < static_cast<int>(moves.size());
-                 ++j)
+            if (next == i)
             {
-                int score =
-                    moveScore(
-                        board,
-                        moves[j],
-                        killers,
-                        counterMove,
-                        history,
-                        ttMove
-                    );
-
-                if (score > bestScore)
-                {
-                    bestScore = score;
-                    bestIndex = j;
-                }
+                moves[j] = temp;
+                break;
             }
 
-            if (bestIndex != i)
-                std::swap(moves[i], moves[bestIndex]);
+            moves[j] = moves[next];
+            j = next;
         }
     }
+}   
     int lateMoveReduction(
     int depth,
     int moveIndex,

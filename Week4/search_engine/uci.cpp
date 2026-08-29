@@ -1,355 +1,401 @@
 #include "search.h"
 #include "../chess.hpp"
+#include "../arun_eval/eval.h"
 
 #include <algorithm>
+#include <atomic>
 #include <cctype>
 #include <cstdint>
 #include <iostream>
+#include <mutex>
 #include <sstream>
 #include <string>
-#include <streambuf>
+#include <thread>
 #include <vector>
 
 // ============================================================
-// NeuralGambit UCI Frontend
+// NeuralGambit UCI Frontend (advanced)
 //
 // Supported:
 //   uci
-//   isready
+//   isready                     (answered immediately, even mid-search)
 //   ucinewgame
 //   position startpos [moves ...]
 //   position fen <6 FEN fields> [moves ...]
 //   go depth N
 //   go movetime N
+//   go nodes N
 //   go wtime N btime N winc N binc N movestogo N
 //   go infinite
+//   go ponder                   (see note below)
+//   ponderhit
+//   stop                        (genuinely interrupts a running search)
+//   setoption name Hash value N
+//   setoption name Threads value N        (accepted; only 1 honored)
+//   setoption name Move Overhead value N
+//   setoption name Clear Hash
+//   setoption name Ponder value <true|false>
+//   eval                        (prints the static evaluation of the
+//                                current position; non-standard, but
+//                                widely supported by engines for
+//                                debugging)
+//   d                           (prints the FEN of the current
+//                                position; non-standard debug aid)
+//   debug on|off
 //   quit
-//   stop
 //
-// "stop" is accepted but cannot interrupt an already-running
-// synchronous findBestMove(). True asynchronous stop requires
-// the search layer itself to expose a thread-safe stop flag.
+// Search now runs on a dedicated worker thread. "stop" sets an
+// atomic flag the search thread checks periodically, so it can
+// genuinely interrupt a running search instead of only being
+// accepted for protocol compatibility.
+//
+// Pondering is supported in the simplest correct form: "go ...
+// ponder" runs an unbounded search (like "go infinite"), and the
+// GUI is expected to send "stop" at the point it would normally
+// have stopped a timed search. "ponderhit" is acknowledged but
+// does not switch to a dynamically-computed time budget mid-search
+// -- this mirrors how many engines implement minimal ponder support.
 // ============================================================
 
-// ============================================================
-// Suppress internal search.cpp stdout.
-//
-// stdout belongs to UCI.
-// Search diagnostics must not corrupt the protocol.
-// ============================================================
-
-class NullBuffer : public std::streambuf
+namespace
 {
-protected:
-    int overflow(int c) override
+    std::mutex stdoutMutex;
+
+    void printLine(const std::string& text)
     {
-        return c;
+        std::lock_guard<std::mutex> lock(stdoutMutex);
+        std::cout << text << '\n';
+        std::cout.flush();
     }
-};
 
-// ============================================================
-// Utility
-// ============================================================
-
-static std::string toLower(std::string s)
-{
-    for (char& c : s)
-        c = static_cast<char>(
-            std::tolower(
-                static_cast<unsigned char>(c)
-            )
-        );
-
-    return s;
-}
-
-static bool parseInt64(
-    const std::string& text,
-    std::int64_t& value)
-{
-    try
+    std::string toLower(std::string s)
     {
-        std::size_t used = 0;
-
-        const long long parsed =
-            std::stoll(text, &used);
-
-        if (used != text.size())
-            return false;
-
-        value =
-            static_cast<std::int64_t>(
-                parsed
+        for (char& c : s)
+            c = static_cast<char>(
+                std::tolower(
+                    static_cast<unsigned char>(c)
+                )
             );
-
-        return true;
-    }
-    catch (...)
-    {
-        return false;
-    }
-}
-
-static int clampToInt(
-    std::int64_t value)
-{
-    if (value < 0)
-        return 0;
-
-    if (value >
-        static_cast<std::int64_t>(
-            INT32_MAX
-        ))
-    {
-        return INT32_MAX;
-    }
-
-    return static_cast<int>(value);
-}
-
-// ============================================================
-// Move -> UCI
-// ============================================================
-
-static std::string moveToUci(
-    const chess::Move& move)
-{
-    if (move == chess::Move::NO_MOVE)
-        return "0000";
-
-    auto squareName = [](int sq)
-    {
-        std::string s(2, 'a');
-
-        s[0] = static_cast<char>(
-            'a' + (sq % 8)
-        );
-
-        s[1] = static_cast<char>(
-            '1' + (sq / 8)
-        );
 
         return s;
-    };
+    }
 
-    std::string result;
-
-    result.reserve(5);
-
-    result +=
-        squareName(
-            move.from().index()
-        );
-
-    result +=
-        squareName(
-            move.to().index()
-        );
-
-    if (move.typeOf() ==
-        chess::Move::PROMOTION)
+    std::string trim(const std::string& s)
     {
-        switch (
-            static_cast<int>(
-                move.promotionType()
-            ))
+        size_t start = s.find_first_not_of(" \t\r\n");
+
+        if (start == std::string::npos)
+            return "";
+
+        size_t end = s.find_last_not_of(" \t\r\n");
+
+        return s.substr(start, end - start + 1);
+    }
+
+    bool parseInt64(
+        const std::string& text,
+        std::int64_t& value)
+    {
+        try
         {
-        case static_cast<int>(
-            chess::PieceType::KNIGHT):
-            result += 'n';
-            break;
+            std::size_t used = 0;
 
-        case static_cast<int>(
-            chess::PieceType::BISHOP):
-            result += 'b';
-            break;
+            const long long parsed =
+                std::stoll(text, &used);
 
-        case static_cast<int>(
-            chess::PieceType::ROOK):
-            result += 'r';
-            break;
+            if (used != text.size())
+                return false;
 
-        case static_cast<int>(
-            chess::PieceType::QUEEN):
-            result += 'q';
-            break;
+            value =
+                static_cast<std::int64_t>(
+                    parsed
+                );
 
-        default:
-            break;
+            return true;
         }
-    }
-
-    return result;
-}
-
-// ============================================================
-// UCI -> legal chess::Move
-// ============================================================
-
-static chess::Move parseUciMove(
-    chess::Board& board,
-    const std::string& text)
-{
-    chess::Movelist legalMoves;
-
-    chess::movegen::legalmoves(
-        legalMoves,
-        board
-    );
-
-    for (const auto& move : legalMoves)
-    {
-        if (moveToUci(move) == text)
-            return move;
-    }
-
-    return chess::Move::NO_MOVE;
-}
-
-// ============================================================
-// Apply moves after "moves"
-// ============================================================
-
-static bool applyMoves(
-    chess::Board& board,
-    std::istringstream& iss)
-{
-    std::string token;
-
-    if (!(iss >> token))
-        return true;
-
-    if (toLower(token) != "moves")
-        return true;
-
-    std::string moveText;
-
-    while (iss >> moveText)
-    {
-        chess::Move move =
-            parseUciMove(
-                board,
-                moveText
-            );
-
-        if (move == chess::Move::NO_MOVE)
+        catch (...)
         {
-            std::cout
-                << "info string invalid move "
-                << moveText
-                << '\n';
-
-            std::cout.flush();
-
             return false;
         }
-
-        board.makeMove(move);
     }
 
-    return true;
-}
-
-// ============================================================
-// position command
-// ============================================================
-
-static bool handlePosition(
-    chess::Board& board,
-    std::istringstream& iss)
-{
-    std::string mode;
-
-    if (!(iss >> mode))
+    int clampToInt(
+        std::int64_t value)
     {
-        std::cout
-            << "info string position command missing argument\n";
+        if (value < 0)
+            return 0;
 
-        std::cout.flush();
-
-        return false;
-    }
-
-    mode = toLower(mode);
-
-    // --------------------------------------------------------
-    // position startpos [moves ...]
-    // --------------------------------------------------------
-
-    if (mode == "startpos")
-    {
-        board = chess::Board();
-
-        return applyMoves(
-            board,
-            iss
-        );
-    }
-
-    // --------------------------------------------------------
-    // position fen <6 fields> [moves ...]
-    // --------------------------------------------------------
-
-    if (mode == "fen")
-    {
-        std::string fen;
-        std::string field;
-
-        // FEN = exactly six fields:
-        //
-        // placement
-        // side
-        // castling
-        // en-passant
-        // halfmove
-        // fullmove
-
-        for (int i = 0; i < 6; ++i)
+        if (value >
+            static_cast<std::int64_t>(
+                INT32_MAX
+            ))
         {
-            if (!(iss >> field))
-            {
-                std::cout
-                    << "info string incomplete FEN\n";
+            return INT32_MAX;
+        }
 
-                std::cout.flush();
+        return static_cast<int>(value);
+    }
+
+    // ========================================================
+    // Move -> UCI
+    // ========================================================
+
+    std::string moveToUci(
+        const chess::Move& move)
+    {
+        if (move == chess::Move::NO_MOVE)
+            return "0000";
+
+        auto squareName = [](int sq)
+        {
+            std::string s(2, 'a');
+
+            s[0] = static_cast<char>(
+                'a' + (sq % 8)
+            );
+
+            s[1] = static_cast<char>(
+                '1' + (sq / 8)
+            );
+
+            return s;
+        };
+
+        std::string result;
+
+        result.reserve(5);
+
+        result +=
+            squareName(
+                move.from().index()
+            );
+
+        result +=
+            squareName(
+                move.to().index()
+            );
+
+        if (move.typeOf() ==
+            chess::Move::PROMOTION)
+        {
+            switch (
+                static_cast<int>(
+                    move.promotionType()
+                ))
+            {
+            case static_cast<int>(
+                chess::PieceType::KNIGHT):
+                result += 'n';
+                break;
+
+            case static_cast<int>(
+                chess::PieceType::BISHOP):
+                result += 'b';
+                break;
+
+            case static_cast<int>(
+                chess::PieceType::ROOK):
+                result += 'r';
+                break;
+
+            case static_cast<int>(
+                chess::PieceType::QUEEN):
+                result += 'q';
+                break;
+
+            default:
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    // ========================================================
+    // UCI -> legal chess::Move
+    // ========================================================
+
+    chess::Move parseUciMove(
+        chess::Board& board,
+        const std::string& text)
+    {
+        chess::Movelist legalMoves;
+
+        chess::movegen::legalmoves(
+            legalMoves,
+            board
+        );
+
+        for (const auto& move : legalMoves)
+        {
+            if (moveToUci(move) == text)
+                return move;
+        }
+
+        return chess::Move::NO_MOVE;
+    }
+
+    // ========================================================
+    // Apply moves after "moves"
+    // ========================================================
+
+    bool applyMoves(
+        chess::Board& board,
+        std::istringstream& iss)
+    {
+        std::string token;
+
+        if (!(iss >> token))
+            return true;
+
+        if (toLower(token) != "moves")
+            return true;
+
+        std::string moveText;
+
+        while (iss >> moveText)
+        {
+            chess::Move move =
+                parseUciMove(
+                    board,
+                    moveText
+                );
+
+            if (move == chess::Move::NO_MOVE)
+            {
+                printLine(
+                    "info string invalid move " + moveText
+                );
 
                 return false;
             }
 
-            if (i != 0)
-                fen += ' ';
-
-            fen += field;
+            board.makeMove(move);
         }
 
-        try
-        {
-            board.setFen(fen);
-        }
-        catch (...)
-        {
-            std::cout
-                << "info string invalid FEN\n";
+        return true;
+    }
 
-            std::cout.flush();
+    // ========================================================
+    // position command
+    // ========================================================
 
+    bool handlePosition(
+        chess::Board& board,
+        std::istringstream& iss)
+    {
+        std::string mode;
+
+        if (!(iss >> mode))
+        {
+            printLine("info string position command missing argument");
             return false;
         }
 
-        return applyMoves(
-            board,
-            iss
-        );
+        mode = toLower(mode);
+
+        if (mode == "startpos")
+        {
+            board = chess::Board();
+            return applyMoves(board, iss);
+        }
+
+        if (mode == "fen")
+        {
+            std::string fen;
+            std::string field;
+
+            for (int i = 0; i < 6; ++i)
+            {
+                if (!(iss >> field))
+                {
+                    printLine("info string incomplete FEN");
+                    return false;
+                }
+
+                if (i != 0)
+                    fen += ' ';
+
+                fen += field;
+            }
+
+            try
+            {
+                board.setFen(fen);
+            }
+            catch (...)
+            {
+                printLine("info string invalid FEN");
+                return false;
+            }
+
+            return applyMoves(board, iss);
+        }
+
+        printLine("info string unknown position type " + mode);
+        return false;
     }
 
-    std::cout
-        << "info string unknown position type "
-        << mode
-        << '\n';
+    // ========================================================
+    // info line formatting
+    // ========================================================
 
-    std::cout.flush();
+    void printInfoLine(const search::SearchInfo& info)
+    {
+        std::ostringstream oss;
 
-    return false;
+        oss << "info depth " << info.depth;
+
+        if (info.seldepth > 0)
+            oss << " seldepth " << info.seldepth;
+
+        oss << " score ";
+
+        if (info.isMate)
+            oss << "mate " << info.mateIn;
+        else
+            oss << "cp " << info.score;
+
+        oss << " nodes " << info.nodes
+            << " nps " << info.nps
+            << " hashfull " << info.hashfull
+            << " time " << info.timeMs;
+
+        if (!info.pv.empty())
+        {
+            oss << " pv";
+
+            for (const auto& move : info.pv)
+                oss << ' ' << moveToUci(move);
+        }
+
+        printLine(oss.str());
+    }
+
+    // ========================================================
+    // UCI option declarations (advertised before uciok)
+    // ========================================================
+
+    void printOptions(int64_t hashMb, int64_t moveOverheadMs)
+    {
+        std::ostringstream oss;
+
+        oss << "option name Hash type spin default "
+            << hashMb << " min 1 max 4096";
+        printLine(oss.str());
+
+        printLine(
+            "option name Threads type spin default 1 min 1 max 1"
+        );
+
+        std::ostringstream oss2;
+        oss2 << "option name Move Overhead type spin default "
+             << moveOverheadMs << " min 0 max 5000";
+        printLine(oss2.str());
+
+        printLine("option name Clear Hash type button");
+        printLine("option name Ponder type check default false");
+    }
 }
 
 // ============================================================
@@ -360,23 +406,42 @@ int main()
 {
     chess::Board board;
     search::SearchStats stats;
-
+    const std::string bookPath =
+    "books\\komodo.bin";
+    const bool bookLoaded =
+    stats.book.load(bookPath);
+    if (bookLoaded)
+{
+    std::cerr
+        << "Polyglot book loaded successfully\n";
+}
+else
+{
+    std::cerr
+        << "Polyglot book FAILED to load\n";
+}
+    
     // Persisted UCI clock state.
-    //
-    // These are updated by every go command.
     std::int64_t whiteTimeMs = 0;
     std::int64_t blackTimeMs = 0;
     std::int64_t whiteIncrementMs = 0;
     std::int64_t blackIncrementMs = 0;
     std::int64_t movesToGo = 0;
 
+    // Persisted engine options.
+    std::int64_t hashMb = 16;
+    std::int64_t threadsOption = 1;
+    std::int64_t moveOverheadMs = 50;
+    bool ponderEnabled = false;
+
     bool uciInitialized = false;
+
+    std::atomic<bool> searching{false};
+    std::thread searchThread;
 
     std::string line;
 
-    while (std::getline(
-        std::cin,
-        line))
+    while (std::getline(std::cin, line))
     {
         if (line.empty())
             continue;
@@ -396,32 +461,23 @@ int main()
 
         if (command == "uci")
         {
-            std::cout
-                << "id name NeuralGambit\n";
+            printLine("id name NeuralGambit");
+            printLine("id author Dev");
 
-            std::cout
-                << "id author Dev\n";
+            printOptions(hashMb, moveOverheadMs);
 
-            // We intentionally advertise only capabilities
-            // that this current implementation genuinely has.
-            std::cout
-                << "uciok\n";
-
-            std::cout.flush();
+            printLine("uciok");
 
             uciInitialized = true;
         }
 
         // ====================================================
-        // READY
+        // READY -- answered immediately, even mid-search.
         // ====================================================
 
         else if (command == "isready")
         {
-            std::cout
-                << "readyok\n";
-
-            std::cout.flush();
+            printLine("readyok");
         }
 
         // ====================================================
@@ -430,16 +486,60 @@ int main()
 
         else if (command == "ucinewgame")
         {
-            board = chess::Board();
-            stats = search::SearchStats{};
+            if (searching.load())
+            {
+                printLine(
+                    "info string cannot start a new game while "
+                    "searching; send stop first"
+                );
+            }
+            else
+            {
+                board = chess::Board();
 
-            whiteTimeMs = 0;
-            blackTimeMs = 0;
+                stats.table.clear();
+                stats.nodes = 0;
+                stats.seldepth = 0;
+                stats.ttHits = 0;
+                stats.ttCutoffs = 0;
+                stats.nullMoveCutoffs = 0;
+                stats.nullMoveAttempts = 0;
+                stats.rootTTHits = 0;
+                stats.aspirationFailLow = 0;
+                stats.aspirationFailHigh = 0;
+                stats.lmrReductions = 0;
+                stats.lmrResearches = 0;
+                stats.stable = true;
+                stats.previousScore = 0;
+                stats.previousBestMove = chess::Move::NO_MOVE;
+                stats.completedDepth = 0;
+                stats.stop = false;
 
-            whiteIncrementMs = 0;
-            blackIncrementMs = 0;
+                for (int side = 0; side < 2; ++side)
+                {
+                    for (int from = 0; from < 64; ++from)
+                    {
+                        for (int to = 0; to < 64; ++to)
+                        {
+                            stats.history[side][from][to] = 0;
+                            stats.counterMoves[side][from][to] =
+                                chess::Move::NO_MOVE;
+                        }
+                    }
+                }
 
-            movesToGo = 0;
+                for (int ply = 0; ply < search::MAX_PLY; ++ply)
+                {
+                    stats.killers[ply][0] = chess::Move::NO_MOVE;
+                    stats.killers[ply][1] = chess::Move::NO_MOVE;
+                }
+
+                whiteTimeMs = 0;
+                blackTimeMs = 0;
+                whiteIncrementMs = 0;
+                blackIncrementMs = 0;
+                movesToGo = 0;
+            }
         }
 
         // ====================================================
@@ -448,10 +548,17 @@ int main()
 
         else if (command == "position")
         {
-            handlePosition(
-                board,
-                iss
-            );
+            if (searching.load())
+            {
+                printLine(
+                    "info string cannot change position while "
+                    "searching; send stop first"
+                );
+            }
+            else
+            {
+                handlePosition(board, iss);
+            }
         }
 
         // ====================================================
@@ -460,337 +567,461 @@ int main()
 
         else if (command == "go")
         {
-            search::SearchLimits limits;
-
-            // Default: search until the search implementation's
-            // normal stopping condition.
-            int depth = 64;
-
-            bool haveMoveTime = false;
-            bool haveClock = false;
-
-            std::int64_t moveTimeMs = 0;
-
-            std::string token;
-
-            while (iss >> token)
+            if (searching.load())
             {
-                token = toLower(token);
+                printLine(
+                    "info string search already running; "
+                    "send stop first"
+                );
+            }
+            else
+            {
+                search::SearchLimits limits;
 
-                std::string valueText;
+                int depth = 64;
 
-                // --------------------------------------------
-                // depth
-                // --------------------------------------------
+                bool haveMoveTime = false;
+                bool haveClock = false;
+                bool isPondering = false;
 
-                if (token == "depth")
+                std::int64_t moveTimeMs = 0;
+                std::int64_t nodesLimit = 0;
+
+                std::string token;
+
+                while (iss >> token)
                 {
-                    if (!(iss >> valueText))
-                    {
-                        std::cout
-                            << "info string missing depth value\n";
+                    token = toLower(token);
 
-                        continue;
+                    std::string valueText;
+
+                    if (token == "depth")
+                    {
+                        if (!(iss >> valueText))
+                        {
+                            printLine("info string missing depth value");
+                            continue;
+                        }
+
+                        std::int64_t value;
+
+                        if (parseInt64(valueText, value))
+                        {
+                            depth = std::max(1, clampToInt(value));
+                        }
                     }
-
-                    std::int64_t value;
-
-                    if (parseInt64(
-                            valueText,
-                            value))
+                    else if (token == "movetime")
                     {
-                        depth =
-                            std::max(
-                                1,
-                                clampToInt(value)
-                            );
+                        if (!(iss >> valueText))
+                            continue;
+
+                        if (parseInt64(valueText, moveTimeMs))
+                            haveMoveTime = true;
                     }
-                }
-
-                // --------------------------------------------
-                // movetime
-                // --------------------------------------------
-
-                else if (token == "movetime")
-                {
-                    if (!(iss >> valueText))
-                        continue;
-
-                    if (parseInt64(
-                            valueText,
-                            moveTimeMs))
+                    else if (token == "wtime")
                     {
-                        haveMoveTime = true;
+                        if (!(iss >> valueText))
+                            continue;
+
+                        std::int64_t value;
+
+                        if (parseInt64(valueText, value))
+                        {
+                            whiteTimeMs = std::max<std::int64_t>(0, value);
+                            haveClock = true;
+                        }
                     }
-                }
-
-                // --------------------------------------------
-                // wtime
-                // --------------------------------------------
-
-                else if (token == "wtime")
-                {
-                    if (!(iss >> valueText))
-                        continue;
-
-                    std::int64_t value;
-
-                    if (parseInt64(
-                            valueText,
-                            value))
+                    else if (token == "btime")
                     {
-                        whiteTimeMs =
-                            std::max<std::int64_t>(
-                                0,
-                                value
-                            );
+                        if (!(iss >> valueText))
+                            continue;
 
-                        haveClock = true;
+                        std::int64_t value;
+
+                        if (parseInt64(valueText, value))
+                        {
+                            blackTimeMs = std::max<std::int64_t>(0, value);
+                            haveClock = true;
+                        }
                     }
-                }
-
-                // --------------------------------------------
-                // btime
-                // --------------------------------------------
-
-                else if (token == "btime")
-                {
-                    if (!(iss >> valueText))
-                        continue;
-
-                    std::int64_t value;
-
-                    if (parseInt64(
-                            valueText,
-                            value))
+                    else if (token == "winc")
                     {
-                        blackTimeMs =
-                            std::max<std::int64_t>(
-                                0,
-                                value
-                            );
+                        if (!(iss >> valueText))
+                            continue;
 
-                        haveClock = true;
+                        std::int64_t value;
+
+                        if (parseInt64(valueText, value))
+                        {
+                            whiteIncrementMs =
+                                std::max<std::int64_t>(0, value);
+                        }
                     }
-                }
-
-                // --------------------------------------------
-                // winc
-                // --------------------------------------------
-
-                else if (token == "winc")
-                {
-                    if (!(iss >> valueText))
-                        continue;
-
-                    std::int64_t value;
-
-                    if (parseInt64(
-                            valueText,
-                            value))
+                    else if (token == "binc")
                     {
-                        whiteIncrementMs =
-                            std::max<std::int64_t>(
-                                0,
-                                value
-                            );
+                        if (!(iss >> valueText))
+                            continue;
+
+                        std::int64_t value;
+
+                        if (parseInt64(valueText, value))
+                        {
+                            blackIncrementMs =
+                                std::max<std::int64_t>(0, value);
+                        }
                     }
-                }
-
-                // --------------------------------------------
-                // binc
-                // --------------------------------------------
-
-                else if (token == "binc")
-                {
-                    if (!(iss >> valueText))
-                        continue;
-
-                    std::int64_t value;
-
-                    if (parseInt64(
-                            valueText,
-                            value))
+                    else if (token == "movestogo")
                     {
-                        blackIncrementMs =
-                            std::max<std::int64_t>(
-                                0,
-                                value
-                            );
+                        if (!(iss >> valueText))
+                            continue;
+
+                        std::int64_t value;
+
+                        if (parseInt64(valueText, value))
+                        {
+                            movesToGo = std::max<std::int64_t>(0, value);
+                        }
                     }
-                }
-
-                // --------------------------------------------
-                // movestogo
-                // --------------------------------------------
-
-                else if (token == "movestogo")
-                {
-                    if (!(iss >> valueText))
-                        continue;
-
-                    std::int64_t value;
-
-                    if (parseInt64(
-                            valueText,
-                            value))
+                    else if (token == "nodes")
                     {
-                        movesToGo =
-                            std::max<std::int64_t>(
-                                0,
-                                value
-                            );
+                        if (!(iss >> valueText))
+                            continue;
+
+                        parseInt64(valueText, nodesLimit);
                     }
-                }
-
-                // --------------------------------------------
-                // infinite
-                // --------------------------------------------
-
-                else if (token == "infinite")
-                {
-                    limits.infinite = true;
-                }
-
-                // --------------------------------------------
-                // ponder
-                //
-                // We accept the keyword so a GUI doesn't treat
-                // it as an unknown command, but this search
-                // currently has no ponder implementation.
-                // --------------------------------------------
-
-                else if (token == "ponder")
-                {
-                    std::cout
-                        << "info string ponder requested; "
-                           "ponder mode is not implemented\n";
-                }
-
-                // --------------------------------------------
-                // unsupported UCI search controls
-                // --------------------------------------------
-
-                else if (
-                    token == "nodes" ||
-                    token == "mate" ||
-                    token == "searchmoves")
-                {
-                    std::cout
-                        << "info string unsupported go option "
-                        << token
-                        << '\n';
-
-                    // searchmoves needs a list parser, so we
-                    // deliberately don't pretend to implement it.
-                    if (token == "searchmoves")
+                    else if (token == "infinite")
                     {
+                        limits.infinite = true;
+                    }
+                    else if (token == "ponder")
+                    {
+                        isPondering = true;
+                    }
+                    else if (token == "mate")
+                    {
+                        printLine(
+                            "info string unsupported go option mate"
+                        );
+
+                        if (iss >> valueText)
+                        {
+                            // Consume the value; mate search is not
+                            // implemented.
+                        }
+                    }
+                    else if (token == "searchmoves")
+                    {
+                        printLine(
+                            "info string unsupported go option searchmoves"
+                        );
+
                         while (iss >> valueText)
                         {
-                            // Consume the rest of the command.
-                            // The current search API has no
-                            // searchmoves field.
+                            // Consume the rest of the command. The
+                            // current search API has no searchmoves
+                            // field.
                         }
                     }
                 }
-            }
 
-            // =================================================
-            // Build SearchLimits
-            // =================================================
+                if (haveMoveTime)
+                {
+                    limits.moveTimeMs = clampToInt(moveTimeMs);
+                }
+                else if (haveClock)
+                {
+                    const bool whiteToMove =
+                        board.sideToMove() == chess::Color::WHITE;
 
-            if (haveMoveTime)
-            {
-                limits.moveTimeMs =
-                    clampToInt(
-                        moveTimeMs
-                    );
-            }
-            else if (haveClock)
-            {
-                const bool whiteToMove =
-                    board.sideToMove() ==
-                    chess::Color::WHITE;
+                    const std::int64_t myTime =
+                        whiteToMove ? whiteTimeMs : blackTimeMs;
 
-                const std::int64_t myTime =
-                    whiteToMove
-                        ? whiteTimeMs
-                        : blackTimeMs;
+                    const std::int64_t myIncrement =
+                        whiteToMove ? whiteIncrementMs : blackIncrementMs;
 
-                const std::int64_t myIncrement =
-                    whiteToMove
-                        ? whiteIncrementMs
-                        : blackIncrementMs;
+                    limits.myTimeMs = clampToInt(myTime);
+                    limits.incrementMs = clampToInt(myIncrement);
+                    limits.movesToGo = clampToInt(movesToGo);
+                }
 
-                limits.myTimeMs =
-                    clampToInt(
-                        myTime
-                    );
+                limits.maxNodes = nodesLimit;
+                limits.moveOverheadMs = moveOverheadMs;
 
-                limits.incrementMs =
-                    clampToInt(
-                        myIncrement
-                    );
+                if (isPondering)
+                {
+                    // The position being searched is hypothetical
+                    // until "ponderhit" arrives, so ignore any
+                    // clock-derived budget and rely on the GUI
+                    // sending "stop" at the right time -- exactly
+                    // like "go infinite".
+                    limits.infinite = true;
+                }
 
-                limits.movesToGo =
-                    clampToInt(
-                        movesToGo
-                    );
-            }
+                stats.stop = false;
+                stats.onIteration = printInfoLine;
 
-            // =================================================
-            // Search
-            // =================================================
+                searching.store(true);
 
-            // search::SearchStats stats;
+                chess::Board searchBoard = board;
 
-            NullBuffer nullBuffer;
+                if (searchThread.joinable())
+                    searchThread.join();
 
-            std::streambuf* oldCout =
-                std::cout.rdbuf(
-                    &nullBuffer
+                searchThread = std::thread(
+                    [&stats, &searching, searchBoard, depth, limits]
+                    () mutable
+                    {
+                        const uint64_t hashBefore = searchBoard.hash();
+
+                        const chess::Move best =
+                            search::findBestMove(
+                                searchBoard,
+                                depth,
+                                stats,
+                                limits
+                            );
+
+                        const uint64_t hashAfter = searchBoard.hash();
+
+                        if (hashBefore != hashAfter)
+                        {
+                            std::cerr
+                                << "SEARCH CORRUPTED BOARD STATE!\n"
+                                << "Before hash: " << hashBefore << '\n'
+                                << "After hash: " << hashAfter << '\n';
+                        }
+
+                        chess::Move finalMove = best;
+
+                        chess::Movelist legalMoves;
+                        chess::movegen::legalmoves(
+                            legalMoves,
+                            searchBoard
+                        );
+
+                        bool legal = false;
+
+                        for (const auto& move : legalMoves)
+                        {
+                            if (move == best)
+                            {
+                                legal = true;
+                                break;
+                            }
+                        }
+
+                        if (!legal)
+                        {
+                            std::cerr
+                                << "ILLEGAL SEARCH MOVE: "
+                                << moveToUci(best) << '\n';
+
+                            if (!legalMoves.empty())
+                            {
+                                finalMove = legalMoves[0];
+
+                                std::cerr
+                                    << "FALLBACK MOVE: "
+                                    << moveToUci(finalMove) << '\n';
+                            }
+                            else
+                            {
+                                finalMove = chess::Move::NO_MOVE;
+                            }
+                        }
+
+                        printLine(
+                            "bestmove " + moveToUci(finalMove)
+                        );
+
+                        searching.store(false);
+                    }
                 );
-
-            const chess::Move best =
-                search::findBestMove(
-                    board,
-                    depth,
-                    stats,
-                    limits
-                );
-
-            std::cout.rdbuf(
-                oldCout
-            );
-
-            // =================================================
-            // Required UCI response
-            // =================================================
-
-            std::cout
-                << "bestmove "
-                << moveToUci(best)
-                << '\n';
-
-            std::cout.flush();
+            }
         }
 
         // ====================================================
-        // STOP
+        // STOP -- genuinely interrupts the running search.
         // ====================================================
 
         else if (command == "stop")
         {
-            // IMPORTANT:
-            //
-            // findBestMove() is synchronous in the current
-            // search architecture. Therefore the main UCI
-            // thread cannot receive/process "stop" while a
-            // search is executing.
-            //
-            // This command is accepted for protocol
-            // compatibility, but true interruption must be
-            // implemented in the search layer.
+            if (searching.load())
+                stats.stop = true;
+        }
+
+        // ====================================================
+        // PONDERHIT
+        // ====================================================
+
+        else if (command == "ponderhit")
+        {
+            // The position now being searched is the real one.
+            // Our minimal pondering support runs unbounded the
+            // whole time (see "go ... ponder" above), so no
+            // action is required here beyond acknowledging it.
+        }
+
+        // ====================================================
+        // SETOPTION
+        // ====================================================
+
+        else if (command == "setoption")
+        {
+            std::string rest;
+            std::getline(iss, rest);
+
+            size_t namePos = rest.find("name");
+
+            if (namePos == std::string::npos)
+            {
+                printLine("info string malformed setoption command");
+            }
+            else
+            {
+                size_t valuePos = rest.find(" value ", namePos);
+
+                std::string optName;
+                std::string optValue;
+                bool hasValue = valuePos != std::string::npos;
+
+                if (hasValue)
+                {
+                    optName = rest.substr(
+                        namePos + 4,
+                        valuePos - (namePos + 4)
+                    );
+
+                    optValue = rest.substr(valuePos + 7);
+                }
+                else
+                {
+                    optName = rest.substr(namePos + 4);
+                }
+
+                optName = trim(optName);
+                optValue = trim(optValue);
+
+                std::string optNameLower = toLower(optName);
+
+                if (optNameLower == "hash")
+                {
+                    std::int64_t value;
+
+                    if (hasValue && parseInt64(optValue, value) &&
+                        value >= 1)
+                    {
+                        if (searching.load())
+                        {
+                            printLine(
+                                "info string cannot resize hash "
+                                "while searching; send stop first"
+                            );
+                        }
+                        else
+                        {
+                            hashMb = value;
+                            stats.table.resize(
+                                static_cast<size_t>(hashMb)
+                            );
+                        }
+                    }
+                }
+                else if (optNameLower == "threads")
+                {
+                    std::int64_t value;
+
+                    if (hasValue && parseInt64(optValue, value))
+                    {
+                        threadsOption = value;
+
+                        if (threadsOption != 1)
+                        {
+                            printLine(
+                                "info string only 1 thread is "
+                                "supported; ignoring"
+                            );
+                        }
+                    }
+                }
+                else if (optNameLower == "move overhead")
+                {
+                    std::int64_t value;
+
+                    if (hasValue && parseInt64(optValue, value) &&
+                        value >= 0)
+                    {
+                        moveOverheadMs = value;
+                    }
+                }
+                else if (optNameLower == "clear hash")
+                {
+                    if (searching.load())
+                    {
+                        printLine(
+                            "info string cannot clear hash while "
+                            "searching; send stop first"
+                        );
+                    }
+                    else
+                    {
+                        stats.table.clear();
+                    }
+                }
+                else if (optNameLower == "ponder")
+                {
+                    ponderEnabled = (toLower(optValue) == "true");
+                }
+                else
+                {
+                    printLine(
+                        "info string unknown option " + optName
+                    );
+                }
+            }
+        }
+
+        // ====================================================
+        // EVAL -- static evaluation of the current position.
+        // ====================================================
+
+        else if (command == "eval")
+        {
+            if (searching.load())
+            {
+                printLine(
+                    "info string cannot evaluate while searching; "
+                    "send stop first"
+                );
+            }
+            else
+            {
+                int whiteRelative = eval::evaluate(board);
+
+                int sideToMoveRelative =
+                    board.sideToMove() == chess::Color::WHITE
+                        ? whiteRelative
+                        : -whiteRelative;
+
+                std::ostringstream oss;
+
+                oss << "info string eval "
+                    << whiteRelative
+                    << " cp (white perspective), "
+                    << sideToMoveRelative
+                    << " cp (side to move perspective)";
+
+                printLine(oss.str());
+            }
+        }
+
+        // ====================================================
+        // D -- debug display of current position.
+        // ====================================================
+
+        else if (command == "d")
+        {
+            printLine("info string fen " + board.getFen());
         }
 
         // ====================================================
@@ -807,12 +1038,7 @@ int main()
 
                 if (mode == "on" || mode == "off")
                 {
-                    std::cout
-                        << "info string debug "
-                        << mode
-                        << '\n';
-
-                    std::cout.flush();
+                    printLine("info string debug " + mode);
                 }
             }
         }
@@ -823,6 +1049,12 @@ int main()
 
         else if (command == "quit")
         {
+            if (searching.load())
+                stats.stop = true;
+
+            if (searchThread.joinable())
+                searchThread.join();
+
             break;
         }
 
@@ -834,14 +1066,15 @@ int main()
         {
             if (uciInitialized)
             {
-                std::cout
-                    << "info string unknown command "
-                    << command
-                    << '\n';
-
-                std::cout.flush();
+                printLine("info string unknown command " + command);
             }
         }
+    }
+
+    if (searchThread.joinable())
+    {
+        stats.stop = true;
+        searchThread.join();
     }
 
     return 0;

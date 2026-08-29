@@ -1,7 +1,19 @@
 #include "tt.h"
-
+#include<algorithm>
 namespace search::tt
 {
+    void Table::newSearch()
+{
+    ++currentGeneration;
+
+    if (currentGeneration == 0)
+        ++currentGeneration;
+}
+
+uint8_t Table::generation() const
+{
+    return currentGeneration;
+}
     int valueToTT(int score, int ply)
 {
     if (score > MATE_BOUND)
@@ -23,17 +35,83 @@ int valueFromTT(int score, int ply)
 
     return score;
 }
+//     Table::Table(size_t megabytes)
+// {
+//     size_t bytes =
+//         megabytes * 1024ULL * 1024ULL;
+
+//     size_t count =
+//         bytes / sizeof(Entry);
+
+//     if (count == 0)
+//         count = 1;
+
+//     // Round down to a power of two so that
+//     // key & (count - 1) can be used instead
+//     // of the much slower modulo operation.
+//     size_t powerOfTwo = 1;
+
+//     while ((powerOfTwo << 1) <= count)
+//         powerOfTwo <<= 1;
+
+//     entries.resize(powerOfTwo);
+// }
     Table::Table(size_t megabytes)
+{
+    resize(megabytes);
+}
+
+    void Table::resize(size_t megabytes)
+{
+    size_t bytes =
+        megabytes * 1024ULL * 1024ULL;
+
+    size_t count =
+        bytes / sizeof(Entry);
+
+    if (count == 0)
+        count = 1;
+
+    size_t powerOfTwo = 1;
+
+    while ((powerOfTwo << 1) <= count)
+        powerOfTwo <<= 1;
+
+    entries.assign(powerOfTwo, Entry{});
+}
+
+    // void Table::clear()
+    // {
+    //     for (auto& entry : entries)
+    //     {
+    //         entry = Entry{};
+    //     }
+    // }
+
+    int Table::hashfull() const
     {
-        size_t bytes = megabytes * 1024ULL * 1024ULL;
+        constexpr size_t SAMPLE_SIZE = 1000;
 
-        size_t count =
-            bytes / sizeof(Entry);
+        size_t sampleCount =
+            std::min(SAMPLE_SIZE, entries.size());
 
-        if (count == 0)
-            count = 1;
+        if (sampleCount == 0)
+            return 0;
 
-        entries.resize(count);
+        size_t filled = 0;
+
+        for (size_t i = 0; i < sampleCount; ++i)
+        {
+            if (entries[i].key != 0 &&
+                entries[i].generation == currentGeneration)
+            {
+                ++filled;
+            }
+        }
+
+        return static_cast<int>(
+            filled * 1000 / sampleCount
+        );
     }
 
     void Table::clear()
@@ -47,7 +125,7 @@ int valueFromTT(int score, int ply)
     Entry* Table::probe(uint64_t key)
     {
         Entry& entry =
-            entries[key % entries.size()];
+            entries[key & (entries.size()-1)];
 
         if (entry.key == key)
             return &entry;
@@ -62,22 +140,30 @@ int valueFromTT(int score, int ply)
                   chess::Move bestMove)
 {
     Entry& entry =
-        entries[key % entries.size()];
+        entries[key & (entries.size()-1)];
 
     // Replace if:
     // 1. slot is empty
     // 2. same position is already there
     // 3. new search is at least as deep
-    if (entry.depth > depth &&
-        entry.key != key)
-    {
-        return;
-    }
+    // if (entry.depth > depth &&
+    //     entry.key != key)
+    // {
+    //     return;
+    // }
+    if (entry.key != 0 &&
+entry.key != key &&
+entry.generation == currentGeneration &&
+entry.depth > depth)
+{
+    return;
+}
 
     entry.key = key;
     entry.depth = static_cast<int8_t>(depth);
     entry.score = static_cast<int16_t>(score);
     entry.bound = bound;
     entry.bestMove = bestMove;
+    entry.generation = currentGeneration;
 }
 }

@@ -237,11 +237,20 @@ namespace search::see
                     the gain changes by the value of the piece
                     currently sitting on the target square.
                 */
-                gain[depth] =
+                                gain[depth] =
                     pieceValue(pieceOnSquare[depth - 1])
                     - gain[depth - 1];
 
                 pieceOnSquare[depth] = attackerType;
+
+                /*
+                    Early exit: if neither side would choose to
+                    continue the exchange from here, we can stop
+                    collecting attackers — the fold-back result
+                    is already determined.
+                */
+                if (std::max(-gain[depth - 1], gain[depth]) < 0)
+                    break;
 
                 /*
                     Remove the attacker from the temporary board.

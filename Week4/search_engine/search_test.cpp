@@ -5,7 +5,7 @@
 
 int main()
 {
-    std::cout << "LMR OFF BASELINE TEST\n";
+    // std::cout << "LMR OFF BASELINE TEST\n";
 
     chess::Board board;
     search::SearchStats stats;
@@ -16,7 +16,7 @@ int main()
     chess::Move best =
         search::findBestMove(
             board,
-            10,
+            14,
             stats,
             limits
         );
