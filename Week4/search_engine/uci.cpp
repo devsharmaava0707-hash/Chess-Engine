@@ -1,7 +1,7 @@
 #include "search.h"
 #include "../chess.hpp"
 #include "../arun_eval/eval.h"
-
+#include "../tablebase/tbprobe.h"
 #include <algorithm>
 #include <atomic>
 #include <cctype>
@@ -406,6 +406,15 @@ int main()
 {
     chess::Board board;
     search::SearchStats stats;
+    const bool tbLoaded =
+    tb_init("tablebases");
+
+std::cerr
+    << "Fathom: "
+    << (tbLoaded ? "loaded" : "failed")
+    << ", TB_LARGEST = "
+    << TB_LARGEST
+    << '\n';
     const std::string bookPath =
     "books\\komodo.bin";
     const bool bookLoaded =

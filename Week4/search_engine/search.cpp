@@ -362,6 +362,219 @@ if (board.isInsufficientMaterial())
     return alpha;
 }
 
+
+// fathom end moves integration 
+static bool tryRootTablebase(
+    chess::Board& board,
+    chess::Move& tbMove)
+{
+    tbMove = chess::Move::NO_MOVE;
+
+    // Fathom was not initialized or no Syzygy files were found.
+    if (TB_LARGEST == 0)
+        return false;
+
+    // Tablebase can only handle positions up to the loaded
+    // number of pieces.
+    
+    if (board.occ().count() >
+        static_cast<int>(TB_LARGEST))
+    {
+        return false;
+    }
+
+    // Your Fathom wrapper rejects any position with castling
+    // rights, so only probe when all castling rights are gone.
+    const auto cr = board.castlingRights();
+
+    const bool hasCastlingRights =
+        cr.has(
+            chess::Color::WHITE,
+            chess::Board::CastlingRights::Side::KING_SIDE
+        ) ||
+        cr.has(
+            chess::Color::WHITE,
+            chess::Board::CastlingRights::Side::QUEEN_SIDE
+        ) ||
+        cr.has(
+            chess::Color::BLACK,
+            chess::Board::CastlingRights::Side::KING_SIDE
+        ) ||
+        cr.has(
+            chess::Color::BLACK,
+            chess::Board::CastlingRights::Side::QUEEN_SIDE
+        );
+
+    if (hasCastlingRights)
+        return false;
+
+    const uint64_t white =
+        board.us(
+            chess::Color::WHITE
+        ).getBits();
+
+    const uint64_t black =
+        board.us(
+            chess::Color::BLACK
+        ).getBits();
+
+    const uint64_t kings =
+        board.pieces(
+            chess::PieceType::KING
+        ).getBits();
+
+    const uint64_t queens =
+        board.pieces(
+            chess::PieceType::QUEEN
+        ).getBits();
+
+    const uint64_t rooks =
+        board.pieces(
+            chess::PieceType::ROOK
+        ).getBits();
+
+    const uint64_t bishops =
+        board.pieces(
+            chess::PieceType::BISHOP
+        ).getBits();
+
+    const uint64_t knights =
+        board.pieces(
+            chess::PieceType::KNIGHT
+        ).getBits();
+
+    const uint64_t pawns =
+        board.pieces(
+            chess::PieceType::PAWN
+        ).getBits();
+
+    const unsigned rule50 =
+        static_cast<unsigned>(
+            board.halfMoveClock()
+        );
+
+    const unsigned ep =
+        board.enpassantSq() ==
+            chess::Square::NO_SQ
+        ? 0
+        : static_cast<unsigned>(
+              board.enpassantSq().index()
+          );
+
+    const bool whiteToMove =
+        board.sideToMove() ==
+        chess::Color::WHITE;
+
+    // Required by tb_probe_root().
+    unsigned results[TB_MAX_MOVES] = {};
+
+    const unsigned result =
+        tb_probe_root(
+            white,
+            black,
+            kings,
+            queens,
+            rooks,
+            bishops,
+            knights,
+            pawns,
+            rule50,
+            0,              // no castling rights
+            ep,
+            whiteToMove,
+            results
+        );
+
+    if (result == TB_RESULT_FAILED)
+        return false;
+
+    const unsigned from =
+        TB_GET_FROM(result);
+
+    const unsigned to =
+        TB_GET_TO(result);
+
+    const unsigned promotes =
+        TB_GET_PROMOTES(result);
+
+    // Convert Fathom's encoded move into YOUR chess::Move.
+    // Validate it against the actual legal move list.
+    chess::Movelist legalMoves;
+
+    chess::movegen::legalmoves(
+        legalMoves,
+        board
+    );
+
+    for (const auto& move : legalMoves)
+    {
+        if (move.from().index() !=
+            static_cast<int>(from))
+        {
+            continue;
+        }
+
+        if (move.to().index() !=
+            static_cast<int>(to))
+        {
+            continue;
+        }
+
+        // Normal move.
+        if (promotes == TB_PROMOTES_NONE)
+        {
+            tbMove = move;
+            return true;
+        }
+
+        // Promotion.
+        if (move.typeOf() !=
+            chess::Move::PROMOTION)
+        {
+            continue;
+        }
+
+        chess::PieceType promotionType;
+
+        switch (promotes)
+        {
+            case TB_PROMOTES_QUEEN:
+                promotionType =
+                    chess::PieceType::QUEEN;
+                break;
+
+            case TB_PROMOTES_ROOK:
+                promotionType =
+                    chess::PieceType::ROOK;
+                break;
+
+            case TB_PROMOTES_BISHOP:
+                promotionType =
+                    chess::PieceType::BISHOP;
+                break;
+
+            case TB_PROMOTES_KNIGHT:
+                promotionType =
+                    chess::PieceType::KNIGHT;
+                break;
+
+            default:
+                continue;
+        }
+
+        if (move.promotionType() ==
+            promotionType)
+        {
+            tbMove = move;
+            return true;
+        }
+    }
+
+    // Fathom returned a result, but we could not map its
+    // suggested move to one of the board's legal chess moves.
+    return false;
+}
+
     int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed)
 {
    ++stats.nodes;
@@ -899,12 +1112,21 @@ stats.maxNodes =
         ? static_cast<uint64_t>(limits.maxNodes)
         : 0;
 stats.table.newSearch();
+
 chess::Move bookMove =
     stats.book.probe(board);
 
 if (bookMove != chess::Move::NO_MOVE)
 {
     return bookMove;
+}
+// fathom integration
+chess::Move tbMove =
+    chess::Move::NO_MOVE;
+
+if (tryRootTablebase(board, tbMove))
+{
+    return tbMove;
 }
     TimeBudget budget =
     computeTimeBudget(
@@ -1063,7 +1285,7 @@ if (depth > 1)
         break;
 
     board.makeMove(move);
-
+    
     int score;
 
     if (i == 0)
