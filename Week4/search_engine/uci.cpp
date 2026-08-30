@@ -140,76 +140,53 @@ namespace
     // Move -> UCI
     // ========================================================
 
-    std::string moveToUci(
-        const chess::Move& move)
+    std::string moveToUci(const chess::Move& move)
+{
+    if (move == chess::Move::NO_MOVE)
+        return "0000";
+
+    auto squareName = [](int sq)
     {
-        if (move == chess::Move::NO_MOVE)
-            return "0000";
+        std::string s(2, 'a');
+        s[0] = static_cast<char>('a' + (sq % 8));
+        s[1] = static_cast<char>('1' + (sq / 8));
+        return s;
+    };
 
-        auto squareName = [](int sq)
-        {
-            std::string s(2, 'a');
+    std::string result;
+    result.reserve(5);
 
-            s[0] = static_cast<char>(
-                'a' + (sq % 8)
-            );
+    result += squareName(move.from().index());
 
-            s[1] = static_cast<char>(
-                '1' + (sq / 8)
-            );
-
-            return s;
-        };
-
-        std::string result;
-
-        result.reserve(5);
-
-        result +=
-            squareName(
-                move.from().index()
-            );
-
-        result +=
-            squareName(
-                move.to().index()
-            );
-
-        if (move.typeOf() ==
-            chess::Move::PROMOTION)
-        {
-            switch (
-                static_cast<int>(
-                    move.promotionType()
-                ))
-            {
-            case static_cast<int>(
-                chess::PieceType::KNIGHT):
-                result += 'n';
-                break;
-
-            case static_cast<int>(
-                chess::PieceType::BISHOP):
-                result += 'b';
-                break;
-
-            case static_cast<int>(
-                chess::PieceType::ROOK):
-                result += 'r';
-                break;
-
-            case static_cast<int>(
-                chess::PieceType::QUEEN):
-                result += 'q';
-                break;
-
-            default:
-                break;
-            }
-        }
-
-        return result;
+    if (move.typeOf() == chess::Move::CASTLING)
+    {
+        // to() is the rook's square in chess.hpp; convert to the
+        // king's actual UCI destination square.
+        bool kingside = move.to() > move.from();
+        int fromRank = move.from().index() / 8;
+        int destFile = kingside ? 6 : 2; // g-file or c-file
+        int destSq = fromRank * 8 + destFile;
+        result += squareName(destSq);
     }
+    else
+    {
+        result += squareName(move.to().index());
+    }
+
+    if (move.typeOf() == chess::Move::PROMOTION)
+    {
+        switch (static_cast<int>(move.promotionType()))
+        {
+        case static_cast<int>(chess::PieceType::KNIGHT): result += 'n'; break;
+        case static_cast<int>(chess::PieceType::BISHOP): result += 'b'; break;
+        case static_cast<int>(chess::PieceType::ROOK):   result += 'r'; break;
+        case static_cast<int>(chess::PieceType::QUEEN):  result += 'q'; break;
+        default: break;
+        }
+    }
+
+    return result;
+}
 
     // ========================================================
     // UCI -> legal chess::Move
