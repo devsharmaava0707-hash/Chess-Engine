@@ -68,11 +68,28 @@ namespace search::ordering
             }
 
             // 5. History
-            return history[
-                move.from().index()
-            ][
-                move.to().index()
-            ];
+//             int historyScore =
+//     history[
+//         move.from().index()
+//     ][
+//         move.to().index()
+//     ];
+
+// int continuationScore =
+//     continuationHistory[
+//         move.to().index()
+//     ][
+//         move.from().index()
+//     ][
+//         move.to().index()
+//     ];
+
+// return historyScore + continuationScore;
+return history[
+    move.from().index()
+][
+    move.to().index()
+];
         }
     }
 
@@ -113,6 +130,7 @@ namespace search::ordering
     const chess::Move killers[2],
     const chess::Move& counterMove,
     const int history[64][64],
+    // const int continuationHistory[64][64][64],
     const chess::Move& ttMove)
 {
     const int n = static_cast<int>(moves.size());

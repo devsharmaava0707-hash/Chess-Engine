@@ -46,6 +46,7 @@ namespace search
         uint64_t nodes = 0;
         chess::Move killers[MAX_PLY][2]{};
         int history[2][64][64]{};
+        // int continuationHistory[64][64][64]{};
         chess::Move counterMoves[2][64][64]{};
         tt::Table table{16};
         uint64_t ttHits = 0;
@@ -63,6 +64,7 @@ namespace search
         chess::Move previousBestMove = chess::Move::NO_MOVE;
         uint64_t lmrReductions = 0;
         uint64_t lmrResearches = 0;
+        uint64_t iirReductions = 0;
         uint64_t maxNodes = 0;
         int seldepth = 0;
         InfoCallback onIteration = nullptr;
@@ -83,13 +85,16 @@ namespace search
         // polyglot implementation
         book::PolyglotBook book;
 
+        // extras
+        int staticEvalStack[MAX_PLY]{};
+        int extensionCap = 0;
     };
     int64_t elapsedMs(const SearchStats& stats);
     bool timeUp(const SearchStats& stats);
     int evaluateForSideToMove(chess::Board& board);
     int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply );
     // int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats &stats,chess::Move prevMove);
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe);
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe,int extcount);
     std::vector<chess::Move> extractPV(chess::Board board, SearchStats& stats, int maxLength);
     chess::Move findBestMove(chess::Board& board,int depth,SearchStats &stats,const SearchLimits & limits);
 }

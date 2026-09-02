@@ -270,6 +270,30 @@ if (board.isInsufficientMaterial())
     // Safety limit for the tactical search.
     if (qply >= MAX_QPLY)
         return evaluateForSideToMove(board);
+const int qDepth = -qply;
+uint64_t key = board.hash();
+tt::Entry* entry = stats.table.probe(key);
+
+int alphaOriginal = alpha;
+
+if (entry != nullptr &&
+    entry->depth >= qDepth)
+{
+    int ttScore =
+        tt::valueFromTT(entry->score, qply);
+
+    if (entry->bound == tt::Bound::EXACT)
+        return ttScore;
+
+    if (entry->bound == tt::Bound::LOWERBOUND &&
+        ttScore >= beta)
+        return ttScore;
+
+    if (entry->bound == tt::Bound::UPPERBOUND &&
+        ttScore <= alpha)
+        return ttScore;
+}
+
 
     const bool inCheck = board.inCheck();
 
@@ -281,8 +305,21 @@ if (board.isInsufficientMaterial())
 {
     int standPat = evaluateForSideToMove(board);
 
+    // if (standPat >= beta)
+    //     return beta;
     if (standPat >= beta)
-        return beta;
+{
+    if (!stats.stop)
+        stats.table.store(
+            key,
+            qDepth,
+            tt::valueToTT(standPat, qply),
+            tt::Bound::LOWERBOUND,
+            chess::Move::NO_MOVE
+        );
+
+    return standPat;
+}
 
     if (standPat > alpha)
         alpha = standPat;
@@ -352,14 +389,48 @@ if (board.isInsufficientMaterial())
     {
         return 0;
     }
+    // if (score >= beta)
+    //     return beta;
+
     if (score >= beta)
-        return beta;
+{
+    if (!stats.stop)
+        stats.table.store(
+            key,
+            qDepth,
+            tt::valueToTT(score, qply),
+            tt::Bound::LOWERBOUND,
+            move
+        );
+
+    return score;
+}
+
 
     if (score > alpha)
         alpha = score;
     }
 
-    return alpha;
+    // return alpha;
+    tt::Bound bound = tt::Bound::EXACT;
+
+if (alpha <= alphaOriginal)
+    bound = tt::Bound::UPPERBOUND;
+else if (alpha >= beta)
+    bound = tt::Bound::LOWERBOUND;
+
+if (!stats.stop)
+{
+    stats.table.store(
+        key,
+        qDepth,
+        tt::valueToTT(alpha, qply),
+        bound,
+        chess::Move::NO_MOVE
+    );
+}
+
+return alpha;
 }
 
 
@@ -575,7 +646,7 @@ static bool tryRootTablebase(
     return false;
 }
 
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed)
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount)
 {
    ++stats.nodes;
 
@@ -647,12 +718,43 @@ if (entry != nullptr)
     // REF
     bool isPV = (beta - alpha > 1);
     int staticEval = evaluateForSideToMove(board);
-    constexpr int RFP_MARGIN_PER_DEPTH = 120;
-    int rfpMargin = RFP_MARGIN_PER_DEPTH * depth;
-    if (!isPV &&!board.inCheck() &&depth <= 6 &&staticEval - rfpMargin >= beta)
+    bool improving = false;
+
+if (!board.inCheck())
+{
+    stats.staticEvalStack[ply] = staticEval;
+
+    // Compare with the same side's evaluation two plies earlier.
+    // We start at ply 3 because the root itself is not searched through
+    // negamax in the current implementation.
+    if (ply >= 3)
     {
-        return staticEval;
-    }   
+        improving =
+            staticEval >= stats.staticEvalStack[ply - 2];
+    }
+}
+    // constexpr int RFP_MARGIN_PER_DEPTH = 120;
+    // int rfpMargin = RFP_MARGIN_PER_DEPTH * depth;
+    // if (!isPV &&!board.inCheck() &&depth <= 6 &&staticEval - rfpMargin >= beta)
+    // {
+    //     return staticEval;
+    // }  
+    constexpr int RFP_MARGIN_PER_DEPTH = 120;
+constexpr int RFP_NOT_IMPROVING_PENALTY = 70;
+
+int rfpMargin =
+    RFP_MARGIN_PER_DEPTH * depth;
+
+if (!improving)
+    rfpMargin += RFP_NOT_IMPROVING_PENALTY;
+
+if (!isPV &&
+    !board.inCheck() &&
+    depth <= 6 &&
+    staticEval - rfpMargin >= beta)
+{
+    return staticEval;
+} 
     // Razoring
     if (!isPV &&
     !board.inCheck() &&
@@ -663,11 +765,25 @@ if (entry != nullptr)
     }  
     // IIR
     // Internal Iterative Reduction
-    int searchDepth=depth;
-    // if (entry == nullptr &&!board.inCheck() &&depth >= 4)
-    // {
-    //     searchDepth=depth-1;
-    // } 
+        int searchDepth = depth;
+
+    // ---------------------------------------------------------
+    // Internal Iterative Reduction (IIR)
+    //
+    // No TT move means no good ordering guess at this node.
+    // Shrink the depth we actually recurse with instead of
+    // paying full price for a poorly-ordered search. The store
+    // at the end of this function still writes a TT entry with
+    // a best move, so the next visit to this position gets a
+    // real move to try first.
+    // ---------------------------------------------------------
+    if (!board.inCheck() &&
+        depth >= 4 &&
+        (entry == nullptr || entry->bestMove == chess::Move::NO_MOVE))
+    {
+        searchDepth = isPV ? depth - 1 : depth - 2;
+        ++stats.iirReductions;   // add this counter to SearchStats, like lmrReductions
+    } 
     if (!isPV &&
     !board.inCheck() &&
     nullMoveAllowed &&
@@ -737,7 +853,7 @@ if (entry != nullptr)
             stats,
             ply + 1,
             chess::Move::NO_MOVE,
-            false
+            false,extCount
         );
 
         board.unmakeNullMove();
@@ -760,7 +876,7 @@ if (entry != nullptr)
                 stats,
                 ply + 1,
                 prevMove,
-                false
+                false,extCount
             );
 
             if (stats.stop)
@@ -804,6 +920,7 @@ if (prevMove != chess::Move::NO_MOVE)
         stats.killers[safePly],
         counterMove,
         stats.history[side],
+        // stats.continuationHistory,
         ttMove
     );
 
@@ -839,14 +956,26 @@ if (prevMove != chess::Move::NO_MOVE)
         stats.history[side]
                     [move.from().index()]
                     [move.to().index()];
+    // Step 5: Main-search SEE pruning
+if (!isPV &&
+    !inCheck &&
+    depth <= 6 &&
+    isCapture &&
+    !isPromotion &&
+    search::see::evaluate(board, move) < 0)
+{
+    continue;
+}
 
-    board.makeMove(move);
+board.makeMove(move);
+
 
     bool givesCheck = board.inCheck();
 // extension add
     int extension = 0;
 
-//     if (givesCheck && depth >= 2) extension = 1;
+if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
+    extension = 1;
 // // above is extension add
     int reduction = 0;
     int score;
@@ -861,7 +990,7 @@ if (prevMove != chess::Move::NO_MOVE)
             stats,
             ply + 1,
             move,
-            true
+            true,extCount + extension
         );
 
         firstMove = false;
@@ -891,7 +1020,7 @@ if (prevMove != chess::Move::NO_MOVE)
             stats,
             ply + 1,
             move,
-            true
+            true,extCount + extension
         );
 
         if (score > alpha &&
@@ -907,7 +1036,7 @@ if (prevMove != chess::Move::NO_MOVE)
                 stats,
                 ply + 1,
                 move,
-                true
+                true,extCount + extension
             );
         }
     }
@@ -984,15 +1113,24 @@ if (prevMove != chess::Move::NO_MOVE)
         move;
 }
 
-            int& h =
-                stats.history[side]
-                            [move.from().index()]
-                            [move.to().index()];
 
-            h += depth * depth;
+           if (prevMove != chess::Move::NO_MOVE)
+{
+    stats.counterMoves[side]
+        [prevMove.from().index()]
+        [prevMove.to().index()] =
+        move;
+}
 
-            if (h > 30000)
-                h = 30000;
+int& h =
+    stats.history[side]
+                [move.from().index()]
+                [move.to().index()];
+
+h += depth * depth;
+
+if (h > 30000)
+    h = 30000;
 
             for (int i = 0; i < quietCount; ++i)
             {
@@ -1106,7 +1244,7 @@ stats.aspirationFailHigh = 0;
 
 stats.lmrReductions = 0;
 stats.lmrResearches = 0;
-
+stats.iirReductions = 0;
 stats.maxNodes =
     limits.maxNodes > 0
         ? static_cast<uint64_t>(limits.maxNodes)
@@ -1167,7 +1305,7 @@ if (rootMoves.empty())
 chess::Move bestMove = rootMoves[0];
 
 int bestScore = -INF;
-
+stats.extensionCap = maxDepth * 2;   // NEW
     for (int depth = 1; depth <= maxDepth; ++depth)
     {
         const int64_t iterationStartMs =elapsedMs(stats);
@@ -1214,6 +1352,7 @@ int bestScore = -INF;
     stats.history[                              // risky
         static_cast<int>(board.sideToMove())
     ],
+    // stats.continuationHistory,
     ttMove
 );
 
@@ -1299,7 +1438,7 @@ if (depth > 1)
             stats,
             1,
             move,
-            true
+            true,0
         );
     }
     else
@@ -1313,7 +1452,7 @@ if (depth > 1)
             stats,
             1,
             move,
-            true
+            true,0
         );
 
         // It beat alpha, so we need the real score.
@@ -1327,7 +1466,7 @@ if (depth > 1)
                 stats,
                 1,
                 move,
-                true
+                true,0
             );
         }
     }
@@ -1475,12 +1614,12 @@ if (!stats.stable)
 //         }
 //     }
 // }
-std::cerr << "Stable: "
-          << (stats.stable ? "yes" : "no")
-          << '\n';
+// std::cerr << "Stable: "
+//           << (stats.stable ? "yes" : "no")
+//           << '\n';
 
-std::cerr << "Soft limit: "
-          << softLimit << '\n';
+// std::cerr << "Soft limit: "
+//           << softLimit << '\n';
 
 if (stats.onIteration)
 {
@@ -1532,27 +1671,27 @@ if (stats.optimalMs > 0 &&
             bestMove
         );
 
-        std::cerr << "Depth: " << depth << '\n';
-        std::cerr << "Score: " << bestScore << '\n';
-        std::cerr << "Best move: "
-                  << bestMove.from().index()
-                  << " -> "
-                  << bestMove.to().index()
-                  << '\n';
-        std::cerr << "Root TT hits: "
-                  << stats.rootTTHits << '\n';
-        std::cerr << "----------------\n";
-        std::cerr << "Aspiration fail-low: "
-          << stats.aspirationFailLow << '\n';
+//         std::cerr << "Depth: " << depth << '\n';
+//         std::cerr << "Score: " << bestScore << '\n';
+//         std::cerr << "Best move: "
+//                   << bestMove.from().index()
+//                   << " -> "
+//                   << bestMove.to().index()
+//                   << '\n';
+//         std::cerr << "Root TT hits: "
+//                   << stats.rootTTHits << '\n';
+//         std::cerr << "----------------\n";
+//         std::cerr << "Aspiration fail-low: "
+//           << stats.aspirationFailLow << '\n';
 
-std::cerr << "Aspiration fail-high: "
-          << stats.aspirationFailHigh << '\n';
+// std::cerr << "Aspiration fail-high: "
+//           << stats.aspirationFailHigh << '\n';
           
-          std::cerr << "LMR reductions: "
-          << stats.lmrReductions << '\n';
+//           std::cerr << "LMR reductions: "
+//           << stats.lmrReductions << '\n';
 
-std::cerr << "LMR researches: "
-          << stats.lmrResearches << '\n';
+// std::cerr << "LMR researches: "
+//           << stats.lmrResearches << '\n';
          
     }
 
