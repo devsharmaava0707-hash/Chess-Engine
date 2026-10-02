@@ -92,7 +92,7 @@ namespace search
     int64_t elapsedMs(const SearchStats& stats);
     bool timeUp(const SearchStats& stats);
     int evaluateForSideToMove(chess::Board& board);
-    int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply );
+    int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly);
     // int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats &stats,chess::Move prevMove);
     int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe,int extcount);
     std::vector<chess::Move> extractPV(chess::Board board, SearchStats& stats, int maxLength);

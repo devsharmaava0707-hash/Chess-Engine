@@ -32,7 +32,7 @@
         "additional_lines_rgx": [],
         "event_name": "Fastchess Tournament",
         "site": "?",
-        "file": "..\\testing\\results_step6_improving_20.pgn",
+        "file": "..\\testing\\results_eval_fix_20.pgn",
         "notation": 0,
         "append_file": true,
         "track_nodes": false,
@@ -60,7 +60,7 @@
     },
     "config_name": "config.json",
     "output": 1,
-    "seed": 6140092259007064056,
+    "seed": 2852081389737705923,
     "variant": 0,
     "type": 0,
     "gauntlet_seeds": 1,
@@ -89,7 +89,7 @@
     },
     "engines": [
         {
-            "name": "Base",
+            "name": "Previous",
             "dir": "",
             "cmd": "..\\testing\\engines\\base\\neuralgambit_base.exe",
             "args": "",
@@ -109,7 +109,7 @@
             "variant": 0
         },
         {
-            "name": "Candidate",
+            "name": "Current",
             "dir": "",
             "cmd": "..\\testing\\engines\\candidate\\neuralgambit_candidate.exe",
             "args": "",
@@ -130,10 +130,10 @@
         }
     ],
     "stats": {
-        "Base vs Candidate": {
-            "wins": 7,
-            "losses": 8,
-            "draws": 5,
+        "Previous vs Current": {
+            "wins": 0,
+            "losses": 10,
+            "draws": 0,
             "penta_WW": 0,
             "penta_WD": 0,
             "penta_WL": 0,

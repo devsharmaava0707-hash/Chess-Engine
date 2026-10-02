@@ -232,15 +232,16 @@ bool timeUp(const SearchStats& stats)
 }
 int evaluateForSideToMove(chess::Board& board)
 {
+    // // int score = eval::evaluate(board);
     // int score = eval::evaluate(board);
-    int score = eval::evaluate(board);
 
-    return board.sideToMove() == chess::Color::WHITE
-        ? score
-        : -score;
-    // return eval::evaluate(board);
+    // return board.sideToMove() == chess::Color::WHITE
+    //     ? score
+    //     : -score;
+    return eval::evaluate(board);
 }
-int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply){
+int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly){
+    const int ply = rootPly + qply;
     ++stats.nodes;
 
 if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
@@ -257,8 +258,8 @@ if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 
 if (stats.stop)
     return 0;
-if (qply > stats.seldepth)
-    stats.seldepth = qply;
+if (ply > stats.seldepth)
+    stats.seldepth = ply;
 if (board.isRepetition(1))
     return 0;
 
@@ -270,7 +271,8 @@ if (board.isInsufficientMaterial())
     // Safety limit for the tactical search.
     if (qply >= MAX_QPLY)
         return evaluateForSideToMove(board);
-const int qDepth = -qply;
+// const int qDepth = -qply;
+const int qDepth = -1 - qply;
 uint64_t key = board.hash();
 tt::Entry* entry = stats.table.probe(key);
 
@@ -313,7 +315,7 @@ if (entry != nullptr &&
         stats.table.store(
             key,
             qDepth,
-            tt::valueToTT(standPat, qply),
+            tt::valueToTT(standPat, ply),
             tt::Bound::LOWERBOUND,
             chess::Move::NO_MOVE
         );
@@ -360,7 +362,7 @@ if (entry != nullptr &&
     if (moves.empty())
     {
         if (inCheck)
-            return -MATE_SCORE + qply;
+            return -MATE_SCORE + ply;
 
         return alpha;
     }
@@ -381,7 +383,8 @@ if (entry != nullptr &&
         -beta,
         -alpha,
         stats,
-        qply + 1
+        qply + 1,
+        rootPly
     );
 
     board.unmakeMove(move);
@@ -398,7 +401,7 @@ if (entry != nullptr &&
         stats.table.store(
             key,
             qDepth,
-            tt::valueToTT(score, qply),
+            tt::valueToTT(score, ply),
             tt::Bound::LOWERBOUND,
             move
         );
@@ -424,7 +427,7 @@ if (!stats.stop)
     stats.table.store(
         key,
         qDepth,
-        tt::valueToTT(alpha, qply),
+        tt::valueToTT(alpha, ply),
         bound,
         chess::Move::NO_MOVE
     );
@@ -649,6 +652,8 @@ static bool tryRootTablebase(
     int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount)
 {
    ++stats.nodes;
+   if (ply >= MAX_PLY - 1)
+    return evaluateForSideToMove(board);
 
 if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 {
@@ -714,24 +719,53 @@ if (entry != nullptr)
     }
 }
 
-    if (depth <= 0)return quiescence(board, alpha, beta, stats,ply);
-    // REF
-    bool isPV = (beta - alpha > 1);
-    int staticEval = evaluateForSideToMove(board);
-    bool improving = false;
+//     if (depth <= 0)return quiescence(board, alpha, beta, stats,ply);
+//     // REF
+//     bool isPV = (beta - alpha > 1);
+//     int staticEval = evaluateForSideToMove(board);
+//     bool improving = false;
 
-if (!board.inCheck())
+// if (!board.inCheck())
+// {
+//     stats.staticEvalStack[ply] = staticEval;
+
+//     // Compare with the same side's evaluation two plies earlier.
+//     // We start at ply 3 because the root itself is not searched through
+//     // negamax in the current implementation.
+//     if (ply >= 3)
+//     {
+//         improving =
+//             staticEval >= stats.staticEvalStack[ply - 2];
+//     }
+// }
+if (depth <= 0)
+    return quiescence(board, alpha, beta, stats, 0,ply);
+
+// REF
+const bool inCheck = board.inCheck();
+
+bool isPV = (beta - alpha > 1);
+
+constexpr int EVAL_NONE = INF;
+
+int staticEval =
+    inCheck
+        ? 0
+        : evaluateForSideToMove(board);
+
+stats.staticEvalStack[ply] =
+    inCheck ? EVAL_NONE : staticEval;
+
+bool improving = false;
+
+if (!inCheck && ply >= 3)
 {
-    stats.staticEvalStack[ply] = staticEval;
+    const int prev =
+        stats.staticEvalStack[ply - 2];
 
-    // Compare with the same side's evaluation two plies earlier.
-    // We start at ply 3 because the root itself is not searched through
-    // negamax in the current implementation.
-    if (ply >= 3)
-    {
-        improving =
-            staticEval >= stats.staticEvalStack[ply - 2];
-    }
+    improving =
+        (prev != EVAL_NONE) &&
+        staticEval >= prev;
 }
     // constexpr int RFP_MARGIN_PER_DEPTH = 120;
     // int rfpMargin = RFP_MARGIN_PER_DEPTH * depth;
@@ -761,7 +795,7 @@ if (!isPV &&
     depth <= 3 &&
     staticEval + 200 * depth < alpha)
     {
-        return quiescence(board, alpha, beta, stats,ply);
+        return quiescence(board, alpha, beta, stats,0,ply);
     }  
     // IIR
     // Internal Iterative Reduction
@@ -929,9 +963,23 @@ if (prevMove != chess::Move::NO_MOVE)
     constexpr int MAX_QUIETS = 256;
     chess::Move quietsTried[MAX_QUIETS];
     int quietCount = 0;
-    bool firstMove=true;
-    bool inCheck = board.inCheck();
-    int moveIndex=0;
+    // bool firstMove=true;
+    // bool inCheck = board.inCheck();
+    // int moveIndex=0;
+    bool firstMove = true;
+// bool inCheck = board.inCheck();
+int moveIndex = 0;
+
+chess::Color us = board.sideToMove();
+
+chess::Bitboard nonPawnPieces =
+    board.us(us) &
+    ~board.pieces(chess::PieceType::PAWN, us) &
+    ~board.pieces(chess::PieceType::KING, us);
+
+bool hasNonPawnMaterial = nonPawnPieces.count() > 0;
+
+constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
     for (const auto& move : moves)
 {
     bool isCapture =
@@ -957,12 +1005,23 @@ if (prevMove != chess::Move::NO_MOVE)
                     [move.from().index()]
                     [move.to().index()];
     // Step 5: Main-search SEE pruning
+// if (!isPV &&
+//     !inCheck &&
+//     depth <= 6 &&
+//     isCapture &&
+//     !isPromotion &&
+//     search::see::evaluate(board, move) < 0)
+// {
+//     continue;
+// }
 if (!isPV &&
     !inCheck &&
+    hasNonPawnMaterial &&
+    bestScore > -MATE_BOUND &&
     depth <= 6 &&
     isCapture &&
     !isPromotion &&
-    search::see::evaluate(board, move) < 0)
+    search::see::evaluate(board, move) < -90 * depth)
 {
     continue;
 }
@@ -1154,21 +1213,27 @@ if (h > 30000)
 
     ++moveIndex;
 }
-
-    tt::Bound bound = tt::Bound::EXACT;
+tt::Bound bound = tt::Bound::EXACT;
 
 if (bestScore <= alphaOriginal)
     bound = tt::Bound::UPPERBOUND;
 else if (bestScore >= beta)
     bound = tt::Bound::LOWERBOUND;
+
 if (stats.stop)
     return 0;
+
+chess::Move storedMove =
+    (bestScore > alphaOriginal)
+        ? bestMove
+        : chess::Move::NO_MOVE;
+
 stats.table.store(
     key,
     depth,
     tt::valueToTT(bestScore, ply),
     bound,
-    bestMove
+    storedMove
 );
 
 return bestScore;
