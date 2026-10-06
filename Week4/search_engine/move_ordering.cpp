@@ -6,12 +6,39 @@ namespace search::ordering
 {
     namespace
     {
+        int pieceIndexForMove(
+    const chess::Board& board,
+    const chess::Move& move)
+{
+    const chess::Piece piece =
+        board.at(move.from());
+
+    const int type =
+        static_cast<int>(
+            piece.type().internal()
+        );
+
+    if (piece.color() == chess::Color::NONE ||
+        type < 0 ||
+        type >= 6)
+    {
+        return -1;
+    }
+
+    return
+        (piece.color() == chess::Color::WHITE ? 0 : 6)
+        + type;
+}
         int moveScore(
-            const chess::Board& board,
-            const chess::Move& move,
-            const chess::Move killers[2],
-            const chess::Move& counterMove,
-            const int history[64][64],const chess::Move& ttMove)
+    const chess::Board& board,
+    const chess::Move& move,
+    const chess::Move killers[2],
+    const chess::Move& counterMove,
+    const int history[64][64],
+    const int continuationHistory[12][64][12][64],
+    int previousPiece,
+    int previousTo,
+    const chess::Move& ttMove)
         {
             bool isCapture =
                 move.typeOf() == chess::Move::ENPASSANT ||
@@ -85,11 +112,40 @@ namespace search::ordering
 //     ];
 
 // return historyScore + continuationScore;
-return history[
-    move.from().index()
-][
-    move.to().index()
-];
+// return history[
+//     move.from().index()
+// ][
+//     move.to().index()
+// ];
+int historyScore =
+    history[
+        move.from().index()
+    ][
+        move.to().index()
+    ];
+
+int continuationScore = 0;
+
+if (previousPiece >= 0 &&
+    previousPiece < 12 &&
+    previousTo >= 0 &&
+    previousTo < 64)
+{
+    const int currentPiece =
+        pieceIndexForMove(board, move);
+
+    if (currentPiece >= 0)
+    {
+        continuationScore =
+            continuationHistory
+                [previousPiece]
+                [previousTo]
+                [currentPiece]
+                [move.to().index()];
+    }
+}
+
+return historyScore + continuationScore / 2;
         }
     }
 
@@ -130,7 +186,9 @@ return history[
     const chess::Move killers[2],
     const chess::Move& counterMove,
     const int history[64][64],
-    // const int continuationHistory[64][64][64],
+    const int continuationHistory[12][64][12][64],
+    int previousPiece,
+    int previousTo,
     const chess::Move& ttMove)
 {
     const int n = static_cast<int>(moves.size());
@@ -141,8 +199,16 @@ return history[
     for (int i = 0; i < n; ++i)
     {
         scores[i] = moveScore(
-            board, moves[i], killers, counterMove, history, ttMove
-        );
+    board,
+    moves[i],
+    killers,
+    counterMove,
+    history,
+    continuationHistory,
+    previousPiece,
+    previousTo,
+    ttMove
+);
         order[i] = i;
     }
 
@@ -179,6 +245,7 @@ return history[
     int depth,
     int moveIndex,
     bool isPV,
+    bool improving,
     bool isCapture,
     bool isPromotion,
     bool inCheck,
@@ -207,7 +274,8 @@ return history[
 
     if (isPV && reduction > 0)
         --reduction;
-
+    if (!improving)
+    ++reduction;
     if (isKillerOrCounter)
     {
         if (reduction > 0)

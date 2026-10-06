@@ -12,7 +12,8 @@
 #include <string>
 #include <thread>
 #include <vector>
-
+#include <memory>
+#include <cstring>
 // ============================================================
 // NeuralGambit UCI Frontend (advanced)
 //
@@ -382,7 +383,12 @@ namespace
 int main()
 {
     chess::Board board;
-    search::SearchStats stats;
+
+    auto statsPtr =
+        std::make_unique<search::SearchStats>();
+
+    search::SearchStats& stats =
+        *statsPtr;
     const bool tbLoaded =
     tb_init("tablebases");
 
@@ -513,7 +519,18 @@ else
                         }
                     }
                 }
+                std::memset(
+    stats.continuationHistory,
+    0,
+    sizeof(stats.continuationHistory)
+);
 
+std::fill(
+    std::begin(stats.moveStack),
+    std::end(stats.moveStack),
+    // search::MoveInfo{}
+    search::SearchStats::MoveInfo{}
+);
                 for (int ply = 0; ply < search::MAX_PLY; ++ply)
                 {
                     stats.killers[ply][0] = chess::Move::NO_MOVE;

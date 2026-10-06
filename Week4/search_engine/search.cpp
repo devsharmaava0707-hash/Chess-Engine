@@ -240,6 +240,26 @@ int evaluateForSideToMove(chess::Board& board)
     //     : -score;
     return eval::evaluate(board);
 }
+static inline int pieceIndexForMoveSearch(
+    const chess::Board& board,
+    const chess::Move& move)
+{
+    const chess::Piece piece = board.at(move.from());
+
+    const int type =
+        static_cast<int>(piece.type().internal());
+
+    if (piece.color() == chess::Color::NONE ||
+        type < 0 ||
+        type >= 6)
+    {
+        return -1;
+    }
+
+    return
+        (piece.color() == chess::Color::WHITE ? 0 : 6)
+        + type;
+}
 int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly){
     const int ply = rootPly + qply;
     ++stats.nodes;
@@ -876,7 +896,8 @@ if (!isPV &&
     // if (verifyScore >= beta)
     //         return beta;
     //     }
-    // }
+    // }    stats.moveStack[ply + 1] = {};
+    stats.moveStack[ply + 1] = {};
             board.makeNullMove();
 
         int nullScore = -negamax(
@@ -901,7 +922,7 @@ if (!isPV &&
 
             if (depth < NMP_VERIFICATION_MIN_DEPTH)
                 return beta;
-
+            stats.moveStack[ply + 1] = {};
             int verifyScore = negamax(
                 board,
                 depth - R,
@@ -948,27 +969,37 @@ if (prevMove != chess::Move::NO_MOVE)
     chess::Move ttMove = chess::Move::NO_MOVE;
 
     if (entry != nullptr) ttMove = entry->bestMove;
+    int previousPiece = -1;
+int previousTo = -1;
+
+if (stats.moveStack[ply].valid)
+{
+    previousPiece =
+        stats.moveStack[ply].piece;
+
+    previousTo =
+        stats.moveStack[ply].to;
+}
     search::ordering::orderMoves(
-        board,
-        moves,
-        stats.killers[safePly],
-        counterMove,
-        stats.history[side],
-        // stats.continuationHistory,
-        ttMove
-    );
+    board,
+    moves,
+    stats.killers[safePly],
+    counterMove,
+    stats.history[side],
+    stats.continuationHistory,
+    previousPiece,
+    previousTo,
+    ttMove
+);
 
     int bestScore = -INF;
     chess::Move bestMove = chess::Move::NO_MOVE;
     constexpr int MAX_QUIETS = 256;
     chess::Move quietsTried[MAX_QUIETS];
     int quietCount = 0;
-    // bool firstMove=true;
-    // bool inCheck = board.inCheck();
-    // int moveIndex=0;
     bool firstMove = true;
-// bool inCheck = board.inCheck();
 int moveIndex = 0;
+int quietsSearched = 0;
 
 chess::Color us = board.sideToMove();
 
@@ -980,6 +1011,7 @@ chess::Bitboard nonPawnPieces =
 bool hasNonPawnMaterial = nonPawnPieces.count() > 0;
 
 constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
+constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
     for (const auto& move : moves)
 {
     bool isCapture =
@@ -1004,6 +1036,8 @@ constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
         stats.history[side]
                     [move.from().index()]
                     [move.to().index()];
+        const bool quietGivesCheck =
+        board.givesCheck(move) != chess::CheckType::NO_CHECK;
     // Step 5: Main-search SEE pruning
 // if (!isPV &&
 //     !inCheck &&
@@ -1024,6 +1058,46 @@ if (!isPV &&
     search::see::evaluate(board, move) < -90 * depth)
 {
     continue;
+}
+constexpr int FUTILITY_MARGIN_PER_DEPTH = 120;
+
+if (!isPV &&
+    !inCheck &&
+    hasNonPawnMaterial &&
+    depth <= 3 &&
+    isQuiet &&
+    !isKillerOrCounter &&
+    !quietGivesCheck &&
+    bestScore > -MATE_BOUND &&
+    staticEval + FUTILITY_MARGIN_PER_DEPTH * depth <= alpha)
+{
+    continue;
+}
+if (!isPV &&
+    !inCheck &&
+    hasNonPawnMaterial &&
+    isQuiet &&
+    !isKillerOrCounter &&
+    !quietGivesCheck &&
+    bestScore > -MATE_BOUND)
+{
+    if (depth >= 1 &&
+        depth <= 3 &&
+        quietsSearched >= LMP_MOVE_LIMIT[depth])
+    {
+        continue;
+    }
+}
+const int currentPiece =
+    pieceIndexForMoveSearch(board, move);
+
+stats.moveStack[ply + 1] = {};
+
+if (currentPiece >= 0)
+{
+    stats.moveStack[ply + 1].piece = currentPiece;
+    stats.moveStack[ply + 1].to = move.to().index();
+    stats.moveStack[ply + 1].valid = true;
 }
 
 board.makeMove(move);
@@ -1062,6 +1136,7 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
                 searchDepth,
                 moveIndex,
                 isPV,
+                improving,
                 isCapture,
                 isPromotion,
                 inCheck,
@@ -1132,6 +1207,7 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
 // }
  // above this is without lmr for evaluation of our engine 
     board.unmakeMove(move);
+    if (isQuiet) ++quietsSearched;
 
     if (stats.stop)
         break;
@@ -1181,15 +1257,27 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
         move;
 }
 
+// int& h =
+//     stats.history[side]
+//                 [move.from().index()]
+//                 [move.to().index()];
+
+// h += depth * depth;
+
+// if (h > 30000)
+//     h = 30000;
 int& h =
     stats.history[side]
                 [move.from().index()]
                 [move.to().index()];
 
-h += depth * depth;
+constexpr int HISTORY_MAX = 30000;
+const int bonus = depth * depth * 2;
 
-if (h > 30000)
-    h = 30000;
+h += bonus - h * bonus / HISTORY_MAX;
+
+if (h > HISTORY_MAX)
+    h = HISTORY_MAX;
 
             for (int i = 0; i < quietCount; ++i)
             {
@@ -1197,14 +1285,72 @@ if (h > 30000)
                     quietsTried[i];
 
                 int& hq =
-                    stats.history[side]
-                                [qm.from().index()]
-                                [qm.to().index()];
+    stats.history[side]
+                [qm.from().index()]
+                [qm.to().index()];
 
-                hq -= depth * depth / 2;
+constexpr int HISTORY_MAX = 30000;
+const int malus = depth * depth;
 
-                if (hq < -30000)
-                    hq = -30000;
+hq += -malus - hq * malus / HISTORY_MAX;
+
+if (hq < -HISTORY_MAX)
+    hq = -HISTORY_MAX;
+            }
+                        // Continuation history update.
+            if (stats.moveStack[ply].valid &&
+                stats.moveStack[ply + 1].valid)
+            {
+                const auto& prev = stats.moveStack[ply];
+                const auto& cur  = stats.moveStack[ply + 1];
+
+                constexpr int CONT_HISTORY_MAX = 30000;
+
+                // Reward the quiet move that caused the beta cutoff.
+                int& ch =
+                    stats.continuationHistory
+                        [prev.piece]
+                        [prev.to]
+                        [cur.piece]
+                        [cur.to];
+
+                const int bonus =
+                    std::min(depth * depth * 2, 2000);
+
+                ch += bonus -
+                      ch * bonus / CONT_HISTORY_MAX;
+
+                if (ch > CONT_HISTORY_MAX)
+                    ch = CONT_HISTORY_MAX;
+
+                // Penalize earlier quiet moves that failed to cut off.
+                for (int i = 0; i < quietCount; ++i)
+                {
+                    const chess::Move& qm =
+                        quietsTried[i];
+
+                    const int qmPiece =
+                        pieceIndexForMoveSearch(board, qm);
+
+                    if (qmPiece < 0)
+                        continue;
+
+                    int& qch =
+                        stats.continuationHistory
+                            [prev.piece]
+                            [prev.to]
+                            [qmPiece]
+                            [qm.to().index()];
+
+                    const int malus =
+                        std::min(depth * depth, 1000);
+
+                    qch += -malus -
+                           qch * malus / CONT_HISTORY_MAX;
+
+                    if (qch < -CONT_HISTORY_MAX)
+                        qch = -CONT_HISTORY_MAX;
+                }
             }
         }
 
@@ -1409,15 +1555,17 @@ stats.extensionCap = maxDepth * 2;   // NEW
         //         }
         //     }
         // }
-        search::ordering::orderMoves(
+       search::ordering::orderMoves(
     board,
     moves,
     stats.killers[0],
     chess::Move::NO_MOVE,
-    stats.history[                              // risky
+    stats.history[
         static_cast<int>(board.sideToMove())
     ],
-    // stats.continuationHistory,
+    stats.continuationHistory,
+    -1,
+    -1,
     ttMove
 );
 
@@ -1488,7 +1636,19 @@ if (depth > 1)
     if (stats.stop)
         break;
 
-    board.makeMove(move);
+    const int currentPiece =
+    pieceIndexForMoveSearch(board, move);
+
+stats.moveStack[1] = {};
+
+if (currentPiece >= 0)
+{
+    stats.moveStack[1].piece = currentPiece;
+    stats.moveStack[1].to = move.to().index();
+    stats.moveStack[1].valid = true;
+}
+
+board.makeMove(move);
     
     int score;
 

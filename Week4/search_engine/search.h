@@ -1,5 +1,7 @@
 #pragma once
 #include <chrono>
+#include<algorithm>
+#include<cstring>
 #include <cstdint>
 #include "../chess.hpp"
 #include "tt.h"
@@ -47,6 +49,13 @@ namespace search
         chess::Move killers[MAX_PLY][2]{};
         int history[2][64][64]{};
         // int continuationHistory[64][64][64]{};
+        int continuationHistory[12][64][12][64]{};
+        struct MoveInfo{
+    int piece = -1;
+    int to = -1;
+    bool valid = false;};
+
+MoveInfo moveStack[MAX_PLY]{};
         chess::Move counterMoves[2][64][64]{};
         tt::Table table{16};
         uint64_t ttHits = 0;
@@ -88,6 +97,67 @@ namespace search
         // extras
         int staticEvalStack[MAX_PLY]{};
         int extensionCap = 0;
+        void resetForNewGame()
+{
+    nodes = 0;
+
+    std::fill(
+        &killers[0][0],
+        &killers[0][0] + MAX_PLY * 2,
+        chess::Move::NO_MOVE
+    );
+
+    std::memset(
+        history,
+        0,
+        sizeof(history)
+    );
+
+    std::fill(
+        &counterMoves[0][0][0],
+        &counterMoves[0][0][0] + 2 * 64 * 64,
+        chess::Move::NO_MOVE
+    );
+
+    std::memset(
+        continuationHistory,
+        0,
+        sizeof(continuationHistory)
+    );
+
+    std::memset(
+        staticEvalStack,
+        0,
+        sizeof(staticEvalStack)
+    );
+
+    std::fill(
+        std::begin(moveStack),
+        std::end(moveStack),
+        MoveInfo{}
+    );
+
+    table.clear();
+
+    ttHits = 0;
+    ttCutoffs = 0;
+    nullMoveCutoffs = 0;
+    nullMoveAttempts = 0;
+    rootTTHits = 0;
+    aspirationFailLow = 0;
+    aspirationFailHigh = 0;
+
+    stop = false;
+    stable = true;
+    previousScore = 0;
+    previousBestMove = chess::Move::NO_MOVE;
+
+    lmrReductions = 0;
+    lmrResearches = 0;
+    iirReductions = 0;
+
+    completedDepth = 0;
+}
     };
     int64_t elapsedMs(const SearchStats& stats);
     bool timeUp(const SearchStats& stats);
