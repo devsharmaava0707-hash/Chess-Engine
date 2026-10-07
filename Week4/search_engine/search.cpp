@@ -731,6 +731,8 @@ if (ply > 0)
     int alphaOriginal = alpha;
     uint64_t key = board.hash();
     tt::Entry* entry = stats.table.probe(key);
+    const bool isPV = (beta - alpha > 1);
+
 
 if (entry != nullptr)
 {
@@ -742,24 +744,17 @@ if (entry != nullptr)
             tt::valueFromTT(entry->score, ply);
 
         if (entry->bound == tt::Bound::EXACT)
-        {
-            ++stats.ttCutoffs;
             return ttScore;
-        }
 
-        if (entry->bound == tt::Bound::LOWERBOUND &&
+        if (!isPV &&
+            entry->bound == tt::Bound::LOWERBOUND &&
             ttScore >= beta)
-        {
-            ++stats.ttCutoffs;
             return ttScore;
-        }
 
-        if (entry->bound == tt::Bound::UPPERBOUND &&
+        if (!isPV &&
+            entry->bound == tt::Bound::UPPERBOUND &&
             ttScore <= alpha)
-        {
-            ++stats.ttCutoffs;
             return ttScore;
-        }
     }
 }
 
@@ -788,7 +783,7 @@ if (depth <= 0)
 // REF
 const bool inCheck = board.inCheck();
 
-bool isPV = (beta - alpha > 1);
+
 
 constexpr int EVAL_NONE = INF;
 
@@ -859,7 +854,8 @@ if (!isPV &&
         depth >= 4 &&
         (entry == nullptr || entry->bestMove == chess::Move::NO_MOVE))
     {
-        searchDepth = isPV ? depth - 1 : depth - 2;
+        // searchDepth = isPV ? depth - 1 : depth - 2;
+        searchDepth = depth - 1;
         ++stats.iirReductions;   // add this counter to SearchStats, like lmrReductions
     } 
     if (!isPV &&
@@ -1478,14 +1474,18 @@ else if (bestScore >= beta)
 if (stats.stop)
     return 0;
 
+// chess::Move storedMove =
+//     (bestScore > alphaOriginal)
+//         ? bestMove
+//         : chess::Move::NO_MOVE;
 chess::Move storedMove =
     (bestScore > alphaOriginal)
         ? bestMove
-        : chess::Move::NO_MOVE;
+        : ttMove;
 
 stats.table.store(
     key,
-    depth,
+    searchDepth,
     tt::valueToTT(bestScore, ply),
     bound,
     storedMove
@@ -1571,12 +1571,22 @@ stats.maxNodes =
         : 0;
 stats.table.newSearch();
 
-chess::Move bookMove =
-    stats.book.probe(board);
+// chess::Move bookMove =
+//     stats.book.probe(board);
 
-if (bookMove != chess::Move::NO_MOVE)
+// if (bookMove != chess::Move::NO_MOVE)
+// {
+//     return bookMove;
+// }
+if (!limits.infinite)
 {
-    return bookMove;
+    chess::Move bookMove =
+        stats.book.probe(board);
+
+    if (bookMove != chess::Move::NO_MOVE)
+    {
+        return bookMove;
+    }
 }
 // fathom integration
 chess::Move tbMove =

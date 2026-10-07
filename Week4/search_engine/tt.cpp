@@ -139,31 +139,36 @@ int valueFromTT(int score, int ply)
                   Bound bound,
                   chess::Move bestMove)
 {
-    Entry& entry =
-        entries[key & (entries.size()-1)];
+    Entry& e = entries[key & (entries.size() - 1)];
 
-    // Replace if:
-    // 1. slot is empty
-    // 2. same position is already there
-    // 3. new search is at least as deep
-    // if (entry.depth > depth &&
-    //     entry.key != key)
-    // {
-    //     return;
-    // }
-    if (entry.key != 0 &&
-entry.key != key &&
-entry.generation == currentGeneration &&
-entry.depth > depth)
-{
-    return;
-}
+    const bool same = (e.key == key);
 
-    entry.key = key;
-    entry.depth = static_cast<int8_t>(depth);
-    entry.score = static_cast<int16_t>(score);
-    entry.bound = bound;
-    entry.bestMove = bestMove;
-    entry.generation = currentGeneration;
+    if (!same &&
+        e.key &&
+        e.generation == currentGeneration &&
+        e.depth > depth)
+    {
+        return;
+    }
+
+    if (same &&
+        e.generation == currentGeneration &&
+        depth < e.depth &&
+        bound != Bound::EXACT)
+    {
+        if (e.bestMove == chess::Move::NO_MOVE)
+            e.bestMove = bestMove;
+
+        return;
+    }
+
+    if (bestMove != chess::Move::NO_MOVE || !same)
+        e.bestMove = bestMove;
+
+    e.key = key;
+    e.score = static_cast<int16_t>(score);
+    e.depth = static_cast<int8_t>(depth);
+    e.bound = bound;
+    e.generation = currentGeneration;
 }
 }
