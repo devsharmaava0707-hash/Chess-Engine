@@ -304,23 +304,25 @@ if (stats.stop)
     return 0;
 if (ply > stats.seldepth)
     stats.seldepth = ply;
-if (board.isRepetition(1))
-    return 0;
+// if (board.isRepetition(1))
+//     return 0;
 
-if (board.isHalfMoveDraw())
-    return 0;
+// if (board.isHalfMoveDraw())
+//     return 0;
 
-if (board.isInsufficientMaterial())
-    return 0;
+// if (board.isInsufficientMaterial())
+//     return 0;
     // Safety limit for the tactical search.
     if (qply >= MAX_QPLY)
         return evaluateForSideToMove(board);
 // const int qDepth = -qply;
-const int qDepth = -1 - qply;
+// const int qDepth = -1 - qply;
+const int qDepth = 0;
 uint64_t key = board.hash();
 tt::Entry* entry = stats.table.probe(key);
 
 int alphaOriginal = alpha;
+int bestScore = -INF;
 
 if (entry != nullptr &&
     entry->depth >= qDepth)
@@ -342,6 +344,17 @@ if (entry != nullptr &&
 
 
     const bool inCheck = board.inCheck();
+    if (inCheck)
+{
+    if (board.isRepetition(1))
+        return 0;
+
+    if (board.isInsufficientMaterial())
+        return 0;
+}
+
+if (board.isHalfMoveDraw())
+    return 0;
 
     /*
         If we are not in check, we can stand pat:
@@ -350,6 +363,7 @@ if (entry != nullptr &&
     if (!inCheck)
 {
     int standPat = evaluateForSideToMove(board);
+    bestScore = standPat;
 
     // if (standPat >= beta)
     //     return beta;
@@ -438,7 +452,7 @@ if (entry != nullptr &&
     }
     // if (score >= beta)
     //     return beta;
-
+    bestScore = std::max(bestScore, score);
     if (score >= beta)
 {
     if (!stats.stop)
@@ -461,9 +475,9 @@ if (entry != nullptr &&
     // return alpha;
     tt::Bound bound = tt::Bound::EXACT;
 
-if (alpha <= alphaOriginal)
+if (bestScore <= alphaOriginal)
     bound = tt::Bound::UPPERBOUND;
-else if (alpha >= beta)
+else if (bestScore >= beta)
     bound = tt::Bound::LOWERBOUND;
 
 if (!stats.stop)
@@ -471,13 +485,13 @@ if (!stats.stop)
     stats.table.store(
         key,
         qDepth,
-        tt::valueToTT(alpha, ply),
+        tt::valueToTT(bestScore, ply),
         bound,
         chess::Move::NO_MOVE
     );
 }
 
-return alpha;
+return bestScore;
 }
 
 
@@ -723,10 +737,30 @@ if (ply > 0)
         return 0;
 
     if (board.isHalfMoveDraw())
+    {
+        // A checkmate takes precedence over the 50/75/100-move draw.
+        if (board.inCheck())
+        {
+            chess::Movelist drawCheckMoves;
+            chess::movegen::legalmoves(drawCheckMoves, board);
+
+            if (drawCheckMoves.empty())
+                return -MATE_SCORE + ply;
+        }
+
         return 0;
+    }
 
     if (board.isInsufficientMaterial())
         return 0;
+}
+if (ply > 0)
+{
+    alpha = std::max(alpha, -MATE_SCORE + ply);
+    beta = std::min(beta, MATE_SCORE - ply - 1);
+
+    if (alpha >= beta)
+        return alpha;
 }
     int alphaOriginal = alpha;
     uint64_t key = board.hash();
@@ -797,7 +831,7 @@ stats.staticEvalStack[ply] =
 
 bool improving = false;
 
-if (!inCheck && ply >= 3)
+if (!inCheck && ply >= 2)
 {
     const int prev =
         stats.staticEvalStack[ply - 2];
@@ -917,7 +951,7 @@ if (!isPV &&
     //         return beta;
     //     }
     // }    stats.moveStack[ply + 1] = {};
-    stats.moveStack[ply + 1] = {};
+    stats.moveStack[ply + 1].valid = false;
             board.makeNullMove();
 
         int nullScore = -negamax(
@@ -941,15 +975,15 @@ if (!isPV &&
             ++stats.nullMoveCutoffs;
 
             if (depth < NMP_VERIFICATION_MIN_DEPTH)
-                return beta;
-            stats.moveStack[ply + 1] = {};
+                return nullScore;
+            stats.moveStack[ply + 1].valid = false;
             int verifyScore = negamax(
                 board,
                 depth - R,
                 beta - 1,
                 beta,
                 stats,
-                ply + 1,
+                ply ,
                 prevMove,
                 false,extCount
             );
@@ -958,7 +992,7 @@ if (!isPV &&
                 return 0;
 
             if (verifyScore >= beta)
-                return beta;
+                return verifyScore;
         }
     }
 }
@@ -1015,7 +1049,7 @@ if (stats.moveStack[ply].valid)
 
     int bestScore = -INF;
     chess::Move bestMove = chess::Move::NO_MOVE;
-    constexpr int MAX_QUIETS = 256;
+    constexpr int MAX_QUIETS = 64;
     chess::Move quietsTried[MAX_QUIETS];
     int quietCount = 0;
     struct TriedCapture
@@ -1044,6 +1078,7 @@ constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
 constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
     for (const auto& move : moves)
 {
+    ++moveIndex;
     bool isCapture =
         move.typeOf() == chess::Move::ENPASSANT ||
         (move.typeOf() != chess::Move::CASTLING &&
@@ -1121,7 +1156,7 @@ if (!isPV &&
 const int currentPiece =
     pieceIndexForMoveSearch(board, move);
 
-stats.moveStack[ply + 1] = {};
+stats.moveStack[ply + 1].valid = false;
 
 if (currentPiece >= 0)
 {
@@ -1149,7 +1184,7 @@ board.makeMove(move);
 // extension add
     int extension = 0;
 
-if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
+if (givesCheck && depth >= 2 && ply < stats.extensionCap)
     extension = 1;
 // // above is extension add
     int reduction = 0;
@@ -1189,32 +1224,55 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
             if (reduction > 0)
         ++stats.lmrReductions;
         score = -negamax(
+    board,
+    searchDepth - 1 - reduction + extension,
+    -alpha - 1,
+    -alpha,
+    stats,
+    ply + 1,
+    move,
+    true,
+    extCount + extension
+);
+
+if (score > alpha)
+{
+    // If the move was reduced, first verify it at full depth
+    // with a null window.
+    if (reduction > 0)
+    {
+        ++stats.lmrResearches;
+
+        score = -negamax(
             board,
-            searchDepth - 1 -reduction +extension, // extension add
+            searchDepth - 1 + extension,
             -alpha - 1,
             -alpha,
             stats,
             ply + 1,
             move,
-            true,extCount + extension
+            true,
+            extCount + extension
         );
+    }
 
-        if (score > alpha &&
-            (reduction > 0 || isPV))
-        {
-            if (reduction > 0)
-    ++stats.lmrResearches;
-            score = -negamax(
-                board,
-                searchDepth - 1+extension, // extension add
-                -beta,
-                -alpha,
-                stats,
-                ply + 1,
-                move,
-                true,extCount + extension
-            );
-        }
+    // Only do the expensive full-window search if the
+    // full-depth result actually lies inside the window.
+    if (score > alpha && score < beta)
+    {
+        score = -negamax(
+            board,
+            searchDepth - 1 + extension,
+            -beta,
+            -alpha,
+            stats,
+            ply + 1,
+            move,
+            true,
+            extCount + extension
+        );
+    }
+}
     }
     // lmr implementation above 
 
@@ -1289,11 +1347,14 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
             int safePly =
                 std::min(ply, MAX_PLY - 1);
 
-            stats.killers[safePly][1] =
-                stats.killers[safePly][0];
+            if (stats.killers[safePly][0] != move)
+{
+    stats.killers[safePly][1] =
+        stats.killers[safePly][0];
 
-            stats.killers[safePly][0] =
-                move;
+    stats.killers[safePly][0] =
+        move;
+}
             if (prevMove != chess::Move::NO_MOVE)
 {
     stats.counterMoves[side]
@@ -1462,7 +1523,7 @@ if (hq < -HISTORY_MAX)
         break;
     }
 
-    ++moveIndex;
+    
 }
 tt::Bound bound = tt::Bound::EXACT;
 
@@ -1635,9 +1696,10 @@ if (rootMoves.empty())
 chess::Move bestMove = rootMoves[0];
 
 int bestScore = -INF;
-stats.extensionCap = maxDepth * 2;   // NEW
+
     for (int depth = 1; depth <= maxDepth; ++depth)
     {
+        stats.extensionCap = maxDepth * 2;
         const int64_t iterationStartMs =elapsedMs(stats);
         const uint64_t iterationStartNodes =stats.nodes;
         // Generate fresh root move list for this iteration.
@@ -1700,7 +1762,10 @@ stats.extensionCap = maxDepth * 2;   // NEW
         // }
         int alpha = -INF;
 int beta = INF;
-int delta = ASPIRATION_WINDOW; // risky entire till beta=bestcore
+int delta =
+    (depth >= 5)
+        ? 20
+        : ASPIRATION_WINDOW;
 if (depth > 1)
 {
     
@@ -1863,27 +1928,71 @@ board.makeMove(move);
 //     continue;
 // }
             if (iterationBestScore <= alpha)
+{
+    ++stats.aspirationFailLow;
+
+    delta += delta / 2;
+
+    if (delta > 400)
+    {
+        alpha = -INF;
+        beta = INF;
+    }
+    else
+    {
+        beta  = (alpha + beta) / 2;
+        alpha = std::max(iterationBestScore - delta, -INF);
+    }
+
+    continue;
+}
+
+          if (iterationBestScore >= beta)
+{
+    ++stats.aspirationFailHigh;
+
+    // Put the new best root move first for the re-search.
+    if (iterationBestMove != chess::Move::NO_MOVE)
+    {
+        for (int i = 0; i < static_cast<int>(moves.size()); ++i)
+        {
+            if (moves[i] == iterationBestMove)
             {
-                ++stats.aspirationFailLow;
-
-                beta  = (alpha + beta) / 2;
-                alpha = std::max(iterationBestScore - delta, -INF);
-                delta += delta / 2;
-                continue;
+                if (i != 0)
+                    std::swap(moves[0], moves[i]);
+                break;
             }
+        }
+    }
 
-            if (iterationBestScore >= beta)
-            {
-                ++stats.aspirationFailHigh;
+    delta += delta / 2;
 
-                beta = std::min(iterationBestScore + delta, INF);
-                delta += delta / 2;
-                continue;
-            }
+    if (delta > 400)
+    {
+        alpha = -INF;
+        beta  = INF;
+    }
+    else
+    {
+        beta = std::min(iterationBestScore + delta, INF);
+    }
+
+    continue;
+}
             // Score is inside the aspiration window.
             break;
         }
-        if (stats.stop) break;
+        // if (stats.stop) break;
+       if (stats.stop)
+{
+    if (iterationBestMove != chess::Move::NO_MOVE &&
+        iterationBestScore > alpha)
+    {
+        bestMove  = iterationBestMove;
+        bestScore = iterationBestScore;
+    }
+    break;
+}
     
         // aspiration search finishes successfully
 
