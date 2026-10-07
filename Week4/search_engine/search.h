@@ -50,6 +50,7 @@ namespace search
         int history[2][64][64]{};
         // int continuationHistory[64][64][64]{};
         int continuationHistory[12][64][12][64]{};
+        int captureHistory[12][6][64]{};
         struct MoveInfo{
     int piece = -1;
     int to = -1;
@@ -124,6 +125,12 @@ MoveInfo moveStack[MAX_PLY]{};
         0,
         sizeof(continuationHistory)
     );
+
+    std::memset(
+    captureHistory,
+    0,
+    sizeof(captureHistory)
+);
 
     std::memset(
         staticEvalStack,

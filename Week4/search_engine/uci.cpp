@@ -253,6 +253,45 @@ namespace
 
         return true;
     }
+    // ========================================================
+    // PERFT
+    // ========================================================
+
+    std::uint64_t perft(
+        chess::Board& board,
+        int depth)
+    {
+        if (depth == 0)
+            return 1;
+
+        chess::Movelist moves;
+
+        chess::movegen::legalmoves(
+            moves,
+            board
+        );
+
+        if (depth == 1)
+            return static_cast<std::uint64_t>(
+                moves.size()
+            );
+
+        std::uint64_t nodes = 0;
+
+        for (const auto& move : moves)
+        {
+            board.makeMove(move);
+
+            nodes += perft(
+                board,
+                depth - 1
+            );
+
+            board.unmakeMove(move);
+        }
+
+        return nodes;
+    }
 
     // ========================================================
     // position command
@@ -489,53 +528,8 @@ else
             {
                 board = chess::Board();
 
-                stats.table.clear();
-                stats.nodes = 0;
-                stats.seldepth = 0;
-                stats.ttHits = 0;
-                stats.ttCutoffs = 0;
-                stats.nullMoveCutoffs = 0;
-                stats.nullMoveAttempts = 0;
-                stats.rootTTHits = 0;
-                stats.aspirationFailLow = 0;
-                stats.aspirationFailHigh = 0;
-                stats.lmrReductions = 0;
-                stats.lmrResearches = 0;
-                stats.stable = true;
-                stats.previousScore = 0;
-                stats.previousBestMove = chess::Move::NO_MOVE;
-                stats.completedDepth = 0;
-                stats.stop = false;
+                stats.resetForNewGame();
 
-                for (int side = 0; side < 2; ++side)
-                {
-                    for (int from = 0; from < 64; ++from)
-                    {
-                        for (int to = 0; to < 64; ++to)
-                        {
-                            stats.history[side][from][to] = 0;
-                            stats.counterMoves[side][from][to] =
-                                chess::Move::NO_MOVE;
-                        }
-                    }
-                }
-                std::memset(
-    stats.continuationHistory,
-    0,
-    sizeof(stats.continuationHistory)
-);
-
-std::fill(
-    std::begin(stats.moveStack),
-    std::end(stats.moveStack),
-    // search::MoveInfo{}
-    search::SearchStats::MoveInfo{}
-);
-                for (int ply = 0; ply < search::MAX_PLY; ++ply)
-                {
-                    stats.killers[ply][0] = chess::Move::NO_MOVE;
-                    stats.killers[ply][1] = chess::Move::NO_MOVE;
-                }
 
                 whiteTimeMs = 0;
                 blackTimeMs = 0;
@@ -563,7 +557,90 @@ std::fill(
                 handlePosition(board, iss);
             }
         }
+                // ====================================================
+        // PERFT -- move-generation correctness test
+        // ====================================================
 
+        else if (command == "perft")
+        {
+            if (searching.load())
+            {
+                printLine(
+                    "info string cannot run perft while searching"
+                );
+            }
+            else
+            {
+                std::string valueText;
+
+                if (!(iss >> valueText))
+                {
+                    printLine(
+                        "info string perft requires a depth"
+                    );
+                    continue;
+                }
+
+                std::int64_t value;
+
+                if (!parseInt64(valueText, value) ||
+                    value < 0 ||
+                    value > 6)
+                {
+                    printLine(
+                        "info string invalid perft depth (0-6)"
+                    );
+                    continue;
+                }
+
+                const int depth =
+                    static_cast<int>(value);
+
+                std::uint64_t nodes = 0;
+
+                if (depth == 0)
+                {
+                    nodes = 1;
+                }
+                else
+                {
+                    chess::Movelist rootMoves;
+
+                    chess::movegen::legalmoves(
+                        rootMoves,
+                        board
+                    );
+
+                    for (const auto& move : rootMoves)
+                    {
+                        board.makeMove(move);
+
+                        const std::uint64_t moveNodes =
+                            depth > 1
+                                ? perft(board, depth - 1)
+                                : 1;
+
+                        board.unmakeMove(move);
+
+                        printLine(
+                            "info string " +
+                            moveToUci(move) +
+                            ": " +
+                            std::to_string(moveNodes)
+                        );
+
+                        nodes += moveNodes;
+                    }
+                }
+
+                printLine(
+                    "info string perft depth " +
+                    std::to_string(depth) +
+                    " nodes " +
+                    std::to_string(nodes)
+                );
+            }
+        }
         // ====================================================
         // GO
         // ====================================================

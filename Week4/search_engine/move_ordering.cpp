@@ -29,6 +29,31 @@ namespace search::ordering
         (piece.color() == chess::Color::WHITE ? 0 : 6)
         + type;
 }
+int capturedTypeForMove(
+    const chess::Board& board,
+    const chess::Move& move)
+{
+    if (move.typeOf() == chess::Move::ENPASSANT)
+        return static_cast<int>(
+            chess::PieceType::PAWN
+        );
+
+    const chess::Piece captured =
+        board.at(move.to());
+
+    if (captured == chess::Piece::NONE)
+        return -1;
+
+    const int type =
+        static_cast<int>(
+            captured.type().internal()
+        );
+
+    if (type < 0 || type >= 6)
+        return -1;
+
+    return type;
+}
         int moveScore(
     const chess::Board& board,
     const chess::Move& move,
@@ -36,6 +61,7 @@ namespace search::ordering
     const chess::Move& counterMove,
     const int history[64][64],
     const int continuationHistory[12][64][12][64],
+    const int captureHistory[12][6][64],
     int previousPiece,
     int previousTo,
     const chess::Move& ttMove)
@@ -53,18 +79,42 @@ namespace search::ordering
             // }
             if (isCapture)
 {
-    int seeScore =
+    const int seeScore =
         search::see::evaluate(board, move);
+
+    const int movingPiece =
+        pieceIndexForMove(board, move);
+
+    const int capturedType =
+        capturedTypeForMove(board, move);
+
+    int captureHistoryScore = 0;
+
+    if (movingPiece >= 0 &&
+        movingPiece < 12 &&
+        capturedType >= 0 &&
+        capturedType < 6)
+    {
+        captureHistoryScore =
+            captureHistory
+                [movingPiece]
+                [capturedType]
+                [move.to().index()];
+    }
 
     if (seeScore >= 0)
     {
-        // Winning/equal captures stay above killers.
-        return 100000 + seeScore;
+        // SEE remains the primary capture signal.
+        return 100000 +
+               seeScore +
+               captureHistoryScore / 16;
     }
 
-    // Losing captures go below quiet heuristics.
-    return -100000 + seeScore;
-}   
+    // Losing captures stay below quiet heuristics.
+    return -100000 +
+           seeScore +
+           captureHistoryScore / 16;
+}  
                 bool isPromotion =
                 move.typeOf() == chess::Move::PROMOTION;
 
@@ -187,6 +237,7 @@ return historyScore + continuationScore / 2;
     const chess::Move& counterMove,
     const int history[64][64],
     const int continuationHistory[12][64][12][64],
+    const int captureHistory[12][6][64],
     int previousPiece,
     int previousTo,
     const chess::Move& ttMove)
@@ -205,6 +256,7 @@ return historyScore + continuationScore / 2;
     counterMove,
     history,
     continuationHistory,
+    captureHistory,
     previousPiece,
     previousTo,
     ttMove

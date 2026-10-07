@@ -11,6 +11,7 @@ namespace search::ordering
     const chess::Move& counterMove,
     const int history[64][64],
     const int continuationHistory[12][64][12][64],
+    const int captureHistory[12][6][64],
     int previousPiece,
     int previousTo,
     const chess::Move& ttMove

@@ -260,6 +260,30 @@ static inline int pieceIndexForMoveSearch(
         (piece.color() == chess::Color::WHITE ? 0 : 6)
         + type;
 }
+static inline int capturedTypeForMoveSearch(
+    const chess::Board& board,
+    const chess::Move& move)
+{
+    if (move.typeOf() == chess::Move::ENPASSANT)
+        return static_cast<int>(
+            chess::PieceType::PAWN
+        );
+
+    const chess::Piece captured =
+        board.at(move.to());
+
+    if (captured == chess::Piece::NONE)
+        return -1;
+
+    const int type =
+        static_cast<int>(
+            captured.type().internal()
+        );
+
+    return (type >= 0 && type < 6)
+        ? type
+        : -1;
+}
 int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly){
     const int ply = rootPly + qply;
     ++stats.nodes;
@@ -302,7 +326,7 @@ if (entry != nullptr &&
     entry->depth >= qDepth)
 {
     int ttScore =
-        tt::valueFromTT(entry->score, qply);
+        tt::valueFromTT(entry->score, ply);
 
     if (entry->bound == tt::Bound::EXACT)
         return ttScore;
@@ -803,7 +827,7 @@ if (!improving)
     rfpMargin += RFP_NOT_IMPROVING_PENALTY;
 
 if (!isPV &&
-    !board.inCheck() &&
+    !inCheck &&
     depth <= 6 &&
     staticEval - rfpMargin >= beta)
 {
@@ -811,7 +835,7 @@ if (!isPV &&
 } 
     // Razoring
     if (!isPV &&
-    !board.inCheck() &&
+    !inCheck &&
     depth <= 3 &&
     staticEval + 200 * depth < alpha)
     {
@@ -831,7 +855,7 @@ if (!isPV &&
     // a best move, so the next visit to this position gets a
     // real move to try first.
     // ---------------------------------------------------------
-    if (!board.inCheck() &&
+    if (!inCheck &&
         depth >= 4 &&
         (entry == nullptr || entry->bestMove == chess::Move::NO_MOVE))
     {
@@ -839,7 +863,7 @@ if (!isPV &&
         ++stats.iirReductions;   // add this counter to SearchStats, like lmrReductions
     } 
     if (!isPV &&
-    !board.inCheck() &&
+    !inCheck &&
     nullMoveAllowed &&
     depth >= 3 &&
      
@@ -947,7 +971,7 @@ if (!isPV &&
 
     if (moves.empty())
 {
-    if (board.inCheck())
+    if (inCheck)
         return -MATE_SCORE + ply;
 
     return 0;
@@ -987,6 +1011,7 @@ if (stats.moveStack[ply].valid)
     counterMove,
     stats.history[side],
     stats.continuationHistory,
+    stats.captureHistory,
     previousPiece,
     previousTo,
     ttMove
@@ -997,6 +1022,15 @@ if (stats.moveStack[ply].valid)
     constexpr int MAX_QUIETS = 256;
     chess::Move quietsTried[MAX_QUIETS];
     int quietCount = 0;
+    struct TriedCapture
+{
+    int piece;
+    int type;
+    int to;
+};
+
+TriedCapture capturesTried[32];
+int captureCount = 0;
     bool firstMove = true;
 int moveIndex = 0;
 int quietsSearched = 0;
@@ -1098,6 +1132,18 @@ if (currentPiece >= 0)
     stats.moveStack[ply + 1].piece = currentPiece;
     stats.moveStack[ply + 1].to = move.to().index();
     stats.moveStack[ply + 1].valid = true;
+}
+int capPiece = -1;
+int capType = -1;
+
+if (isCapture)
+{
+    capPiece = currentPiece;
+    capType =
+        capturedTypeForMoveSearch(
+            board,
+            move
+        );
 }
 
 board.makeMove(move);
@@ -1227,7 +1273,19 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
     {
         quietsTried[quietCount++] = move;
     }
-
+    if (isCapture &&
+    capPiece >= 0 &&
+    capType >= 0 &&
+    alpha < beta &&
+    captureCount < 32)
+{
+    capturesTried[captureCount++] = {
+        capPiece,
+        capType,
+        move.to().index()
+    };
+}
+    
     if (alpha >= beta)
     {
         if (isQuiet)
@@ -1249,13 +1307,13 @@ if (givesCheck && depth >= 2 && extCount < stats.extensionCap)
 }
 
 
-           if (prevMove != chess::Move::NO_MOVE)
-{
-    stats.counterMoves[side]
-        [prevMove.from().index()]
-        [prevMove.to().index()] =
-        move;
-}
+//            if (prevMove != chess::Move::NO_MOVE)
+// {
+//     stats.counterMoves[side]
+//         [prevMove.from().index()]
+//         [prevMove.to().index()] =
+//         move;
+// }
 
 // int& h =
 //     stats.history[side]
@@ -1272,7 +1330,11 @@ int& h =
                 [move.to().index()];
 
 constexpr int HISTORY_MAX = 30000;
-const int bonus = depth * depth * 2;
+const int bonus =
+    std::min(
+        depth * depth * 2,
+        2000
+    );
 
 h += bonus - h * bonus / HISTORY_MAX;
 
@@ -1353,6 +1415,53 @@ if (hq < -HISTORY_MAX)
                 }
             }
         }
+        {
+    auto updateCaptureHistory =
+        [&](int piece, int type, int to, int delta)
+        {
+            int& h =
+                stats.captureHistory
+                    [piece]
+                    [type]
+                    [to];
+
+            const int amount =
+                delta < 0 ? -delta : delta;
+
+            h += delta -
+                 h * amount / 30000;
+        };
+
+    if (isCapture &&
+        capPiece >= 0 &&
+        capType >= 0)
+    {
+        updateCaptureHistory(
+            capPiece,
+            capType,
+            move.to().index(),
+            std::min(
+                depth * depth * 2,
+                2000
+            )
+        );
+    }
+
+    for (int i = 0;
+         i < captureCount;
+         ++i)
+    {
+        updateCaptureHistory(
+            capturesTried[i].piece,
+            capturesTried[i].type,
+            capturesTried[i].to,
+            -std::min(
+                depth * depth,
+                1000
+            )
+        );
+    }
+}
 
         break;
     }
@@ -1564,6 +1673,7 @@ stats.extensionCap = maxDepth * 2;   // NEW
         static_cast<int>(board.sideToMove())
     ],
     stats.continuationHistory,
+    stats.captureHistory,
     -1,
     -1,
     ttMove
@@ -1801,7 +1911,18 @@ stats.lastIterationNodes =
 
 stats.completedDepth =
     depth;
-    stats.previousScore = bestScore;
+
+stats.previousScore = bestScore;
+
+// Store root result BEFORE extractPV().
+stats.table.store(
+    key,
+    depth,
+    tt::valueToTT(bestScore, 0),
+    tt::Bound::EXACT,
+    bestMove
+);
+
 int64_t softLimit = stats.optimalMs;
 
 if (!stats.stable)
@@ -1888,13 +2009,7 @@ if (stats.optimalMs > 0 &&
     break;
 }
         // Store root result for the next iteration.
-        stats.table.store(
-            key,
-            depth,
-            tt::valueToTT(bestScore, 0),
-            tt::Bound::EXACT,
-            bestMove
-        );
+        
 
 //         std::cerr << "Depth: " << depth << '\n';
 //         std::cerr << "Score: " << bestScore << '\n';
