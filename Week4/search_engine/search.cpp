@@ -1337,6 +1337,12 @@ if (!isPV &&
         continue;
     }
 }
+const bool isBadCapture =
+    !firstMove &&
+    depth >= 3 &&
+    isCapture &&
+    !isPromotion &&
+    !search::see::see_ge(board, move, 0);
 const int currentPiece =
     pieceIndexForMoveSearch(board, move);
 int continuationHistoryScore = 0;
@@ -1418,6 +1424,7 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
         improving,
         cutNode,
         isCapture,
+        isBadCapture,
         isPromotion,
         inCheck,
         givesCheck,

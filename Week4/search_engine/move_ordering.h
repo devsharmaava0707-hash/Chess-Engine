@@ -30,6 +30,7 @@ void pickNextMove(
     bool improving,
     bool cutNode,
     bool isCapture,
+    bool isBadCapture,
     bool isPromotion,
     bool inCheck,
     bool givesCheck,

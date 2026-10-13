@@ -395,6 +395,7 @@ void pickNextMove(
     bool improving,
     bool cutNode,
     bool isCapture,
+    bool isBadCapture,
     bool isPromotion,
     bool inCheck,
     bool givesCheck,
@@ -403,14 +404,14 @@ void pickNextMove(
     int historyScore,int continuationHistoryScore)
 {
     if (depth < 2 ||
-        moveIndex < 1 ||
-        isCapture ||
-        isPromotion ||
-        inCheck ||
-        givesCheck)
-    {
-        return 0;
-    }
+    moveIndex < 1 ||
+    (isCapture && !isBadCapture) ||
+    isPromotion ||
+    inCheck ||
+    givesCheck)
+{
+    return 0;
+}
 
     int reduction;
 
