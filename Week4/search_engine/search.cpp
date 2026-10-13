@@ -35,23 +35,43 @@ TimeBudget computeTimeBudget(
     // --------------------------------------------------------
     // Explicit per-move time.
     // --------------------------------------------------------
+    // dev sharma
+    // if (limits.moveTimeMs > 0)
+    // {
+    //     const int64_t usable =
+    //         std::max<int64_t>(
+    //             1,
+    //             limits.moveTimeMs -
+    //             // COMMUNICATION_MARGIN_MS
+    //             limits.moveOverheadMs
+    //         );
 
+    //     return {
+    //         usable,
+    //         usable
+    //     };
+    // }
+    // dev sharma
     if (limits.moveTimeMs > 0)
-    {
-        const int64_t usable =
-            std::max<int64_t>(
-                1,
-                limits.moveTimeMs -
-                // COMMUNICATION_MARGIN_MS
-                limits.moveOverheadMs
-            );
+{
+    const int64_t usable =
+        std::max<int64_t>(
+            1,
+            limits.moveTimeMs -
+            limits.moveOverheadMs
+        );
 
-        return {
-            usable,
-            usable
-        };
-    }
+    const int64_t soft =
+        std::max<int64_t>(
+            1,
+            usable * 80 / 100
+        );
 
+    return {
+        soft,
+        usable
+    };
+}
     // --------------------------------------------------------
     // Infinite search.
     // --------------------------------------------------------
@@ -72,36 +92,65 @@ TimeBudget computeTimeBudget(
     // --------------------------------------------------------
     // Moves remaining.
     // --------------------------------------------------------
+    // dev sharma 
+    // int movesToGo =
+    //     limits.movesToGo;
 
+    // if (movesToGo <= 0)
+    //     movesToGo =
+    //         estimateMovesToGo(moveNumber); 
+
+    // movesToGo =
+    //     std::clamp(
+    //         movesToGo,
+    //         1,
+    //         100
+    //     );
+    // dev sharma
     int movesToGo =
-        limits.movesToGo;
+    limits.movesToGo;
 
-    if (movesToGo <= 0)
-        movesToGo =
-            estimateMovesToGo(moveNumber);
+if (movesToGo <= 0)
+    movesToGo = 30;
 
-    movesToGo =
-        std::clamp(
-            movesToGo,
-            1,
-            100
-        );
-
+movesToGo =
+    std::clamp(
+        movesToGo,
+        1,
+        100
+    );
     // --------------------------------------------------------
     // Reserve time for GUI/UCI overhead.
     //
     // More time => slightly larger absolute reserve.
     // --------------------------------------------------------
+    // dev sharma
+    // int64_t overhead =limits.moveOverheadMs;
+    //     // COMMUNICATION_MARGIN_MS; 
 
-    int64_t overhead =limits.moveOverheadMs;
-        // COMMUNICATION_MARGIN_MS; 
+    // if (timeLeft >= 10000)
+    //     overhead = 75;
 
-    if (timeLeft >= 10000)
-        overhead = 75;
+    // if (timeLeft >= 30000)
+    //     overhead = 100;
+    // dev sharma
+    int64_t overhead =
+    std::max<int64_t>(
+        limits.moveOverheadMs,
+        COMMUNICATION_MARGIN_MS
+    );
 
-    if (timeLeft >= 30000)
-        overhead = 100;
+if (timeLeft >= 10000)
+{
+    overhead =
+        std::max<int64_t>(overhead, 75);
+}
 
+if (timeLeft >= 30000)
+{
+    overhead =
+        std::max<int64_t>(overhead, 100);
+}
     const int64_t usable =
         std::max<int64_t>(
             1,
@@ -124,25 +173,30 @@ TimeBudget computeTimeBudget(
     // --------------------------------------------------------
     // Base allocation.
     // --------------------------------------------------------
+    // dev sharma
+    // int64_t base =
+    //     usable / movesToGo;
 
-    int64_t base =
-        usable / movesToGo;
+    // base += effectiveIncrement;
 
-    base += effectiveIncrement;
+    // // --------------------------------------------------------
+    // // Give ourselves a little more time when the clock is
+    // // comfortable, but never spend too much of the bank.
+    // // --------------------------------------------------------
 
-    // --------------------------------------------------------
-    // Give ourselves a little more time when the clock is
-    // comfortable, but never spend too much of the bank.
-    // --------------------------------------------------------
+    // int64_t soft =
+    //     base;
 
+    // if (timeLeft > 30000)
+    //     soft += usable / 20;      // +5%
+
+    // else if (timeLeft > 10000)
+    //     soft += usable / 30;      // +3.3%
+    // dev sharma
     int64_t soft =
-        base;
+    usable / movesToGo;
 
-    if (timeLeft > 30000)
-        soft += usable / 20;      // +5%
-
-    else if (timeLeft > 10000)
-        soft += usable / 30;      // +3.3%
+soft += effectiveIncrement;
 
     // --------------------------------------------------------
     // Safety rails.
@@ -161,12 +215,18 @@ TimeBudget computeTimeBudget(
         );
 
     // Never plan to consume more than 85% of the clock.
+    // dev sharma 
+    // const int64_t hardCap =
+    //     std::max<int64_t>(
+    //         1,
+    //         (timeLeft * 85) / 100
+    //     );
+    // dev sharma
     const int64_t hardCap =
-        std::max<int64_t>(
-            1,
-            (timeLeft * 85) / 100
-        );
-
+    std::max<int64_t>(
+        1,
+        (timeLeft * 30) / 100
+    );
     soft =
         std::min(
             soft,
@@ -190,28 +250,33 @@ TimeBudget computeTimeBudget(
     //
     // It is still constrained by the 85% rail.
     // --------------------------------------------------------
+    // dev sharma
+    // int64_t hard =
+    //     soft * 5 / 2;
 
-    int64_t hard =
-        soft * 5 / 2;
+    // hard =
+    //     std::min(
+    //         hard,
+    //         hardCap
+    //     );
 
-    hard =
-        std::min(
-            hard,
-            hardCap
-        );
+    // hard =
+    //     std::min(
+    //         hard,
+    //         hardAvailable
+    //     );
 
-    hard =
-        std::min(
-            hard,
-            hardAvailable
-        );
-
-    hard =
-        std::max(
-            hard,
-            soft
-        );
-
+    // hard =
+    //     std::max(
+    //         hard,
+    //         soft
+    //     );
+    // dev sharma 
+    const int64_t hard =
+    std::max<int64_t>(
+        soft,
+        std::min({ soft * 5, hardCap, hardAvailable })
+    );
     return {
         soft,
         hard
@@ -323,7 +388,9 @@ tt::Entry* entry = stats.table.probe(key);
 
 int alphaOriginal = alpha;
 int bestScore = -INF;
+int standPat = -INF;
 
+constexpr int DELTA_MARGIN = 200;
 if (entry != nullptr &&
     entry->depth >= qDepth)
 {
@@ -362,7 +429,7 @@ if (board.isHalfMoveDraw())
     */
     if (!inCheck)
 {
-    int standPat = evaluateForSideToMove(board);
+     standPat = evaluateForSideToMove(board);
     bestScore = standPat;
 
     // if (standPat >= beta)
@@ -385,7 +452,7 @@ if (board.isHalfMoveDraw())
         alpha = standPat;
 
     // Delta pruning
-    constexpr int DELTA_MARGIN = 200;
+    // constexpr int DELTA_MARGIN = 200;
 
     // if (standPat +
     //     piece_value_bonus(
@@ -393,12 +460,12 @@ if (board.isHalfMoveDraw())
     //         true
     //     ) +
     //     DELTA_MARGIN < alpha)
-    if (standPat +
-    eval::materialValue(chess::PieceType::QUEEN) + // for arun evaluation 
-    DELTA_MARGIN < alpha)
-    {
-        return standPat;
-    }
+    // if (standPat +
+    // eval::materialValue(chess::PieceType::QUEEN) + // for arun evaluation 
+    // DELTA_MARGIN < alpha)
+    // {
+    //     return standPat;
+    // }
 }
 
     chess::Movelist moves;
@@ -409,12 +476,25 @@ if (board.isHalfMoveDraw())
         chess::movegen::legalmoves(moves, board);
     }
     else
+{
+    // Generate captures, including capture-promotions.
+    chess::movegen::legalmoves<
+        chess::movegen::MoveGenType::CAPTURE
+    >(moves, board);
+
+    // Also include quiet promotions, but not ordinary quiet moves.
+    chess::Movelist quietMoves;
+
+    chess::movegen::legalmoves<
+        chess::movegen::MoveGenType::QUIET
+    >(quietMoves, board);
+
+    for (const auto& move : quietMoves)
     {
-        // Not in check: only forcing captures.
-        chess::movegen::legalmoves<
-            chess::movegen::MoveGenType::CAPTURE
-        >(moves, board);
+        if (move.typeOf() == chess::Move::PROMOTION)
+            moves.add(move);
     }
+}
 
     // Checkmate during qsearch.
     if (moves.empty())
@@ -424,15 +504,67 @@ if (board.isHalfMoveDraw())
 
         return alpha;
     }
+    const int qSafePly = std::min(ply, MAX_PLY - 1);
+const int qSide = static_cast<int>(board.sideToMove());
 
-    for (const auto& move : moves)
+const chess::Move qTtMove =
+    entry != nullptr
+        ? entry->bestMove
+        : chess::Move::NO_MOVE;
+
+int qMoveScores[256];
+
+search::ordering::scoreMoves(
+    board,
+    moves,
+    stats.killers[qSafePly],
+    chess::Move::NO_MOVE,
+    stats.history[qSide],
+    stats.continuationHistory,
+    stats.captureHistory,
+    -1,
+    -1,
+    qTtMove,
+    qMoveScores
+);
+    for (int qMoveSlot = 0;
+     qMoveSlot < static_cast<int>(moves.size());
+     ++qMoveSlot)
+{
+    search::ordering::pickNextMove(
+        moves,
+        qMoveScores,
+        qMoveSlot
+    );
+
+    const chess::Move& move = moves[qMoveSlot];
+    if (!inCheck &&
+    move.typeOf() != chess::Move::PROMOTION)
+{
+    int victimValue = 0;
+
+    if (move.typeOf() == chess::Move::ENPASSANT)
     {
+        victimValue =
+            eval::materialValue(chess::PieceType::PAWN);
+    }
+    else
+    {
+        const chess::Piece victim = board.at(move.to());
+
+        if (victim != chess::Piece::NONE)
+            victimValue = eval::materialValue(victim.type());
+    }
+
+    if (standPat + victimValue + DELTA_MARGIN <= alpha)
+        continue;
+}
     // In a normal quiescence node, skip captures
     // that SEE says are materially losing.
     //
     // When in check, we must examine every legal move.
-    if (!inCheck && search::see::evaluate(board, move) < 0)
-        continue;
+    if (!inCheck && !search::see::see_ge(board, move, 0))
+    continue;
 
     board.makeMove(move);
 
@@ -1034,7 +1166,9 @@ if (stats.moveStack[ply].valid)
     previousTo =
         stats.moveStack[ply].to;
 }
-    search::ordering::orderMoves(
+    int moveScores[256];
+
+search::ordering::scoreMoves(
     board,
     moves,
     stats.killers[safePly],
@@ -1044,7 +1178,8 @@ if (stats.moveStack[ply].valid)
     stats.captureHistory,
     previousPiece,
     previousTo,
-    ttMove
+    ttMove,
+    moveScores
 );
 
     int bestScore = -INF;
@@ -1076,9 +1211,20 @@ bool hasNonPawnMaterial = nonPawnPieces.count() > 0;
 
 constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
 constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
-    for (const auto& move : moves)
+    for (int moveSlot = 0;
+     moveSlot < static_cast<int>(moves.size());
+     ++moveSlot)
 {
+    search::ordering::pickNextMove(
+        moves,
+        moveScores,
+        moveSlot
+    );
+
+    const chess::Move& move = moves[moveSlot];
+
     ++moveIndex;
+
     bool isCapture =
         move.typeOf() == chess::Move::ENPASSANT ||
         (move.typeOf() != chess::Move::CASTLING &&
@@ -1101,8 +1247,9 @@ constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
         stats.history[side]
                     [move.from().index()]
                     [move.to().index()];
-        const bool quietGivesCheck =
-        board.givesCheck(move) != chess::CheckType::NO_CHECK;
+        // const bool quietGivesCheck =
+        // board.givesCheck(move) != chess::CheckType::NO_CHECK;
+        bool quietGivesCheck = false;
     // Step 5: Main-search SEE pruning
 // if (!isPV &&
 //     !inCheck &&
@@ -1120,12 +1267,35 @@ if (!isPV &&
     depth <= 6 &&
     isCapture &&
     !isPromotion &&
-    search::see::evaluate(board, move) < -90 * depth)
+    !search::see::see_ge(board, move, -90 * depth))
 {
     continue;
 }
 constexpr int FUTILITY_MARGIN_PER_DEPTH = 120;
+const bool quietPruningCandidate =
+    !isPV &&
+    !inCheck &&
+    hasNonPawnMaterial &&
+    isQuiet &&
+    !isKillerOrCounter &&
+    bestScore > -MATE_BOUND;
 
+const bool futilityMayPrune =
+    quietPruningCandidate &&
+    depth <= 3 &&
+    staticEval + FUTILITY_MARGIN_PER_DEPTH * depth <= alpha;
+
+const bool lmpMayPrune =
+    quietPruningCandidate &&
+    depth >= 1 &&
+    depth <= 3 &&
+    quietsSearched >= LMP_MOVE_LIMIT[depth];
+
+if (futilityMayPrune || lmpMayPrune)
+{
+    quietGivesCheck =
+        board.givesCheck(move) != chess::CheckType::NO_CHECK;
+}
 if (!isPV &&
     !inCheck &&
     hasNonPawnMaterial &&
@@ -1609,7 +1779,7 @@ chess::Move findBestMove(
     stats.startTime =
     std::chrono::steady_clock::now();
 
-    stats.stop = false;
+    // stats.stop = false;
 
 stats.nodes = 0;
 stats.seldepth = 0;
@@ -1691,7 +1861,8 @@ chess::movegen::legalmoves(rootMoves, board);
 constexpr int ASPIRATION_WINDOW = 50;
 if (rootMoves.empty())
     return chess::Move::NO_MOVE;
-
+if (rootMoves.size() == 1)
+    return rootMoves[0]; // dev sharma 
 // Always have a legal fallback move.
 chess::Move bestMove = rootMoves[0];
 
@@ -1736,7 +1907,9 @@ int bestScore = -INF;
         //         }
         //     }
         // }
-       search::ordering::orderMoves(
+      int rootMoveScores[256];
+
+search::ordering::scoreMoves(
     board,
     moves,
     stats.killers[0],
@@ -1748,7 +1921,8 @@ int bestScore = -INF;
     stats.captureHistory,
     -1,
     -1,
-    ttMove
+    ttMove,
+    rootMoveScores
 );
 
         // Depth 1 uses the full window.
@@ -1816,6 +1990,11 @@ if (depth > 1)
      i < static_cast<int>(moves.size());
      ++i)
 {
+    search::ordering::pickNextMove(
+        moves,
+        rootMoveScores,
+        i
+    );
     const chess::Move& move = moves[i];
 
     if (stats.stop)
@@ -1951,15 +2130,13 @@ board.makeMove(move);
 {
     ++stats.aspirationFailHigh;
 
-    // Put the new best root move first for the re-search.
     if (iterationBestMove != chess::Move::NO_MOVE)
     {
-        for (int i = 0; i < static_cast<int>(moves.size()); ++i)
+        for (int k = 0; k < static_cast<int>(moves.size()); ++k)
         {
-            if (moves[i] == iterationBestMove)
+            if (moves[k] == iterationBestMove)
             {
-                if (i != 0)
-                    std::swap(moves[0], moves[i]);
+                rootMoveScores[k] = 2000000000;
                 break;
             }
         }
@@ -2119,13 +2296,42 @@ if (stats.onIteration)
 
     stats.onIteration(info);
 }
-
-int64_t elapsed = elapsedMs(stats);
-
-if (stats.optimalMs > 0 &&
-    elapsed >= softLimit)
+// Stop when a forced mate has been established
+// within the completed search depth.
+// dev sharma
+if (bestScore >= MATE_SCORE - depth)
 {
     break;
+}
+// dev sharma 
+// int64_t elapsed = elapsedMs(stats);
+
+// if (stats.optimalMs > 0 &&  
+//     elapsed >= softLimit)
+// {
+//     break;
+// }
+// dev sharma 
+int64_t elapsed = elapsedMs(stats);
+
+if (stats.optimalMs > 0)
+{
+    // Avoid starting another iteration too late.
+    const int64_t latestStart =
+        softLimit * 55 / 100;
+
+    const int64_t estimatedNextIteration =
+        std::max<int64_t>(
+            1,
+            stats.lastIterationMs * 3 / 2
+        );
+
+    if (elapsed >= softLimit ||
+        elapsed >= latestStart ||
+        elapsed + estimatedNextIteration >= softLimit)
+    {
+        break;
+    }
 }
         // Store root result for the next iteration.
         

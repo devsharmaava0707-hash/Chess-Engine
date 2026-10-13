@@ -6,11 +6,19 @@ namespace search::see
 {
     namespace
     {
-        int pieceValue(chess::PieceType type)
-        {
-            // return piece_value_bonus(type, true);
-            return eval::materialValue(type);
-        }
+       int pieceValue(chess::PieceType type)
+{
+    switch (type.internal())
+    {
+        case chess::PieceType::underlying::PAWN:   return 100;
+        case chess::PieceType::underlying::KNIGHT: return 320;
+        case chess::PieceType::underlying::BISHOP: return 330;
+        case chess::PieceType::underlying::ROOK:   return 500;
+        case chess::PieceType::underlying::QUEEN:  return 900;
+        case chess::PieceType::underlying::KING:   return 20000;
+        default:                                   return 0;
+    }
+}
 
         bool leastValuableAttacker(
             const chess::Board& board,
@@ -206,8 +214,18 @@ namespace search::see
             /*
                 Initial gain = value of the piece we captured.
             */
+            // gain[0] = pieceValue(capturedPiece.type());
+            // pieceOnSquare[0] = currentPieceType;
             gain[0] = pieceValue(capturedPiece.type());
-            pieceOnSquare[0] = currentPieceType;
+
+if (move.typeOf() == chess::Move::PROMOTION)
+{
+    gain[0] +=
+        pieceValue(move.promotionType()) -
+        pieceValue(chess::PieceType::PAWN);
+}
+
+pieceOnSquare[0] = currentPieceType;
 
             /*
                 Opponent gets the first recapture.
@@ -287,5 +305,122 @@ namespace search::see
     const chess::Move& move)
 {
     return seeImpl(board, move);
+}
+bool see_ge(
+    const chess::Board& board,
+    const chess::Move& move,
+    int threshold)
+{
+    if (move.typeOf() == chess::Move::CASTLING)
+        return threshold <= 0;
+
+    const chess::Color mover = board.sideToMove();
+    const chess::Square from = move.from();
+    const chess::Square to = move.to();
+
+    chess::Piece capturedPiece = board.at(to);
+
+    if (move.typeOf() == chess::Move::ENPASSANT)
+    {
+        capturedPiece = chess::Piece(
+            chess::PieceType::PAWN,
+            ~mover
+        );
+    }
+
+    // Match evaluate(): non-captures have SEE value zero.
+    if (capturedPiece == chess::Piece::NONE)
+        return threshold <= 0;
+
+    const chess::PieceType movingType =
+        move.typeOf() == chess::Move::PROMOTION
+            ? move.promotionType()
+            : board.at(from).type();
+
+    int swap = pieceValue(capturedPiece.type());
+
+    // Preserve the capture-promotion bonus from Step 3.2.
+    if (move.typeOf() == chess::Move::PROMOTION)
+    {
+        swap += pieceValue(move.promotionType())
+              - pieceValue(chess::PieceType::PAWN);
+    }
+
+    swap -= threshold;
+
+    if (swap < 0)
+        return false;
+
+    swap = pieceValue(movingType) - swap;
+
+    if (swap <= 0)
+        return true;
+
+    chess::Bitboard occupancy = board.occ();
+    occupancy.clear(from.index());
+
+    if (move.typeOf() == chess::Move::ENPASSANT)
+    {
+        const int capturedPawnSquare =
+            to.index() + (mover == chess::Color::WHITE ? -8 : 8);
+
+        occupancy.clear(capturedPawnSquare);
+    }
+
+    chess::Color side = mover;
+    int result = 1;
+
+    while (true)
+    {
+        side = ~side;
+
+        chess::Square attackerSquare;
+        chess::PieceType attackerType;
+
+        if (!leastValuableAttacker(
+                board,
+                side,
+                to,
+                occupancy,
+                attackerSquare,
+                attackerType))
+        {
+            break;
+        }
+
+        result ^= 1;
+
+        // A king may capture only if the destination is not attacked
+        // after the king leaves its original square.
+        if (attackerType == chess::PieceType::KING)
+        {
+            chess::Bitboard kingOccupancy = occupancy;
+            kingOccupancy.clear(attackerSquare.index());
+
+            chess::Square ignoredSquare;
+            chess::PieceType ignoredType;
+
+            const bool kingIsAttacked = leastValuableAttacker(
+                board,
+                ~side,
+                to,
+                kingOccupancy,
+                ignoredSquare,
+                ignoredType
+            );
+
+            return kingIsAttacked ? (result ^ 1) != 0
+                                  : result != 0;
+        }
+
+        swap = pieceValue(attackerType) - swap;
+
+        if (swap < result)
+            break;
+
+        occupancy.clear(attackerSquare.index());
+    }
+
+    return result != 0;
 }
 }

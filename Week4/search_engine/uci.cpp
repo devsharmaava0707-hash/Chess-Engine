@@ -747,38 +747,31 @@ else
                 );
             }
         }
-                // ====================================================
-        // BENCH
-        // ====================================================
-
         else if (command == "bench")
-        {
-            if (searching.load())
-            {
-                printLine(
-                    "info string cannot run bench while searching"
-                );
-            }
-            else
-            {
-                runBench(board, stats);
-            }
-        }
-
+{
+    if (searching.load())
+    {
+        printLine("info string cannot run bench while searching");
+    }
+    else
+    {
+        runBench(board, stats);
+    }
+}
         // ====================================================
         // GO
         // ====================================================
 
         else if (command == "go")
         {
-            if (searching.load())
-            {
-                printLine(
-                    "info string search already running; "
-                    "send stop first"
-                );
-            }
-            else
+            if (searchThread.joinable())
+{
+    stats.stop = true;
+    searchThread.join();
+    searching.store(false);
+}
+
+{
             {
                 search::SearchLimits limits;
 
@@ -968,8 +961,8 @@ else
 
                 chess::Board searchBoard = board;
 
-                if (searchThread.joinable())
-                    searchThread.join();
+                // if (searchThread.joinable())
+                //     searchThread.join();
 
                 searchThread = std::thread(
                     [&stats, &searching, searchBoard, depth, limits]
@@ -1033,16 +1026,17 @@ else
                                 finalMove = chess::Move::NO_MOVE;
                             }
                         }
-
+                        searching.store(false);
                         printLine(
                             "bestmove " + moveToUci(finalMove)
                         );
 
-                        searching.store(false);
+                        // searching.store(false);
                     }
                 );
             }
         }
+    }
 
         // ====================================================
         // STOP -- genuinely interrupts the running search.

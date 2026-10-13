@@ -4,7 +4,7 @@
 
 namespace search::ordering
 {
-    void orderMoves(
+    void scoreMoves(
     const chess::Board& board,
     chess::Movelist& moves,
     const chess::Move killers[2],
@@ -14,7 +14,14 @@ namespace search::ordering
     const int captureHistory[12][6][64],
     int previousPiece,
     int previousTo,
-    const chess::Move& ttMove
+    const chess::Move& ttMove,
+    int scores[256]
+);
+
+void pickNextMove(
+    chess::Movelist& moves,
+    int scores[256],
+    int index
 );
     int lateMoveReduction(
     int depth,

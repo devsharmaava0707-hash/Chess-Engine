@@ -79,8 +79,9 @@ int capturedTypeForMove(
             // }
             if (isCapture)
 {
-    const int seeScore =
-        search::see::evaluate(board, move);
+    static constexpr int PIECE_VALUES[6] = {
+        100, 320, 330, 500, 900, 20000
+    };
 
     const int movingPiece =
         pieceIndexForMove(board, move);
@@ -89,6 +90,8 @@ int capturedTypeForMove(
         capturedTypeForMove(board, move);
 
     int captureHistoryScore = 0;
+    int mvvLvaScore = 0;
+    int base = 100000;
 
     if (movingPiece >= 0 &&
         movingPiece < 12 &&
@@ -100,21 +103,24 @@ int capturedTypeForMove(
                 [movingPiece]
                 [capturedType]
                 [move.to().index()];
+
+        const int attackerType = movingPiece % 6;
+
+        mvvLvaScore =
+            PIECE_VALUES[capturedType] * 16
+            - PIECE_VALUES[attackerType];
+
+        // Equal-or-better trades can't lose material, so SEE is only
+        // needed when the attacker is worth more than the victim.
+        if (PIECE_VALUES[capturedType] < PIECE_VALUES[attackerType] &&
+            !search::see::see_ge(board, move, 0))
+        {
+            base = -100000;   // losing capture: sorted after quiets
+        }
     }
 
-    if (seeScore >= 0)
-    {
-        // SEE remains the primary capture signal.
-        return 100000 +
-               seeScore +
-               captureHistoryScore / 16;
-    }
-
-    // Losing captures stay below quiet heuristics.
-    return -100000 +
-           seeScore +
-           captureHistoryScore / 16;
-}  
+    return base + mvvLvaScore + captureHistoryScore / 16;
+} 
                 bool isPromotion =
                 move.typeOf() == chess::Move::PROMOTION;
 
@@ -230,7 +236,70 @@ return historyScore + continuationScore / 2;
 //     for (int i = 0; i < n; ++i)
 //         moves[i] = sorted[i];
 // }
-    void orderMoves(
+//     void orderMoves(
+//     const chess::Board& board,
+//     chess::Movelist& moves,
+//     const chess::Move killers[2],
+//     const chess::Move& counterMove,
+//     const int history[64][64],
+//     const int continuationHistory[12][64][12][64],
+//     const int captureHistory[12][6][64],
+//     int previousPiece,
+//     int previousTo,
+//     const chess::Move& ttMove)
+// {
+//     const int n = static_cast<int>(moves.size());
+
+//     static thread_local int scores[256];
+//     static thread_local int order[256];
+
+//     for (int i = 0; i < n; ++i)
+//     {
+//         scores[i] = moveScore(
+//     board,
+//     moves[i],
+//     killers,
+//     counterMove,
+//     history,
+//     continuationHistory,
+//     captureHistory,
+//     previousPiece,
+//     previousTo,
+//     ttMove
+// );
+//         order[i] = i;
+//     }
+
+//     std::stable_sort(order, order + n,
+//         [](int a, int b) { return scores[a] > scores[b]; });
+
+//     // Apply permutation in place.
+//     std::vector<bool> placed(n, false);
+//     for (int i = 0; i < n; ++i)
+//     {
+//         if (placed[i] || order[i] == i)
+//             continue;
+
+//         chess::Move temp = moves[i];
+//         int j = i;
+
+//         while (!placed[j])
+//         {
+//             placed[j] = true;
+//             int next = order[j];
+
+//             if (next == i)
+//             {
+//                 moves[j] = temp;
+//                 break;
+//             }
+
+//             moves[j] = moves[next];
+//             j = next;
+//         }
+//     }
+// }   
+    void scoreMoves(
     const chess::Board& board,
     chess::Movelist& moves,
     const chess::Move killers[2],
@@ -240,59 +309,57 @@ return historyScore + continuationScore / 2;
     const int captureHistory[12][6][64],
     int previousPiece,
     int previousTo,
-    const chess::Move& ttMove)
+    const chess::Move& ttMove,
+    int scores[256])
 {
     const int n = static_cast<int>(moves.size());
-
-    static thread_local int scores[256];
-    static thread_local int order[256];
 
     for (int i = 0; i < n; ++i)
     {
         scores[i] = moveScore(
-    board,
-    moves[i],
-    killers,
-    counterMove,
-    history,
-    continuationHistory,
-    captureHistory,
-    previousPiece,
-    previousTo,
-    ttMove
-);
-        order[i] = i;
+            board,
+            moves[i],
+            killers,
+            counterMove,
+            history,
+            continuationHistory,
+            captureHistory,
+            previousPiece,
+            previousTo,
+            ttMove
+        );
     }
+}
 
-    std::stable_sort(order, order + n,
-        [](int a, int b) { return scores[a] > scores[b]; });
+void pickNextMove(
+    chess::Movelist& moves,
+    int scores[256],
+    int index)
+{
+    const int n = static_cast<int>(moves.size());
+    int best = index;
 
-    // Apply permutation in place.
-    std::vector<bool> placed(n, false);
-    for (int i = 0; i < n; ++i)
+    for (int i = index + 1; i < n; ++i)
     {
-        if (placed[i] || order[i] == i)
-            continue;
-
-        chess::Move temp = moves[i];
-        int j = i;
-
-        while (!placed[j])
-        {
-            placed[j] = true;
-            int next = order[j];
-
-            if (next == i)
-            {
-                moves[j] = temp;
-                break;
-            }
-
-            moves[j] = moves[next];
-            j = next;
-        }
+        if (scores[i] > scores[best])
+            best = i;
     }
-}   
+
+    if (best != index)
+    {
+        const chess::Move m = moves[best];
+        const int s = scores[best];
+
+        for (int k = best; k > index; --k)
+        {
+            moves[k] = moves[k - 1];
+            scores[k] = scores[k - 1];
+        }
+
+        moves[index] = m;
+        scores[index] = s;
+    }
+}
     int lateMoveReduction(
     int depth,
     int moveIndex,
