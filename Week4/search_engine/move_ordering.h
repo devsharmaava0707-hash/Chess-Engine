@@ -28,6 +28,7 @@ void pickNextMove(
     int moveIndex,
     bool isPV,
     bool improving,
+    bool cutNode,
     bool isCapture,
     bool isPromotion,
     bool inCheck,

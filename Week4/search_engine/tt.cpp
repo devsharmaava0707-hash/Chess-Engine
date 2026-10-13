@@ -1,5 +1,11 @@
 #include "tt.h"
 #include<algorithm>
+static std::size_t ttIndex(std::uint64_t key, std::size_t count)
+{
+    return static_cast<std::size_t>(
+        (static_cast<unsigned __int128>(key) * count) >> 64
+    );
+}
 namespace search::tt
 {
     void Table::newSearch()
@@ -63,21 +69,15 @@ int valueFromTT(int score, int ply)
 
     void Table::resize(size_t megabytes)
 {
-    size_t bytes =
+    const std::size_t bytes =
         megabytes * 1024ULL * 1024ULL;
 
-    size_t count =
-        bytes / sizeof(Entry);
+    std::size_t count = bytes / sizeof(Entry);
 
     if (count == 0)
         count = 1;
 
-    size_t powerOfTwo = 1;
-
-    while ((powerOfTwo << 1) <= count)
-        powerOfTwo <<= 1;
-
-    entries.assign(powerOfTwo, Entry{});
+    entries.assign(count, Entry{});
 }
 
     // void Table::clear()
@@ -123,15 +123,18 @@ int valueFromTT(int score, int ply)
     }
 
     Entry* Table::probe(uint64_t key)
+{
+    Entry& entry =
+        entries[ttIndex(key, entries.size())];
+
+    if (entry.key == key)
     {
-        Entry& entry =
-            entries[key & (entries.size()-1)];
-
-        if (entry.key == key)
-            return &entry;
-
-        return nullptr;
+        entry.generation = currentGeneration;
+        return &entry;
     }
+
+    return nullptr;
+}
 
     void Table::store(uint64_t key,
                   int depth,
@@ -139,7 +142,7 @@ int valueFromTT(int score, int ply)
                   Bound bound,
                   chess::Move bestMove)
 {
-    Entry& e = entries[key & (entries.size() - 1)];
+    Entry& e = entries[ttIndex(key, entries.size())];
 
     const bool same = (e.key == key);
 

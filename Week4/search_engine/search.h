@@ -171,7 +171,7 @@ MoveInfo moveStack[MAX_PLY]{};
     int evaluateForSideToMove(chess::Board& board);
     int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly);
     // int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats &stats,chess::Move prevMove);
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe,int extcount);
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe,int extcount,bool cutNode);
     std::vector<chess::Move> extractPV(chess::Board board, SearchStats& stats, int maxLength);
     chess::Move findBestMove(chess::Board& board,int depth,SearchStats &stats,const SearchLimits & limits);
 }

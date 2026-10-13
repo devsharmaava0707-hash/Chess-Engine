@@ -839,7 +839,7 @@ static bool tryRootTablebase(
     return false;
 }
 
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount)
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount,bool cutNode)
 {
    ++stats.nodes;
    if (ply >= MAX_PLY - 1)
@@ -1024,6 +1024,15 @@ if (!isPV &&
         searchDepth = depth - 1;
         ++stats.iirReductions;   // add this counter to SearchStats, like lmrReductions
     } 
+    const chess::Color us = board.sideToMove();
+
+const chess::Bitboard nonPawnPieces =
+    board.us(us) &
+    ~board.pieces(chess::PieceType::PAWN, us) &
+    ~board.pieces(chess::PieceType::KING, us);
+
+const bool hasNonPawnMaterial =
+    nonPawnPieces.count() > 0;
     if (!isPV &&
     !inCheck &&
     nullMoveAllowed &&
@@ -1033,14 +1042,14 @@ if (!isPV &&
 {
     // ++nullMoveAttempts = 0;
      ++stats.nullMoveAttempts;
-    chess::Color us = board.sideToMove();
+    // chess::Color us = board.sideToMove();
 
-    chess::Bitboard nonPawnPieces =
-        board.us(us) &
-        ~board.pieces(chess::PieceType::PAWN, us) &
-        ~board.pieces(chess::PieceType::KING, us);
+    // chess::Bitboard nonPawnPieces =
+    //     board.us(us) &
+    //     ~board.pieces(chess::PieceType::PAWN, us) &
+    //     ~board.pieces(chess::PieceType::KING, us);
 
-    if (nonPawnPieces.count() >= 1)
+    if (hasNonPawnMaterial)
     {
         int R = (depth >= 6 ? 3 : 2);
 
@@ -1094,7 +1103,7 @@ if (!isPV &&
             stats,
             ply + 1,
             chess::Move::NO_MOVE,
-            false,extCount
+            false,extCount,!cutNode
         );
 
         board.unmakeNullMove();
@@ -1117,7 +1126,7 @@ if (!isPV &&
                 stats,
                 ply ,
                 prevMove,
-                false,extCount
+                false,extCount,false
             );
 
             if (stats.stop)
@@ -1200,14 +1209,14 @@ int captureCount = 0;
 int moveIndex = 0;
 int quietsSearched = 0;
 
-chess::Color us = board.sideToMove();
+// chess::Color us = board.sideToMove();
 
-chess::Bitboard nonPawnPieces =
-    board.us(us) &
-    ~board.pieces(chess::PieceType::PAWN, us) &
-    ~board.pieces(chess::PieceType::KING, us);
+// chess::Bitboard nonPawnPieces =
+//     board.us(us) &
+//     ~board.pieces(chess::PieceType::PAWN, us) &
+//     ~board.pieces(chess::PieceType::KING, us);
 
-bool hasNonPawnMaterial = nonPawnPieces.count() > 0;
+// bool hasNonPawnMaterial = nonPawnPieces.count() > 0;
 
 constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
 constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
@@ -1359,6 +1368,8 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
 // // above is extension add
     int reduction = 0;
     int score;
+    const bool childCutNode =
+    isPV ? !firstMove : !cutNode;
 
     if (firstMove)
     {
@@ -1370,7 +1381,7 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
             stats,
             ply + 1,
             move,
-            true,extCount + extension
+            true,extCount + extension,childCutNode
         );
 
         firstMove = false;
@@ -1384,6 +1395,7 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
                 moveIndex,
                 isPV,
                 improving,
+                cutNode,
                 isCapture,
                 isPromotion,
                 inCheck,
@@ -1402,7 +1414,8 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
     ply + 1,
     move,
     true,
-    extCount + extension
+    extCount + extension,
+    childCutNode
 );
 
 if (score > alpha)
@@ -1422,7 +1435,8 @@ if (score > alpha)
             ply + 1,
             move,
             true,
-            extCount + extension
+            extCount + extension,
+            childCutNode
         );
     }
 
@@ -1439,7 +1453,8 @@ if (score > alpha)
             ply + 1,
             move,
             true,
-            extCount + extension
+            extCount + extension,
+            childCutNode
         );
     }
 }
@@ -2027,7 +2042,7 @@ board.makeMove(move);
             stats,
             1,
             move,
-            true,0
+            true,0,false
         );
     }
     else
@@ -2041,7 +2056,7 @@ board.makeMove(move);
             stats,
             1,
             move,
-            true,0
+            true,0,true
         );
 
         // It beat alpha, so we need the real score.
@@ -2055,7 +2070,7 @@ board.makeMove(move);
                 stats,
                 1,
                 move,
-                true,0
+                true,0,false
             );
         }
     }

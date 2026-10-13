@@ -2,6 +2,34 @@
 #include "see.h"
 #include<cmath>
 #include<algorithm>
+#include <array>
+namespace
+{
+    constexpr int MAX_LMR_DEPTH = 256;
+    constexpr int MAX_LMR_MOVES = 256;
+
+    const auto LMR_TABLE = [] {
+        std::array<
+            std::array<int, MAX_LMR_MOVES>,
+            MAX_LMR_DEPTH
+        > table{};
+
+        for (int depth = 2; depth < MAX_LMR_DEPTH; ++depth)
+        {
+            for (int moveIndex = 1; moveIndex < MAX_LMR_MOVES; ++moveIndex)
+            {
+                const double lr =
+                    0.4 +
+                    std::log(static_cast<double>(depth)) *
+                    std::log(static_cast<double>(moveIndex + 1)) / 2.0;
+
+                table[depth][moveIndex] = static_cast<int>(lr);
+            }
+        }
+
+        return table;
+    }();
+}
 namespace search::ordering
 {
     namespace
@@ -365,6 +393,7 @@ void pickNextMove(
     int moveIndex,
     bool isPV,
     bool improving,
+    bool cutNode,
     bool isCapture,
     bool isPromotion,
     bool inCheck,
@@ -382,18 +411,29 @@ void pickNextMove(
         return 0;
     }
 
-    double lr =
+    int reduction;
+
+if (depth < MAX_LMR_DEPTH && moveIndex < MAX_LMR_MOVES)
+{
+    reduction = LMR_TABLE[depth][moveIndex];
+}
+else
+{
+    const double lr =
         0.4 +
         std::log(static_cast<double>(depth)) *
-        std::log(static_cast<double>(moveIndex + 1)) /
-        2.0;
+        std::log(static_cast<double>(moveIndex + 1)) / 2.0;
 
-    int reduction =
-        static_cast<int>(lr);
+    reduction = static_cast<int>(lr);
+}
 
     if (isPV && reduction > 0)
-        --reduction;
-    if (!improving)
+    --reduction;
+
+if (!improving)
+    ++reduction;
+
+if (cutNode && !isPV)
     ++reduction;
     if (isKillerOrCounter)
     {
