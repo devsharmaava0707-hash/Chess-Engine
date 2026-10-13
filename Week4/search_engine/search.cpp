@@ -1033,12 +1033,24 @@ const chess::Bitboard nonPawnPieces =
 
 const bool hasNonPawnMaterial =
     nonPawnPieces.count() > 0;
+
+    constexpr int NULL_MOVE_MATE_BOUND =
+    MATE_SCORE - MAX_PLY;
+
+const bool ttUpperBoundBelowBeta =
+    entry != nullptr &&
+    entry->depth >= depth &&
+    entry->bound == tt::Bound::UPPERBOUND &&
+    tt::valueFromTT(entry->score, ply) < beta;
+
     if (!isPV &&
     !inCheck &&
     nullMoveAllowed &&
     depth >= 3 &&
-     
-    staticEval >= beta)
+    staticEval >= beta &&
+    beta > -NULL_MOVE_MATE_BOUND &&
+    beta < NULL_MOVE_MATE_BOUND &&
+    !ttUpperBoundBelowBeta)
 {
     // ++nullMoveAttempts = 0;
      ++stats.nullMoveAttempts;
@@ -1051,10 +1063,10 @@ const bool hasNonPawnMaterial =
 
     if (hasNonPawnMaterial)
     {
-        int R = (depth >= 6 ? 3 : 2);
-
-        if (staticEval - beta >= 200)
-            ++R;
+        int R =
+    3 +
+    depth / 3 +
+    std::min((staticEval - beta) / 200, 3);
 
     //     board.makeNullMove();
 
