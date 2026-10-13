@@ -1334,6 +1334,22 @@ if (!isPV &&
 }
 const int currentPiece =
     pieceIndexForMoveSearch(board, move);
+int continuationHistoryScore = 0;
+
+if (!isCapture &&
+    previousPiece >= 0 &&
+    previousPiece < 12 &&
+    previousTo >= 0 &&
+    previousTo < 64 &&
+    currentPiece >= 0)
+{
+    continuationHistoryScore =
+        stats.continuationHistory
+            [previousPiece]
+            [previousTo]
+            [currentPiece]
+            [move.to().index()];
+}
 
 stats.moveStack[ply + 1].valid = false;
 
@@ -1390,19 +1406,20 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
     else
     {
         reduction =
-            search::ordering::lateMoveReduction(
-                searchDepth,
-                moveIndex,
-                isPV,
-                improving,
-                cutNode,
-                isCapture,
-                isPromotion,
-                inCheck,
-                givesCheck,
-                isKillerOrCounter,
-                historyScore
-            );
+    search::ordering::lateMoveReduction(
+        searchDepth,
+        moveIndex,
+        isPV,
+        improving,
+        cutNode,
+        isCapture,
+        isPromotion,
+        inCheck,
+        givesCheck,
+        isKillerOrCounter,
+        isCapture ? 0 : historyScore,
+        isCapture ? 0 : continuationHistoryScore
+    );
             if (reduction > 0)
         ++stats.lmrReductions;
         score = -negamax(

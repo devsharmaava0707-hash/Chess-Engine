@@ -34,6 +34,7 @@ void pickNextMove(
     bool inCheck,
     bool givesCheck,
     bool isKillerOrCounter,
-    int historyScore
+    int historyScore,
+    int continuationHistoryScore
 );
 }

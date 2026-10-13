@@ -399,7 +399,7 @@ void pickNextMove(
     bool inCheck,
     bool givesCheck,
     bool isKillerOrCounter,
-    int historyScore)
+    int historyScore,int continuationHistoryScore)
 {
     if (depth < 2 ||
         moveIndex < 1 ||
@@ -436,14 +436,13 @@ if (!improving)
 if (cutNode && !isPV)
     ++reduction;
     if (isKillerOrCounter)
-    {
-        if (reduction > 0)
-            --reduction;
-    }
-    else if (historyScore < -4000)
-    {
-        ++reduction;
-    }
+{
+    if (reduction > 0)
+        --reduction;
+}
+
+reduction -=
+    (historyScore + continuationHistoryScore) / 8192;
 
     int maxReduction =
         std::max(0, depth - 2);
