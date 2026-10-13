@@ -1164,6 +1164,11 @@ if (prevMove != chess::Move::NO_MOVE)
     chess::Move ttMove = chess::Move::NO_MOVE;
 
     if (entry != nullptr) ttMove = entry->bestMove;
+    const bool ttMoveIsCapture =
+    ttMove != chess::Move::NO_MOVE &&
+    (ttMove.typeOf() == chess::Move::ENPASSANT ||
+     (ttMove.typeOf() != chess::Move::CASTLING &&
+      board.at(ttMove.to()) != chess::Piece::NONE));
     int previousPiece = -1;
 int previousTo = -1;
 
@@ -1417,6 +1422,7 @@ if (givesCheck && depth >= 2 && ply < stats.extensionCap)
         inCheck,
         givesCheck,
         isKillerOrCounter,
+        ttMoveIsCapture,
         isCapture ? 0 : historyScore,
         isCapture ? 0 : continuationHistoryScore
     );
