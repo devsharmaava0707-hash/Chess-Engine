@@ -842,7 +842,7 @@ static bool tryRootTablebase(
     return false;
 }
 
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount,bool cutNode)
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount,bool cutNode,chess::Move excludedMove)
 {
    ++stats.nodes;
    if (ply >= MAX_PLY - 1)
@@ -908,7 +908,7 @@ if (ply > 0)
     const bool isPV = (beta - alpha > 1);
 
 
-if (entry != nullptr)
+if (entry != nullptr &&  excludedMove == chess::Move::NO_MOVE)
 {
     ++stats.ttHits;
 
@@ -1189,6 +1189,28 @@ if (prevMove != chess::Move::NO_MOVE)
     (ttMove.typeOf() == chess::Move::ENPASSANT ||
      (ttMove.typeOf() != chess::Move::CASTLING &&
       board.at(ttMove.to()) != chess::Piece::NONE));
+
+      constexpr int SINGULAR_MATE_BOUND =
+    MATE_SCORE - 2 * MAX_PLY;
+
+const int singularTtScore =
+    entry != nullptr
+        ? tt::valueFromTT(entry->score, ply)
+        : 0;
+
+const bool singularCandidate =
+    excludedMove == chess::Move::NO_MOVE &&
+    !isPV &&
+    !inCheck &&
+    searchDepth >= 6 &&
+    ply < stats.extensionCap &&
+    entry != nullptr &&
+    ttMove != chess::Move::NO_MOVE &&
+    entry->depth >= searchDepth - 3 &&
+    (entry->bound == tt::Bound::LOWERBOUND ||
+     entry->bound == tt::Bound::EXACT) &&
+    singularTtScore > -SINGULAR_MATE_BOUND &&
+    singularTtScore < SINGULAR_MATE_BOUND;
     int previousPiece = -1;
 int previousTo = -1;
 
@@ -1278,7 +1300,8 @@ constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
     );
 
     const chess::Move& move = moves[moveSlot];
-
+if (move == excludedMove)
+    continue;
     ++moveIndex;
 
     bool isCapture =
@@ -1306,6 +1329,38 @@ constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
         // const bool quietGivesCheck =
         // board.givesCheck(move) != chess::CheckType::NO_CHECK;
         bool quietGivesCheck = false;
+        int singularExtension = 0;
+
+if (singularCandidate && move == ttMove)
+{
+    stats.moveStack[ply + 1].valid = false;
+
+    const int singularBeta =
+        singularTtScore - 2 * searchDepth;
+
+    const int singularDepth =
+        std::max(1, (searchDepth - 1) / 2);
+
+    const int singularScore = negamax(
+        board,
+        singularDepth,
+        singularBeta - 1,
+        singularBeta,
+        stats,
+        ply,
+        prevMove,
+        false,
+        extCount,
+        false,
+        ttMove
+    );
+
+    if (stats.stop)
+        return 0;
+
+    if (singularScore < singularBeta)
+        singularExtension = 1;
+}
     // Step 5: Main-search SEE pruning
 // if (!isPV &&
 //     !inCheck &&
@@ -1430,10 +1485,14 @@ board.makeMove(move);
 
     bool givesCheck = board.inCheck();
 // extension add
-    int extension = 0;
+   int extension = singularExtension;
 
-if (givesCheck && depth >= 2 && ply < stats.extensionCap)
-    extension = 1;
+if (givesCheck &&
+    depth >= 2 &&
+    ply < stats.extensionCap)
+{
+    extension = std::max(extension, 1);
+}
 // // above is extension add
     int reduction = 0;
     int score;
