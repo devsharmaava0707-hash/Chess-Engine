@@ -89,9 +89,15 @@ int capturedTypeForMove(
     const chess::Move& counterMove,
     const int history[64][64],
     const int continuationHistory[12][64][12][64],
+    const int continuationHistory2[12][64][12][64],
+    const int continuationHistory4[12][64][12][64],
     const int captureHistory[12][6][64],
     int previousPiece,
     int previousTo,
+    int previous2Piece,
+    int previous2To,
+    int previous4Piece,
+    int previous4To,
     const chess::Move& ttMove)
         {
             bool isCapture =
@@ -201,24 +207,29 @@ int capturedTypeForMove(
 // ][
 //     move.to().index()
 // ];
+// int historyScore =
+//     history[
+//         move.from().index()
+//     ][
+//         move.to().index()
+//     ];
+
+// int continuationScore = 0;
 int historyScore =
-    history[
-        move.from().index()
-    ][
-        move.to().index()
-    ];
+    history[move.from().index()][move.to().index()];
+
+const int currentPiece = pieceIndexForMove(board, move);
 
 int continuationScore = 0;
+int continuationScore2 = 0;
+int continuationScore4 = 0;
 
-if (previousPiece >= 0 &&
-    previousPiece < 12 &&
-    previousTo >= 0 &&
-    previousTo < 64)
+if (currentPiece >= 0)
 {
-    const int currentPiece =
-        pieceIndexForMove(board, move);
-
-    if (currentPiece >= 0)
+    if (previousPiece >= 0 &&
+        previousPiece < 12 &&
+        previousTo >= 0 &&
+        previousTo < 64)
     {
         continuationScore =
             continuationHistory
@@ -227,11 +238,63 @@ if (previousPiece >= 0 &&
                 [currentPiece]
                 [move.to().index()];
     }
+
+    if (previous2Piece >= 0 &&
+        previous2Piece < 12 &&
+        previous2To >= 0 &&
+        previous2To < 64)
+    {
+        continuationScore2 =
+            continuationHistory2
+                [previous2Piece]
+                [previous2To]
+                [currentPiece]
+                [move.to().index()];
+    }
+
+    if (previous4Piece >= 0 &&
+        previous4Piece < 12 &&
+        previous4To >= 0 &&
+        previous4To < 64)
+    {
+        continuationScore4 =
+            continuationHistory4
+                [previous4Piece]
+                [previous4To]
+                [currentPiece]
+                [move.to().index()];
+    }
 }
 
-return historyScore + continuationScore / 2;
+return historyScore
+     + continuationScore / 2
+     + continuationScore2 / 4
+     + continuationScore4 / 8;
         }
     }
+
+// if (previousPiece >= 0 &&
+//     previousPiece < 12 &&
+//     previousTo >= 0 &&
+//     previousTo < 64)
+// {
+//     const int currentPiece =
+//         pieceIndexForMove(board, move);
+
+//     if (currentPiece >= 0)
+//     {
+//         continuationScore =
+//             continuationHistory
+//                 [previousPiece]
+//                 [previousTo]
+//                 [currentPiece]
+//                 [move.to().index()];
+//     }
+// }
+
+// return historyScore + continuationScore / 2;
+//         }
+//     }
 
 //     void orderMoves(
 //     const chess::Board& board,
@@ -329,33 +392,45 @@ return historyScore + continuationScore / 2;
 // }   
     void scoreMoves(
     const chess::Board& board,
-    chess::Movelist& moves,
-    const chess::Move killers[2],
-    const chess::Move& counterMove,
-    const int history[64][64],
-    const int continuationHistory[12][64][12][64],
-    const int captureHistory[12][6][64],
-    int previousPiece,
-    int previousTo,
-    const chess::Move& ttMove,
-    int scores[256])
+chess::Movelist& moves,
+const chess::Move killers[2],
+const chess::Move& counterMove,
+const int history[64][64],
+const int continuationHistory[12][64][12][64],
+const int continuationHistory2[12][64][12][64],
+const int continuationHistory4[12][64][12][64],
+const int captureHistory[12][6][64],
+int previousPiece,
+int previousTo,
+int previous2Piece,
+int previous2To,
+int previous4Piece,
+int previous4To,
+const chess::Move& ttMove,
+int scores[256])
 {
     const int n = static_cast<int>(moves.size());
 
     for (int i = 0; i < n; ++i)
     {
         scores[i] = moveScore(
-            board,
-            moves[i],
-            killers,
-            counterMove,
-            history,
-            continuationHistory,
-            captureHistory,
-            previousPiece,
-            previousTo,
-            ttMove
-        );
+    board,
+    moves[i],
+    killers,
+    counterMove,
+    history,
+    continuationHistory,
+    continuationHistory2,
+    continuationHistory4,
+    captureHistory,
+    previousPiece,
+    previousTo,
+    previous2Piece,
+    previous2To,
+    previous4Piece,
+    previous4To,
+    ttMove
+);
     }
 }
 

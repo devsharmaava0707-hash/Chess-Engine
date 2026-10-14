@@ -521,9 +521,12 @@ search::ordering::scoreMoves(
     chess::Move::NO_MOVE,
     stats.history[qSide],
     stats.continuationHistory,
+    stats.continuationHistory2,
+    stats.continuationHistory4,
     stats.captureHistory,
-    -1,
-    -1,
+    -1, -1,
+    -1, -1,
+    -1, -1,
     qTtMove,
     qMoveScores
 );
@@ -844,6 +847,11 @@ static bool tryRootTablebase(
    ++stats.nodes;
    if (ply >= MAX_PLY - 1)
     return evaluateForSideToMove(board);
+    if (ply + 2 < MAX_PLY)
+{
+    stats.killers[ply + 2][0] = chess::Move::NO_MOVE;
+    stats.killers[ply + 2][1] = chess::Move::NO_MOVE;
+}
 
 if ((stats.nodes & (stats.timeCheckPeriod - 1)) == 0)
 {
@@ -1192,6 +1200,23 @@ if (stats.moveStack[ply].valid)
     previousTo =
         stats.moveStack[ply].to;
 }
+int previous2Piece = -1;
+int previous2To = -1;
+
+if (ply >= 2 && stats.moveStack[ply - 1].valid)
+{
+    previous2Piece = stats.moveStack[ply - 1].piece;
+    previous2To = stats.moveStack[ply - 1].to;
+}
+
+int previous4Piece = -1;
+int previous4To = -1;
+
+if (ply >= 4 && stats.moveStack[ply - 3].valid)
+{
+    previous4Piece = stats.moveStack[ply - 3].piece;
+    previous4To = stats.moveStack[ply - 3].to;
+}
     int moveScores[256];
 
 search::ordering::scoreMoves(
@@ -1201,13 +1226,18 @@ search::ordering::scoreMoves(
     counterMove,
     stats.history[side],
     stats.continuationHistory,
+    stats.continuationHistory2,
+    stats.continuationHistory4,
     stats.captureHistory,
     previousPiece,
     previousTo,
+    previous2Piece,
+    previous2To,
+    previous4Piece,
+    previous4To,
     ttMove,
     moveScores
 );
-
     int bestScore = -INF;
     chess::Move bestMove = chess::Move::NO_MOVE;
     constexpr int MAX_QUIETS = 64;
@@ -1636,7 +1666,8 @@ if (h > HISTORY_MAX)
                 [qm.to().index()];
 
 constexpr int HISTORY_MAX = 30000;
-const int malus = depth * depth;
+const int malus =
+    std::min(depth * depth * 2, 2000);
 
 hq += -malus - hq * malus / HISTORY_MAX;
 
@@ -1644,60 +1675,89 @@ if (hq < -HISTORY_MAX)
     hq = -HISTORY_MAX;
             }
                         // Continuation history update.
-            if (stats.moveStack[ply].valid &&
-                stats.moveStack[ply + 1].valid)
-            {
-                const auto& prev = stats.moveStack[ply];
-                const auto& cur  = stats.moveStack[ply + 1];
+            // Update continuation history at 1, 2, and 4 plies.
+constexpr int CONT_HISTORY_MAX = 30000;
 
-                constexpr int CONT_HISTORY_MAX = 30000;
+const int contDelta =
+    std::min(depth * depth * 2, 2000);
 
-                // Reward the quiet move that caused the beta cutoff.
-                int& ch =
-                    stats.continuationHistory
-                        [prev.piece]
-                        [prev.to]
-                        [cur.piece]
-                        [cur.to];
+auto updateContinuationTable =
+    [&](auto& table, int contextPly)
+{
+    if (contextPly < 0 ||
+        contextPly >= MAX_PLY ||
+        !stats.moveStack[contextPly].valid ||
+        !stats.moveStack[ply + 1].valid)
+    {
+        return;
+    }
 
-                const int bonus =
-                    std::min(depth * depth * 2, 2000);
+    const auto& context = stats.moveStack[contextPly];
+    const auto& current = stats.moveStack[ply + 1];
 
-                ch += bonus -
-                      ch * bonus / CONT_HISTORY_MAX;
+    auto updateCell =
+        [&](int piece, int to, int delta)
+    {
+        int& value =
+            table[context.piece]
+                 [context.to]
+                 [piece]
+                 [to];
 
-                if (ch > CONT_HISTORY_MAX)
-                    ch = CONT_HISTORY_MAX;
+        const int magnitude =
+            delta < 0 ? -delta : delta;
 
-                // Penalize earlier quiet moves that failed to cut off.
-                for (int i = 0; i < quietCount; ++i)
-                {
-                    const chess::Move& qm =
-                        quietsTried[i];
+        value +=
+            delta -
+            value * magnitude / CONT_HISTORY_MAX;
 
-                    const int qmPiece =
-                        pieceIndexForMoveSearch(board, qm);
+        value = std::clamp(
+            value,
+            -CONT_HISTORY_MAX,
+            CONT_HISTORY_MAX
+        );
+    };
 
-                    if (qmPiece < 0)
-                        continue;
+    // Reward the quiet move that caused the cutoff.
+    updateCell(
+        current.piece,
+        current.to,
+        contDelta
+    );
 
-                    int& qch =
-                        stats.continuationHistory
-                            [prev.piece]
-                            [prev.to]
-                            [qmPiece]
-                            [qm.to().index()];
+    // Penalize earlier quiet moves that failed to cut off.
+    for (int i = 0; i < quietCount; ++i)
+    {
+        const chess::Move& qm = quietsTried[i];
 
-                    const int malus =
-                        std::min(depth * depth, 1000);
+        const int qmPiece =
+            pieceIndexForMoveSearch(board, qm);
 
-                    qch += -malus -
-                           qch * malus / CONT_HISTORY_MAX;
+        if (qmPiece < 0)
+            continue;
 
-                    if (qch < -CONT_HISTORY_MAX)
-                        qch = -CONT_HISTORY_MAX;
-                }
-            }
+        updateCell(
+            qmPiece,
+            qm.to().index(),
+            -contDelta
+        );
+    }
+};
+
+updateContinuationTable(
+    stats.continuationHistory,
+    ply
+);
+
+updateContinuationTable(
+    stats.continuationHistory2,
+    ply - 1
+);
+
+updateContinuationTable(
+    stats.continuationHistory4,
+    ply - 3
+);
         }
         {
     auto updateCaptureHistory =
@@ -1975,9 +2035,12 @@ search::ordering::scoreMoves(
         static_cast<int>(board.sideToMove())
     ],
     stats.continuationHistory,
+    stats.continuationHistory2,
+    stats.continuationHistory4,
     stats.captureHistory,
-    -1,
-    -1,
+    -1, -1,
+    -1, -1,
+    -1, -1,
     ttMove,
     rootMoveScores
 );
