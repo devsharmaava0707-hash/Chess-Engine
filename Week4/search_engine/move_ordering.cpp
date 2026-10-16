@@ -3,6 +3,7 @@
 #include<cmath>
 #include<algorithm>
 #include <array>
+#include "search_tuning.h"
 namespace
 {
     constexpr int MAX_LMR_DEPTH = 256;
@@ -19,9 +20,10 @@ namespace
             for (int moveIndex = 1; moveIndex < MAX_LMR_MOVES; ++moveIndex)
             {
                 const double lr =
-                    0.4 +
-                    std::log(static_cast<double>(depth)) *
-                    std::log(static_cast<double>(moveIndex + 1)) / 2.0;
+                    search::tuning::LMR_LOG_BASE +
+std::log(static_cast<double>(depth)) *
+std::log(static_cast<double>(moveIndex + 1)) /
+    search::tuning::LMR_LOG_DIVISOR;
 
                 table[depth][moveIndex] = static_cast<int>(lr);
             }
@@ -497,31 +499,36 @@ if (depth < MAX_LMR_DEPTH && moveIndex < MAX_LMR_MOVES)
 else
 {
     const double lr =
-        0.4 +
-        std::log(static_cast<double>(depth)) *
-        std::log(static_cast<double>(moveIndex + 1)) / 2.0;
+        search::tuning::LMR_LOG_BASE +
+std::log(static_cast<double>(depth)) *
+std::log(static_cast<double>(moveIndex + 1)) /
+    search::tuning::LMR_LOG_DIVISOR;
 
     reduction = static_cast<int>(lr);
 }
 
     if (isPV && reduction > 0)
-    --reduction;
+    reduction -= search::tuning::LMR_PV_DISCOUNT;
 
 if (!improving)
-    ++reduction;
+    reduction +=
+        search::tuning::LMR_NOT_IMPROVING_BONUS;
 
 if (cutNode && !isPV)
-    ++reduction;
-    if (isKillerOrCounter)
-{
-    if (reduction > 0)
-        --reduction;
-}
+    reduction +=
+        search::tuning::LMR_CUTNODE_BONUS;
+
+if (isKillerOrCounter && reduction > 0)
+    reduction -=
+        search::tuning::LMR_KILLER_DISCOUNT;
 
 reduction -=
-    (historyScore + continuationHistoryScore) / 8192;
+    (historyScore + continuationHistoryScore) /
+    search::tuning::LMR_HISTORY_DIVISOR;
+
 if (ttMoveIsCapture)
-    ++reduction;
+    reduction +=
+        search::tuning::LMR_TT_CAPTURE_BONUS;
 
     int maxReduction =
         std::max(0, depth - 2);

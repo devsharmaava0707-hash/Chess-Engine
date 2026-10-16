@@ -6,6 +6,7 @@
 #include "../tablebase/tbprobe.h"
 #include "move_ordering.h"
 #include<algorithm>
+#include "search_tuning.h"
 namespace search
 {
     struct TimeBudget
@@ -1146,6 +1147,130 @@ static bool tryRootTablebase(
     return false;
 }
 
+static bool trySearchTablebaseWDL(
+    const chess::Board& board,
+    int ply,
+    int& score)
+{
+    score = 0;
+
+    if (TB_LARGEST == 0)
+        return false;
+
+    if (board.occ().count() >
+        static_cast<int>(TB_LARGEST))
+    {
+        return false;
+    }
+
+    // Keep this first version conservative:
+    // the root helper also rejects castling rights.
+    if (board.inCheck())
+        return false;
+
+    const auto cr = board.castlingRights();
+
+    const bool hasCastlingRights =
+        cr.has(
+            chess::Color::WHITE,
+            chess::Board::CastlingRights::Side::KING_SIDE
+        ) ||
+        cr.has(
+            chess::Color::WHITE,
+            chess::Board::CastlingRights::Side::QUEEN_SIDE
+        ) ||
+        cr.has(
+            chess::Color::BLACK,
+            chess::Board::CastlingRights::Side::KING_SIDE
+        ) ||
+        cr.has(
+            chess::Color::BLACK,
+            chess::Board::CastlingRights::Side::QUEEN_SIDE
+        );
+
+    if (hasCastlingRights)
+        return false;
+
+    const uint64_t white =
+        board.us(chess::Color::WHITE).getBits();
+
+    const uint64_t black =
+        board.us(chess::Color::BLACK).getBits();
+
+    const uint64_t kings =
+        board.pieces(chess::PieceType::KING).getBits();
+
+    const uint64_t queens =
+        board.pieces(chess::PieceType::QUEEN).getBits();
+
+    const uint64_t rooks =
+        board.pieces(chess::PieceType::ROOK).getBits();
+
+    const uint64_t bishops =
+        board.pieces(chess::PieceType::BISHOP).getBits();
+
+    const uint64_t knights =
+        board.pieces(chess::PieceType::KNIGHT).getBits();
+
+    const uint64_t pawns =
+        board.pieces(chess::PieceType::PAWN).getBits();
+
+    const unsigned rule50 =
+        static_cast<unsigned>(board.halfMoveClock());
+
+    const unsigned ep =
+        board.enpassantSq() == chess::Square::NO_SQ
+            ? 0
+            : static_cast<unsigned>(
+                  board.enpassantSq().index()
+              );
+
+    const bool whiteToMove =
+        board.sideToMove() == chess::Color::WHITE;
+
+    const unsigned wdl = tb_probe_wdl(
+        white,
+        black,
+        kings,
+        queens,
+        rooks,
+        bishops,
+        knights,
+        pawns,
+        rule50,
+        0,          // no castling rights
+        ep,
+        whiteToMove
+    );
+
+    if (wdl == TB_RESULT_FAILED)
+        return false;
+
+    // Keep tablebase results below ordinary mate scores.
+    constexpr int TB_WIN_SCORE =
+        MATE_SCORE - MAX_PLY - 1;
+
+    switch (wdl)
+    {
+        case TB_WIN:
+            score = TB_WIN_SCORE - ply;
+            return true;
+
+        case TB_LOSS:
+            score = -TB_WIN_SCORE + ply;
+            return true;
+
+        case TB_BLESSED_LOSS:
+        case TB_DRAW:
+        case TB_CURSED_WIN:
+            score = 0;
+            return true;
+
+        default:
+            return false;
+    }
+}
+
     int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount,bool cutNode,chess::Move excludedMove,bool allowProbCut)
 {
    ++stats.nodes;
@@ -1210,6 +1335,28 @@ if (ply > 0)
     uint64_t key = board.hash();
     tt::Entry* entry = stats.table.probe(key);
     const bool isPV = (beta - alpha > 1);
+
+int tbScore = 0;
+
+if (depth > 0 &&
+    ply > 0 &&
+    trySearchTablebaseWDL(board, ply, tbScore))
+{
+    const chess::Move preservedMove =
+        entry != nullptr
+            ? entry->bestMove
+            : chess::Move::NO_MOVE;
+
+    stats.table.store(
+        key,
+        depth,
+        tt::valueToTT(tbScore, ply),
+        tt::Bound::EXACT,
+        preservedMove
+    );
+
+    return tbScore;
+}
 
 
 if (entry != nullptr &&  excludedMove == chess::Move::NO_MOVE)
@@ -1295,22 +1442,26 @@ if (!inCheck && ply >= 2)
     // {
     //     return staticEval;
     // }  
-    constexpr int RFP_MARGIN_PER_DEPTH = 120;
-constexpr int RFP_NOT_IMPROVING_PENALTY = 70;
+    constexpr int RFP_MATE_BOUND = MATE_SCORE - MAX_PLY;
 
 int rfpMargin =
-    RFP_MARGIN_PER_DEPTH * depth;
+    search::tuning::RFP_MARGIN_PER_DEPTH * depth;
 
 if (!improving)
-    rfpMargin += RFP_NOT_IMPROVING_PENALTY;
+{
+    rfpMargin +=
+        search::tuning::RFP_NOT_IMPROVING_PENALTY;
+}
 
 if (!isPV &&
     !inCheck &&
-    depth <= 6 &&
+    depth <= search::tuning::RFP_MAX_DEPTH &&
+    beta > -RFP_MATE_BOUND &&
+    beta < RFP_MATE_BOUND &&
     staticEval - rfpMargin >= beta)
 {
-    return staticEval;
-} 
+    return (staticEval + beta) / 2;
+}
     // Razoring
     if (!isPV &&
     !inCheck &&
@@ -1653,7 +1804,7 @@ int quietsSearched = 0;
 // bool hasNonPawnMaterial = nonPawnPieces.count() > 0;
 
 constexpr int MATE_BOUND = MATE_SCORE - MAX_PLY;
-constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
+// constexpr int LMP_MOVE_LIMIT[4] = {0,6,10,14};
     for (int moveSlot = 0;
      moveSlot < static_cast<int>(moves.size());
      ++moveSlot)
@@ -1726,16 +1877,11 @@ if (singularCandidate && move == ttMove)
     if (singularScore < singularBeta)
         singularExtension = 1;
 }
-    // Step 5: Main-search SEE pruning
-// if (!isPV &&
-//     !inCheck &&
-//     depth <= 6 &&
-//     isCapture &&
-//     !isPromotion &&
-//     search::see::evaluate(board, move) < 0)
-// {
-//     continue;
-// }
+   
+constexpr int MATE_BOUND =
+    MATE_SCORE - MAX_PLY;
+
+// Keep capture SEE pruning separate from quiet-move pruning.
 if (!isPV &&
     !inCheck &&
     hasNonPawnMaterial &&
@@ -1743,70 +1889,19 @@ if (!isPV &&
     depth <= 6 &&
     isCapture &&
     !isPromotion &&
-    !search::see::see_ge(board, move, -90 * depth))
+    !search::see::see_ge(
+        board,
+        move,
+        -90 * depth))
 {
     continue;
 }
-constexpr int FUTILITY_MARGIN_PER_DEPTH = 120;
-const bool quietPruningCandidate =
-    !isPV &&
-    !inCheck &&
-    hasNonPawnMaterial &&
-    isQuiet &&
-    !isKillerOrCounter &&
-    bestScore > -MATE_BOUND;
 
-const bool futilityMayPrune =
-    quietPruningCandidate &&
-    depth <= 3 &&
-    staticEval + FUTILITY_MARGIN_PER_DEPTH * depth <= alpha;
-
-const bool lmpMayPrune =
-    quietPruningCandidate &&
-    depth >= 1 &&
-    depth <= 3 &&
-    quietsSearched >= LMP_MOVE_LIMIT[depth];
-
-if (futilityMayPrune || lmpMayPrune)
-{
-    quietGivesCheck =
-        board.givesCheck(move) != chess::CheckType::NO_CHECK;
-}
-if (!isPV &&
-    !inCheck &&
-    hasNonPawnMaterial &&
-    depth <= 3 &&
-    isQuiet &&
-    !isKillerOrCounter &&
-    !quietGivesCheck &&
-    bestScore > -MATE_BOUND &&
-    staticEval + FUTILITY_MARGIN_PER_DEPTH * depth <= alpha)
-{
-    continue;
-}
-if (!isPV &&
-    !inCheck &&
-    hasNonPawnMaterial &&
-    isQuiet &&
-    !isKillerOrCounter &&
-    !quietGivesCheck &&
-    bestScore > -MATE_BOUND)
-{
-    if (depth >= 1 &&
-        depth <= 3 &&
-        quietsSearched >= LMP_MOVE_LIMIT[depth])
-    {
-        continue;
-    }
-}
-const bool isBadCapture =
-    !firstMove &&
-    depth >= 3 &&
-    isCapture &&
-    !isPromotion &&
-    !search::see::see_ge(board, move, 0);
+// Piece and continuation history are needed to estimate
+// the existing LMR reduction before making the move.
 const int currentPiece =
     pieceIndexForMoveSearch(board, move);
+
 int continuationHistoryScore = 0;
 
 if (!isCapture &&
@@ -1823,6 +1918,123 @@ if (!isCapture &&
             [currentPiece]
             [move.to().index()];
 }
+
+// Do not prune the first searched move, TT move, checking
+// move, killer/counter move, or singularly extended move.
+const bool quietPruningCandidate =
+    !isPV &&
+    !inCheck &&
+    hasNonPawnMaterial &&
+    isQuiet &&
+    !firstMove &&
+    move != ttMove &&
+    !isKillerOrCounter &&
+    singularExtension == 0 &&
+    bestScore > -MATE_BOUND;
+
+int preliminaryReduction = 0;
+int futilityDepth = searchDepth;
+
+if (quietPruningCandidate)
+{
+    quietGivesCheck =
+        board.givesCheck(move) !=
+        chess::CheckType::NO_CHECK;
+
+    if (!quietGivesCheck)
+    {
+        // Estimate the same LMR reduction that the main
+        // move-search path will use for this quiet move.
+        preliminaryReduction =
+            search::ordering::lateMoveReduction(
+                searchDepth,
+                moveIndex,
+                isPV,
+                improving,
+                cutNode,
+                false,  // isCapture
+                false,  // isBadCapture
+                false,  // isPromotion
+                inCheck,
+                false,  // givesCheck
+                isKillerOrCounter,
+                ttMoveIsCapture,
+                historyScore,
+                continuationHistoryScore
+            );
+
+        futilityDepth =
+            std::max(
+                1,
+                searchDepth -1- preliminaryReduction
+            );
+    }
+}
+
+// Futility pruning uses the effective depth after LMR.
+const bool futilityMayPrune =
+    quietPruningCandidate &&
+    !quietGivesCheck &&
+    futilityDepth <=
+        search::tuning::FUTILITY_MAX_DEPTH &&
+    staticEval +
+        search::tuning::FUTILITY_MARGIN_PER_DEPTH *
+        futilityDepth <= alpha;
+
+// LMP threshold: (3 + depth^2) / (2 - improving).
+const int lmpMoveLimit =
+    (search::tuning::LMP_BASE +
+     searchDepth * searchDepth) /
+    (2 - static_cast<int>(improving));
+
+const bool lmpMayPrune =
+    quietPruningCandidate &&
+    !quietGivesCheck &&
+    searchDepth >= 1 &&
+    searchDepth <= search::tuning::LMP_MAX_DEPTH &&
+    quietsSearched >= lmpMoveLimit;
+
+// Start with a fixed history threshold. This can be tuned
+// after tactical testing and Cutechess comparisons.
+const bool historyMayPrune =
+    quietPruningCandidate &&
+    !quietGivesCheck &&
+    searchDepth <=
+        search::tuning::HISTORY_PRUNING_MAX_DEPTH &&
+    historyScore <
+        -search::tuning::HISTORY_PRUNING_THRESHOLD;
+
+if (futilityMayPrune ||
+    lmpMayPrune ||
+    historyMayPrune)
+{
+    continue;
+}
+
+// Requires see_ge() to correctly handle quiet moves.
+// Do not enable this rule until Step 5 below is fixed.
+const bool quietSeeMayPrune =
+    quietPruningCandidate &&
+    !quietGivesCheck &&
+    searchDepth >= 1 &&
+    searchDepth <= search::tuning::QUIET_SEE_MAX_DEPTH;
+
+if (quietSeeMayPrune &&
+    !search::see::see_ge(
+        board,
+        move,
+        -search::tuning::QUIET_SEE_MARGIN *
+        searchDepth * searchDepth))
+{
+    continue;
+}
+
+const bool isBadCapture =
+    !firstMove &&
+    depth >= 3 &&
+    isCapture &&
+    !isPromotion &&
+    !search::see::see_ge(board, move, 0);
 
 stats.moveStack[ply + 1].valid = false;
 
@@ -1882,23 +2094,31 @@ if (givesCheck &&
     // lmr implementation 
     else
     {
+         if (quietPruningCandidate && !quietGivesCheck)
+    {
+        reduction = preliminaryReduction;
+    }
+    else
+    {
         reduction =
-    search::ordering::lateMoveReduction(
-        searchDepth,
-        moveIndex,
-        isPV,
-        improving,
-        cutNode,
-        isCapture,
-        isBadCapture,
-        isPromotion,
-        inCheck,
-        givesCheck,
-        isKillerOrCounter,
-        ttMoveIsCapture,
-        isCapture ? 0 : historyScore,
-        isCapture ? 0 : continuationHistoryScore
-    );
+            search::ordering::lateMoveReduction(
+                searchDepth,
+                moveIndex,
+                isPV,
+                improving,
+                cutNode,
+                isCapture,
+                isBadCapture,
+                isPromotion,
+                inCheck,
+                givesCheck,
+                isKillerOrCounter,
+                ttMoveIsCapture,
+                isCapture ? 0 : historyScore,
+                isCapture ? 0 : continuationHistoryScore
+            );
+    }
+
             if (reduction > 0)
         ++stats.lmrReductions;
         score = -negamax(
@@ -2431,7 +2651,7 @@ stats.timeCheckPeriod = 1024;
     // Root legal-move check
 chess::Movelist rootMoves;
 chess::movegen::legalmoves(rootMoves, board);
-constexpr int ASPIRATION_WINDOW = 50;
+// constexpr int ASPIRATION_WINDOW = 50;
 if (rootMoves.empty())
     return chess::Move::NO_MOVE;
 if (rootMoves.size() == 1)
@@ -2513,9 +2733,9 @@ search::ordering::scoreMoves(
         int alpha = -INF;
 int beta = INF;
 int delta =
-    (depth >= 5)
-        ? 20
-        : ASPIRATION_WINDOW;
+    (depth >= search::tuning::ASPIRATION_DEEP_DEPTH)
+        ? search::tuning::ASPIRATION_DEEP_WINDOW
+        : search::tuning::ASPIRATION_INITIAL_WINDOW;
 if (depth > 1)
 {
     
@@ -2590,25 +2810,51 @@ if (currentPiece >= 0)
 
 board.makeMove(move);
     
-    int score;
+    
+int score;
 
-    if (i == 0)
+if (i == 0)
+{
+    // The first root move always gets the full-depth search.
+    score = -negamax(
+        board,
+        depth - 1,
+        -windowBeta,
+        -windowAlpha,
+        stats,
+        1,
+        move,
+        true,
+        0,
+        false
+    );
+}
+else
+{
+    // Reduce later root moves by one ply at sufficient depth.
+    const bool reduceRootMove =
+        depth >= 5 && i >= 3;
+
+    const int firstSearchDepth =
+        reduceRootMove ? depth - 2 : depth - 1;
+
+    // Initial null-window search.
+    score = -negamax(
+        board,
+        firstSearchDepth,
+        -windowAlpha - 1,
+        -windowAlpha,
+        stats,
+        1,
+        move,
+        true,
+        0,
+        true
+    );
+
+    // If a reduced search beats alpha, verify at full depth.
+    if (reduceRootMove && score > windowAlpha)
     {
-        // First/root PV move gets the full aspiration window.
-        score = -negamax(
-            board,
-            depth - 1,
-            -windowBeta,
-            -windowAlpha,
-            stats,
-            1,
-            move,
-            true,0,false
-        );
-    }
-    else
-    {
-        // Later moves get a null-window search first.
         score = -negamax(
             board,
             depth - 1,
@@ -2617,24 +2863,31 @@ board.makeMove(move);
             stats,
             1,
             move,
-            true,0,true
+            true,
+            0,
+            true
         );
-
-        // It beat alpha, so we need the real score.
-        if (score > windowAlpha)
-        {
-            score = -negamax(
-                board,
-                depth - 1,
-                -windowBeta,
-                -windowAlpha,
-                stats,
-                1,
-                move,
-                true,0,false
-            );
-        }
     }
+
+    // If the full-depth null-window search beats alpha,
+    // perform the full-window search.
+    if (score > windowAlpha)
+    {
+        score = -negamax(
+            board,
+            depth - 1,
+            -windowBeta,
+            -windowAlpha,
+            stats,
+            1,
+            move,
+            true,
+            0,
+            false
+        );
+    }
+}
+
 
     board.unmakeMove(move);
 

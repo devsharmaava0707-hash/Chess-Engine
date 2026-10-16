@@ -329,15 +329,19 @@ bool see_ge(
     }
 
     // Match evaluate(): non-captures have SEE value zero.
-    if (capturedPiece == chess::Piece::NONE)
-        return threshold <= 0;
+    // if (capturedPiece == chess::Piece::NONE)
+    //     return threshold <= 0;
 
     const chess::PieceType movingType =
         move.typeOf() == chess::Move::PROMOTION
             ? move.promotionType()
             : board.at(from).type();
 
-    int swap = pieceValue(capturedPiece.type());
+    // int swap = pieceValue(capturedPiece.type());
+    int swap =
+    capturedPiece == chess::Piece::NONE
+        ? 0
+        : pieceValue(capturedPiece.type());
 
     // Preserve the capture-promotion bonus from Step 3.2.
     if (move.typeOf() == chess::Move::PROMOTION)
