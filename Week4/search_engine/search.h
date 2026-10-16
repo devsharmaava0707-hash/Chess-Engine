@@ -53,6 +53,18 @@ namespace search
         int continuationHistory2[12][64][12][64]{};
         int continuationHistory4[12][64][12][64]{};
         int captureHistory[12][6][64]{};
+        static constexpr int PAWN_CORRECTION_SIZE = 4096;
+
+struct PawnCorrectionEntry
+{
+    uint64_t whitePawns = 0;
+    uint64_t blackPawns = 0;
+    int correction = 0;
+    bool valid = false;
+};
+
+PawnCorrectionEntry
+    pawnCorrectionHistory[2][PAWN_CORRECTION_SIZE]{};
         struct MoveInfo{
     int piece = -1;
     int to = -1;
@@ -143,7 +155,14 @@ std::memset(
     0,
     sizeof(captureHistory)
 );
-
+for (auto& sideEntries : pawnCorrectionHistory)
+{
+    std::fill(
+        std::begin(sideEntries),
+        std::end(sideEntries),
+        PawnCorrectionEntry{}
+    );
+}
     std::memset(
         staticEvalStack,
         0,
@@ -183,7 +202,7 @@ std::memset(
     int evaluateForSideToMove(chess::Board& board);
     int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly);
     // int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats &stats,chess::Move prevMove);
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe,int extcount,bool cutNode,chess::Move excludedMove = chess::Move::NO_MOVE);
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess::Move prevMove,bool nullMoveAllowe,int extcount,bool cutNode,chess::Move excludedMove = chess::Move::NO_MOVE,bool allowProbCut = true);
     std::vector<chess::Move> extractPV(chess::Board board, SearchStats& stats, int maxLength);
     chess::Move findBestMove(chess::Board& board,int depth,SearchStats &stats,const SearchLimits & limits);
 }

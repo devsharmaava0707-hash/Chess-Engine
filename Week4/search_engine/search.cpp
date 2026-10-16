@@ -349,6 +349,310 @@ static inline int capturedTypeForMoveSearch(
         ? type
         : -1;
 }
+static int pawnCorrectionIndex(
+    uint64_t whitePawns,
+    uint64_t blackPawns)
+{
+    uint64_t key =
+        whitePawns ^
+        (blackPawns
+         + 0x9e3779b97f4a7c15ULL
+         + (whitePawns << 6)
+         + (whitePawns >> 2));
+
+    key ^= key >> 30;
+    key *= 0xbf58476d1ce4e5b9ULL;
+    key ^= key >> 27;
+    key *= 0x94d049bb133111ebULL;
+    key ^= key >> 31;
+
+    return static_cast<int>(
+        key & (SearchStats::PAWN_CORRECTION_SIZE - 1)
+    );
+}
+
+static int getPawnCorrection(
+    const chess::Board& board,
+    const SearchStats& stats)
+{
+    const uint64_t whitePawns =
+        board.pieces(
+            chess::PieceType::PAWN,
+            chess::Color::WHITE
+        ).getBits();
+
+    const uint64_t blackPawns =
+        board.pieces(
+            chess::PieceType::PAWN,
+            chess::Color::BLACK
+        ).getBits();
+
+    const int side =
+        static_cast<int>(board.sideToMove());
+
+    const int index =
+        pawnCorrectionIndex(whitePawns, blackPawns);
+
+    const auto& entry =
+        stats.pawnCorrectionHistory[side][index];
+
+    if (!entry.valid ||
+        entry.whitePawns != whitePawns ||
+        entry.blackPawns != blackPawns)
+    {
+        return 0;
+    }
+
+    return entry.correction;
+}
+
+static void updatePawnCorrection(
+    const chess::Board& board,
+    SearchStats& stats,
+    int residual,
+    int depth)
+{
+    constexpr int CORRECTION_LIMIT = 64;
+
+    const uint64_t whitePawns =
+        board.pieces(
+            chess::PieceType::PAWN,
+            chess::Color::WHITE
+        ).getBits();
+
+    const uint64_t blackPawns =
+        board.pieces(
+            chess::PieceType::PAWN,
+            chess::Color::BLACK
+        ).getBits();
+
+    const int side =
+        static_cast<int>(board.sideToMove());
+
+    const int index =
+        pawnCorrectionIndex(whitePawns, blackPawns);
+
+    auto& entry =
+        stats.pawnCorrectionHistory[side][index];
+
+    if (!entry.valid ||
+        entry.whitePawns != whitePawns ||
+        entry.blackPawns != blackPawns)
+    {
+        entry.whitePawns = whitePawns;
+        entry.blackPawns = blackPawns;
+        entry.correction = 0;
+        entry.valid = true;
+    }
+
+    const int target =
+        std::clamp(
+            residual,
+            -CORRECTION_LIMIT,
+            CORRECTION_LIMIT
+        );
+
+    const int difference =
+        target - entry.correction;
+
+    const int weight =
+        std::min(depth + 1, 16);
+
+    int adjustment =
+        difference * weight / 64;
+
+    if (adjustment == 0 && difference != 0)
+        adjustment = difference > 0 ? 1 : -1;
+
+    entry.correction =
+        std::clamp(
+            entry.correction + adjustment,
+            -CORRECTION_LIMIT,
+            CORRECTION_LIMIT
+        );
+}
+
+#if defined(_MSC_VER)
+#define SEARCH_NOINLINE __declspec(noinline)
+#elif defined(__GNUC__) || defined(__clang__)
+#define SEARCH_NOINLINE __attribute__((noinline))
+#else
+#define SEARCH_NOINLINE
+#endif
+
+static constexpr int PROBCUT_MARGIN = 120;
+static constexpr int PROBCUT_REDUCTION = 4;
+static constexpr int PROBCUT_MATE_BOUND = MATE_SCORE - MAX_PLY;
+
+static SEARCH_NOINLINE bool tryProbCut(
+    chess::Board& board,
+    int searchDepth,
+    int probBeta,
+    SearchStats& stats,
+    int ply,
+    chess::Move prevMove,
+    int extCount,
+    int staticEval,
+    chess::Move ttMove,
+    int& cutoffScore,
+    chess::Move& cutoffMove)
+{
+    cutoffScore = 0;
+    cutoffMove = chess::Move::NO_MOVE;
+
+    // ProbCut considers captures only.
+    chess::Movelist probMoves;
+
+    chess::movegen::legalmoves<
+        chess::movegen::MoveGenType::CAPTURE
+    >(probMoves, board);
+
+    if (probMoves.empty())
+        return false;
+
+    const int side =
+        static_cast<int>(board.sideToMove());
+
+    const int safePly =
+        std::min(ply, MAX_PLY - 1);
+
+    chess::Move counterMove =
+        chess::Move::NO_MOVE;
+
+    if (prevMove != chess::Move::NO_MOVE)
+    {
+        counterMove =
+            stats.counterMoves[side]
+                              [prevMove.from().index()]
+                              [prevMove.to().index()];
+    }
+
+    int previousPiece = -1;
+    int previousTo = -1;
+
+    if (stats.moveStack[ply].valid)
+    {
+        previousPiece = stats.moveStack[ply].piece;
+        previousTo = stats.moveStack[ply].to;
+    }
+
+    int previous2Piece = -1;
+    int previous2To = -1;
+
+    if (ply >= 2 && stats.moveStack[ply - 1].valid)
+    {
+        previous2Piece = stats.moveStack[ply - 1].piece;
+        previous2To = stats.moveStack[ply - 1].to;
+    }
+
+    int previous4Piece = -1;
+    int previous4To = -1;
+
+    if (ply >= 4 && stats.moveStack[ply - 3].valid)
+    {
+        previous4Piece = stats.moveStack[ply - 3].piece;
+        previous4To = stats.moveStack[ply - 3].to;
+    }
+
+    // Fixed-size score array: chess positions have fewer
+    // than 256 legal moves.
+    int probMoveScores[256];
+
+    search::ordering::scoreMoves(
+        board,
+        probMoves,
+        stats.killers[safePly],
+        counterMove,
+        stats.history[side],
+        stats.continuationHistory,
+        stats.continuationHistory2,
+        stats.continuationHistory4,
+        stats.captureHistory,
+        previousPiece,
+        previousTo,
+        previous2Piece,
+        previous2To,
+        previous4Piece,
+        previous4To,
+        ttMove,
+        probMoveScores
+    );
+
+    for (int moveSlot = 0;
+         moveSlot < static_cast<int>(probMoves.size());
+         ++moveSlot)
+    {
+        search::ordering::pickNextMove(
+            probMoves,
+            probMoveScores,
+            moveSlot
+        );
+
+        const chess::Move probMove =
+            probMoves[moveSlot];
+
+        // Reject captures that cannot plausibly reach the
+        // raised ProbCut threshold.
+        if (!search::see::see_ge(
+                board,
+                probMove,
+                probBeta - staticEval))
+        {
+            continue;
+        }
+
+        // Clear any stale continuation-history context.
+        stats.moveStack[ply + 1] = {};
+
+        const int pcPiece =
+            pieceIndexForMoveSearch(board, probMove);
+
+        if (pcPiece >= 0)
+        {
+            stats.moveStack[ply + 1].piece = pcPiece;
+            stats.moveStack[ply + 1].to =
+                probMove.to().index();
+            stats.moveStack[ply + 1].valid = true;
+        }
+
+        board.makeMove(probMove);
+
+        const int probScore = -negamax(
+            board,
+            searchDepth - PROBCUT_REDUCTION,
+            -probBeta,
+            -probBeta + 1,
+            stats,
+            ply + 1,
+            probMove,
+            true,
+            extCount,
+            false,
+            chess::Move::NO_MOVE,
+            false
+        );
+
+        board.unmakeMove(probMove);
+
+        if (stats.stop)
+            return false;
+
+        if (probScore >= probBeta)
+        {
+            // Keep the cutoff score conservative.
+            cutoffScore =
+                probScore - PROBCUT_MARGIN;
+
+            cutoffMove = probMove;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+#undef SEARCH_NOINLINE
+
 int quiescence(chess::Board& board,int alpha,int beta,SearchStats& stats,int qply,int rootPly){
     const int ply = rootPly + qply;
     ++stats.nodes;
@@ -842,7 +1146,7 @@ static bool tryRootTablebase(
     return false;
 }
 
-    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount,bool cutNode,chess::Move excludedMove)
+    int negamax(chess::Board& board,int depth,int alpha,int beta,SearchStats& stats,int ply,chess:: Move prevMove,bool nullMoveAllowed,int extCount,bool cutNode,chess::Move excludedMove,bool allowProbCut)
 {
    ++stats.nodes;
    if (ply >= MAX_PLY - 1)
@@ -961,10 +1265,15 @@ const bool inCheck = board.inCheck();
 
 constexpr int EVAL_NONE = INF;
 
-int staticEval =
+const int rawStaticEval =
     inCheck
         ? 0
         : evaluateForSideToMove(board);
+
+int staticEval = rawStaticEval;
+
+if (!inCheck)
+    staticEval += getPawnCorrection(board, stats);
 
 stats.staticEvalStack[ply] =
     inCheck ? EVAL_NONE : staticEval;
@@ -1123,7 +1432,8 @@ const bool ttUpperBoundBelowBeta =
             stats,
             ply + 1,
             chess::Move::NO_MOVE,
-            false,extCount,!cutNode
+            false,extCount,!cutNode,chess::Move::NO_MOVE,
+allowProbCut
         );
 
         board.unmakeNullMove();
@@ -1146,7 +1456,8 @@ const bool ttUpperBoundBelowBeta =
                 stats,
                 ply ,
                 prevMove,
-                false,extCount,false
+                false,extCount,false,chess::Move::NO_MOVE,
+allowProbCut
             );
 
             if (stats.stop)
@@ -1260,6 +1571,60 @@ search::ordering::scoreMoves(
     ttMove,
     moveScores
 );
+
+if (allowProbCut &&
+    excludedMove == chess::Move::NO_MOVE &&
+    !isPV &&
+    !inCheck &&
+    hasNonPawnMaterial &&
+    searchDepth >= PROBCUT_REDUCTION + 1 &&
+    beta > -PROBCUT_MATE_BOUND &&
+    beta < PROBCUT_MATE_BOUND - PROBCUT_MARGIN)
+{
+    const int probBeta =
+        beta + PROBCUT_MARGIN;
+
+    // A sufficiently deep TT upper/exact bound below the
+    // raised threshold argues against trying ProbCut.
+    const bool ttCanRejectProbCut =
+        entry != nullptr &&
+        entry->depth >= searchDepth - PROBCUT_REDUCTION &&
+        (entry->bound == tt::Bound::UPPERBOUND ||
+         entry->bound == tt::Bound::EXACT) &&
+        tt::valueFromTT(entry->score, ply) < probBeta;
+
+    if (!ttCanRejectProbCut)
+    {
+        int cutoffScore = 0;
+        chess::Move cutoffMove =
+            chess::Move::NO_MOVE;
+
+        if (tryProbCut(
+                board,
+                searchDepth,
+                probBeta,
+                stats,
+                ply,
+                prevMove,
+                extCount,
+                staticEval,
+                ttMove,
+                cutoffScore,
+                cutoffMove))
+        {
+            stats.table.store(
+                key,
+                searchDepth - PROBCUT_REDUCTION + 1,
+                tt::valueToTT(cutoffScore, ply),
+                tt::Bound::LOWERBOUND,
+                cutoffMove
+            );
+
+            return cutoffScore;
+        }
+    }
+}
+
     int bestScore = -INF;
     chess::Move bestMove = chess::Move::NO_MOVE;
     constexpr int MAX_QUIETS = 64;
@@ -1509,7 +1874,7 @@ if (givesCheck &&
             stats,
             ply + 1,
             move,
-            true,extCount + extension,childCutNode
+            true,extCount + extension,childCutNode,chess::Move::NO_MOVE,allowProbCut
         );
 
         firstMove = false;
@@ -1546,7 +1911,8 @@ if (givesCheck &&
     move,
     true,
     extCount + extension,
-    childCutNode
+    childCutNode,chess::Move::NO_MOVE,
+allowProbCut
 );
 
 if (score > alpha)
@@ -1567,7 +1933,8 @@ if (score > alpha)
             move,
             true,
             extCount + extension,
-            childCutNode
+            childCutNode,chess::Move::NO_MOVE,
+allowProbCut
         );
     }
 
@@ -1585,7 +1952,8 @@ if (score > alpha)
             move,
             true,
             extCount + extension,
-            childCutNode
+            childCutNode,chess::Move::NO_MOVE,
+allowProbCut
         );
     }
 }
@@ -1870,6 +2238,35 @@ updateContinuationTable(
     }
 
     
+}
+constexpr int CORRECTION_MATE_BOUND =
+    MATE_SCORE - MAX_PLY;
+
+const bool bestIsCapture =
+    bestMove != chess::Move::NO_MOVE &&
+    (bestMove.typeOf() == chess::Move::ENPASSANT ||
+     (bestMove.typeOf() != chess::Move::CASTLING &&
+      board.at(bestMove.to()) != chess::Piece::NONE));
+
+const bool lowerBound = bestScore >= beta;
+const bool upperBound = bestScore <= alphaOriginal;
+
+if (!stats.stop &&
+    excludedMove == chess::Move::NO_MOVE &&
+    !inCheck &&
+    depth >= 3 &&
+    !bestIsCapture &&
+    bestScore > -CORRECTION_MATE_BOUND &&
+    bestScore < CORRECTION_MATE_BOUND &&
+    !(lowerBound && bestScore <= rawStaticEval) &&
+    !(upperBound && bestScore >= rawStaticEval))
+{
+    updatePawnCorrection(
+        board,
+        stats,
+        bestScore - rawStaticEval,
+        depth
+    );
 }
 tt::Bound bound = tt::Bound::EXACT;
 
