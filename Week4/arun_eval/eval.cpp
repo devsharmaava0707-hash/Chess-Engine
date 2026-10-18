@@ -152,54 +152,83 @@ namespace eval::pawn_structure
     // Adjacent files only (excludes the pawn's own file) — used for
     // isolated/backward/connected checks, which care about *support from
     // a neighboring file*, not the pawn's own file.
-    inline Bitboard neighborFilesMask(int file)
-    {
-      Bitboard mask;
-      if (file > 0)
-        mask |= fileMask(file - 1);
-      if (file < 7)
-        mask |= fileMask(file + 1);
-      return mask;
-    }
+    // Precomputed pawn-structure masks.
+// Index 0 = White, index 1 = Black for side-dependent masks.
+struct PawnMaskTables
+{
+    Bitboard neighborFiles[8]{};
+    Bitboard passedSpan[8]{};
+    Bitboard ranksAhead[2][8]{};
+    Bitboard ranksBehindOrLevel[2][8]{};
+};
 
-    // Own file + both adjacent files (clamped at the board edge) — the
-    // "passed pawn span": if no enemy pawn sits anywhere in this span
-    // ahead of the pawn, nothing can ever stop or capture it on its way
-    // to promotion, so it's passed.
-    inline Bitboard passedSpanMask(int file)
+inline const PawnMaskTables& pawnMaskTables()
+{
+    static const PawnMaskTables masks = []()
     {
-      Bitboard mask = fileMask(file);
-      mask |= neighborFilesMask(file);
-      return mask;
-    }
+        PawnMaskTables m{};
 
-    // All ranks strictly ahead of `rank`, toward promotion, for `side`.
-    inline Bitboard ranksAheadMask(int rank, Color side)
-    {
-      Bitboard mask;
-      if (side == Color::WHITE)
-        for (int r = rank + 1; r <= 7; ++r)
-          mask |= rankMask(r);
-      else
-        for (int r = rank - 1; r >= 0; --r)
-          mask |= rankMask(r);
-      return mask;
-    }
+        // Precompute neighboring files and passed-pawn spans.
+        for (int file = 0; file < 8; ++file)
+        {
+            if (file > 0)
+                m.neighborFiles[file] |= fileMask(file - 1);
 
-    // All ranks level with or behind `rank`, for `side` — used by the
-    // backward-pawn check (is there a friendly pawn that could have
-    // escorted this one forward by pushing up beside it?).
-    inline Bitboard ranksBehindOrLevelMask(int rank, Color side)
-    {
-      Bitboard mask;
-      if (side == Color::WHITE)
-        for (int r = 0; r <= rank; ++r)
-          mask |= rankMask(r);
-      else
-        for (int r = 7; r >= rank; --r)
-          mask |= rankMask(r);
-      return mask;
-    }
+            if (file < 7)
+                m.neighborFiles[file] |= fileMask(file + 1);
+
+            m.passedSpan[file] =
+                fileMask(file) | m.neighborFiles[file];
+        }
+
+        // Precompute rank masks for both colors.
+        for (int rank = 0; rank < 8; ++rank)
+        {
+            // White: higher ranks are ahead.
+            for (int r = rank + 1; r <= 7; ++r)
+                m.ranksAhead[0][rank] |= rankMask(r);
+
+            // Black: lower ranks are ahead.
+            for (int r = rank - 1; r >= 0; --r)
+                m.ranksAhead[1][rank] |= rankMask(r);
+
+            // White: current rank and all lower ranks.
+            for (int r = 0; r <= rank; ++r)
+                m.ranksBehindOrLevel[0][rank] |= rankMask(r);
+
+            // Black: current rank and all higher ranks.
+            for (int r = 7; r >= rank; --r)
+                m.ranksBehindOrLevel[1][rank] |= rankMask(r);
+        }
+
+        return m;
+    }();
+
+    return masks;
+}
+
+inline Bitboard neighborFilesMask(int file)
+{
+    return pawnMaskTables().neighborFiles[file];
+}
+
+inline Bitboard passedSpanMask(int file)
+{
+    return pawnMaskTables().passedSpan[file];
+}
+
+inline Bitboard ranksAheadMask(int rank, Color side)
+{
+    int sideIndex = (side == Color::WHITE) ? 0 : 1;
+    return pawnMaskTables().ranksAhead[sideIndex][rank];
+}
+
+inline Bitboard ranksBehindOrLevelMask(int rank, Color side)
+{
+    int sideIndex = (side == Color::WHITE) ? 0 : 1;
+    return pawnMaskTables().ranksBehindOrLevel[sideIndex][rank];
+}
+    
 
     struct SideResult
     {
@@ -303,6 +332,89 @@ namespace eval::pawn_structure
   }
 
 } // namespace eval::pawn_structure
+
+// Shared attack maps used by the evaluation terms below.
+namespace eval::attack
+{
+  inline int idx(PieceType pt)
+  {
+    return static_cast<int>(pt.internal());
+  }
+
+  inline Bitboard pawnAttacksBB(Bitboard pawns, Color side)
+  {
+    if (side == Color::WHITE)
+      return attacks::pawnLeftAttacks<Color::underlying::WHITE>(pawns) |
+             attacks::pawnRightAttacks<Color::underlying::WHITE>(pawns);
+
+    return attacks::pawnLeftAttacks<Color::underlying::BLACK>(pawns) |
+           attacks::pawnRightAttacks<Color::underlying::BLACK>(pawns);
+  }
+
+  struct AttackMap
+  {
+    Bitboard byType[6]{};
+    Bitboard all;
+    Bitboard doubled;
+  };
+
+  inline AttackMap build(const Board& board, Color side)
+  {
+    AttackMap m;
+    const Bitboard occ = board.occ();
+
+    auto add = [&](Bitboard bb)
+    {
+      m.doubled |= m.all & bb;
+      m.all |= bb;
+    };
+
+    {
+      Bitboard u = pawnAttacksBB(board.pieces(PieceType::PAWN, side), side);
+      m.byType[idx(PieceType::PAWN)] = u;
+      add(u);
+    }
+    {
+      Bitboard u;
+      Bitboard bb = board.pieces(PieceType::KNIGHT, side);
+      while (bb)
+        u |= attacks::knight(bb.pop());
+      m.byType[idx(PieceType::KNIGHT)] = u;
+      add(u);
+    }
+    {
+      Bitboard u;
+      Bitboard bb = board.pieces(PieceType::BISHOP, side);
+      while (bb)
+        u |= attacks::bishop(bb.pop(), occ);
+      m.byType[idx(PieceType::BISHOP)] = u;
+      add(u);
+    }
+    {
+      Bitboard u;
+      Bitboard bb = board.pieces(PieceType::ROOK, side);
+      while (bb)
+        u |= attacks::rook(bb.pop(), occ);
+      m.byType[idx(PieceType::ROOK)] = u;
+      add(u);
+    }
+    {
+      Bitboard u;
+      Bitboard bb = board.pieces(PieceType::QUEEN, side);
+      while (bb)
+        u |= attacks::queen(bb.pop(), occ);
+      m.byType[idx(PieceType::QUEEN)] = u;
+      add(u);
+    }
+    {
+      Bitboard u = attacks::king(board.kingSq(side));
+      m.byType[idx(PieceType::KING)] = u;
+      add(u);
+    }
+
+    return m;
+  }
+} // namespace eval::attack
 
 // King safety: pawn shelter/storm + a simplified king-danger term
 namespace eval::king_safety
@@ -419,7 +531,7 @@ namespace eval::king_safety
 
   } // namespace
 
-  Score evaluate(const Board &board)
+  Score evaluate(const Board &board, const attack::AttackMap att[2])
   {
     Score total = 0;
 
@@ -487,24 +599,9 @@ namespace eval::king_safety
 
       // Safe checks: squares (empty, reachable, not defended by us) from
       // which an enemy piece of each type could deliver check right now.
-      auto unionAttacks = [&](Bitboard pieceBB, auto attackFn)
-      {
-        Bitboard u;
-        Bitboard bb = pieceBB;
-        while (bb)
-          u |= attackFn(bb.pop());
-        return u;
-      };
       auto hasSafeCheck = [&](Bitboard landingSquares)
       {
-        Bitboard b = landingSquares & ~occ;
-        while (b)
-        {
-          Square sq = b.pop();
-          if (!board.isAttacked(sq, us))
-            return true;
-        }
-        return false;
+        return !(landingSquares & ~occ & ~att[int(us)].all).empty();
       };
 
       Bitboard knightCheckSquares = attacks::knight(ksq);
@@ -512,18 +609,14 @@ namespace eval::king_safety
       Bitboard rookCheckSquares = attacks::rook(ksq, occ);
       Bitboard queenCheckSquares = bishopCheckSquares | rookCheckSquares;
 
-      Bitboard theirKnightAttacks = unionAttacks(board.pieces(PieceType::KNIGHT, them),
-                                                  [](Square s)
-                                                  { return attacks::knight(s); });
-      Bitboard theirBishopAttacks = unionAttacks(board.pieces(PieceType::BISHOP, them),
-                                                  [occ](Square s)
-                                                  { return attacks::bishop(s, occ); });
-      Bitboard theirRookAttacks = unionAttacks(board.pieces(PieceType::ROOK, them),
-                                                [occ](Square s)
-                                                { return attacks::rook(s, occ); });
-      Bitboard theirQueenAttacks = unionAttacks(board.pieces(PieceType::QUEEN, them),
-                                                 [occ](Square s)
-                                                 { return attacks::queen(s, occ); });
+      Bitboard theirKnightAttacks =
+          att[int(them)].byType[attack::idx(PieceType::KNIGHT)];
+      Bitboard theirBishopAttacks =
+          att[int(them)].byType[attack::idx(PieceType::BISHOP)];
+      Bitboard theirRookAttacks =
+          att[int(them)].byType[attack::idx(PieceType::ROOK)];
+      Bitboard theirQueenAttacks =
+          att[int(them)].byType[attack::idx(PieceType::QUEEN)];
 
       if (hasSafeCheck(knightCheckSquares & theirKnightAttacks))
         kingDanger += KNIGHT_SAFE_CHECK;
@@ -584,16 +677,7 @@ namespace eval::mobility
     inline Bitboard fileMask(int file) { return attacks::MASK_FILE[file]; }
     inline Bitboard rankMask(int rank) { return attacks::MASK_RANK[rank]; }
 
-    inline Bitboard pawnAttacksBB(Bitboard pawns, Color side)
-    {
-      if (side == Color::WHITE)
-        return attacks::pawnLeftAttacks<Color::underlying::WHITE>(pawns) |
-               attacks::pawnRightAttacks<Color::underlying::WHITE>(pawns);
-      return attacks::pawnLeftAttacks<Color::underlying::BLACK>(pawns) |
-             attacks::pawnRightAttacks<Color::underlying::BLACK>(pawns);
-    }
-
-    Score evaluateSide(const Board &board, Color us)
+    Score evaluateSide(const Board &board, Color us, const attack::AttackMap att[2])
     {
       Color them = ~us;
       Bitboard occ = board.occ();
@@ -610,7 +694,8 @@ namespace eval::mobility
       else
         blockedOrLow = ownPawns & ((occ << 8) | rankMask(6) | rankMask(5));
 
-      Bitboard enemyPawnAttacks = pawnAttacksBB(theirPawns, them);
+      Bitboard enemyPawnAttacks =
+          att[int(them)].byType[attack::idx(PieceType::PAWN)];
 
       Bitboard mobilityArea = ~(blockedOrLow | board.pieces(PieceType::KING, us) |
                                  board.pieces(PieceType::QUEEN, us) | enemyPawnAttacks);
@@ -679,9 +764,10 @@ namespace eval::mobility
 
   } // namespace
 
-  Score evaluate(const Board &board)
+  Score evaluate(const Board &board, const attack::AttackMap att[2])
   {
-    return evaluateSide(board, Color::WHITE) - evaluateSide(board, Color::BLACK);
+    return evaluateSide(board, Color::WHITE, att) -
+           evaluateSide(board, Color::BLACK, att);
   }
 
 } // namespace eval::mobility
@@ -709,95 +795,18 @@ namespace eval::threats
     const Score ThreatBySafePawn = scaleScore({173, 94});
     const Score ThreatByPawnPush = scaleScore({48, 39});
 
-    inline int idx(PieceType pt) { return static_cast<int>(pt.internal()); }
-
-    struct AttackMap
-    {
-      Bitboard byType[6]{};
-      Bitboard all;
-      Bitboard doubled; // attacked by 2 or more of this side's pieces
-    };
-
-    AttackMap buildAttackMap(const Board &board, Color side)
-    {
-      AttackMap m;
-      Bitboard occ = board.occ();
-
-      auto add = [&](Bitboard bb)
-      {
-        m.doubled |= m.all & bb;
-        m.all |= bb;
-      };
-
-      Bitboard pawns = board.pieces(PieceType::PAWN, side);
-      {
-        Bitboard u;
-        Bitboard bb = pawns;
-        while (bb)
-          u |= attacks::pawn(side, bb.pop());
-        m.byType[idx(PieceType::PAWN)] = u;
-        add(u);
-      }
-      {
-        Bitboard u;
-        Bitboard bb = board.pieces(PieceType::KNIGHT, side);
-        while (bb)
-          u |= attacks::knight(bb.pop());
-        m.byType[idx(PieceType::KNIGHT)] = u;
-        add(u);
-      }
-      {
-        Bitboard u;
-        Bitboard bb = board.pieces(PieceType::BISHOP, side);
-        while (bb)
-          u |= attacks::bishop(bb.pop(), occ);
-        m.byType[idx(PieceType::BISHOP)] = u;
-        add(u);
-      }
-      {
-        Bitboard u;
-        Bitboard bb = board.pieces(PieceType::ROOK, side);
-        while (bb)
-          u |= attacks::rook(bb.pop(), occ);
-        m.byType[idx(PieceType::ROOK)] = u;
-        add(u);
-      }
-      {
-        Bitboard u;
-        Bitboard bb = board.pieces(PieceType::QUEEN, side);
-        while (bb)
-          u |= attacks::queen(bb.pop(), occ);
-        m.byType[idx(PieceType::QUEEN)] = u;
-        add(u);
-      }
-      {
-        Bitboard u = attacks::king(board.kingSq(side));
-        m.byType[idx(PieceType::KING)] = u;
-        add(u);
-      }
-
-      return m;
-    }
-
-    inline Bitboard pawnAttacksBB(Bitboard pawns, Color side)
-    {
-      if (side == Color::WHITE)
-        return attacks::pawnLeftAttacks<Color::underlying::WHITE>(pawns) |
-               attacks::pawnRightAttacks<Color::underlying::WHITE>(pawns);
-      return attacks::pawnLeftAttacks<Color::underlying::BLACK>(pawns) |
-             attacks::pawnRightAttacks<Color::underlying::BLACK>(pawns);
-    }
-
-    Score evaluateSide(const Board &board, Color us)
+    Score evaluateSide(const Board& board,
+                       Color us,
+                       const attack::AttackMap& ours,
+                       const attack::AttackMap& theirs)
     {
       Color them = ~us;
-      AttackMap ours = buildAttackMap(board, us);
-      AttackMap theirs = buildAttackMap(board, them);
+
 
       Bitboard theirAll = board.us(them);
       Bitboard nonPawnEnemies = theirAll & ~board.pieces(PieceType::PAWN, them);
 
-      Bitboard stronglyProtected = theirs.byType[idx(PieceType::PAWN)] | (theirs.doubled & ~ours.doubled);
+      Bitboard stronglyProtected = theirs.byType[attack::idx(PieceType::PAWN)] | (theirs.doubled & ~ours.doubled);
       Bitboard defended = nonPawnEnemies & stronglyProtected;
       Bitboard weak = theirAll & ~stronglyProtected & ours.all;
 
@@ -806,29 +815,29 @@ namespace eval::threats
       if (!(defended | weak).empty())
       {
         Bitboard minorTargets = (defended | weak) &
-                                 (ours.byType[idx(PieceType::KNIGHT)] | ours.byType[idx(PieceType::BISHOP)]);
+                                 (ours.byType[attack::idx(PieceType::KNIGHT)] | ours.byType[attack::idx(PieceType::BISHOP)]);
         {
           Bitboard b = minorTargets;
           while (b)
           {
             Square s = b.pop();
             PieceType victim = board.at(s).type();
-            score += scaleScore(ThreatByMinor[idx(victim)]);
+            score += scaleScore(ThreatByMinor[attack::idx(victim)]);
           }
         }
 
-        Bitboard rookTargets = weak & ours.byType[idx(PieceType::ROOK)];
+        Bitboard rookTargets = weak & ours.byType[attack::idx(PieceType::ROOK)];
         {
           Bitboard b = rookTargets;
           while (b)
           {
             Square s = b.pop();
             PieceType victim = board.at(s).type();
-            score += scaleScore(ThreatByRook[idx(victim)]);
+            score += scaleScore(ThreatByRook[attack::idx(victim)]);
           }
         }
 
-        if (!(weak & ours.byType[idx(PieceType::KING)]).empty())
+        if (!(weak & ours.byType[attack::idx(PieceType::KING)]).empty())
           score += ThreatByKing;
 
         Bitboard hangingMask = ~theirs.all | (nonPawnEnemies & ours.doubled);
@@ -839,35 +848,54 @@ namespace eval::threats
       Bitboard safe = ~theirs.all | ours.all;
       {
         Bitboard ownPawns = board.pieces(PieceType::PAWN, us) & safe;
-        Bitboard attacked = pawnAttacksBB(ownPawns, us) & nonPawnEnemies;
+        Bitboard attacked = attack::pawnAttacksBB(ownPawns, us) & nonPawnEnemies;
         score += ThreatBySafePawn * attacked.count();
       }
 
       // Safe pawn pushes (one or two squares) that would attack an enemy
       // non-pawn piece next move.
       {
+        // Bitboard occ = board.occ();
+        // int shift = (us == Color::WHITE) ? 8 : -8;
+        // auto shiftBB = [&](Bitboard bb)
+        // {
+        //   Bitboard r;
+        //   Bitboard b = bb;
+        //   while (b)
+        //   {
+        //     int i = b.pop() + shift;
+        //     if (i >= 0 && i < 64)
+        //       r.set(i);
+        //   }
+        //   return r;
+        // };
         Bitboard occ = board.occ();
-        int shift = (us == Color::WHITE) ? 8 : -8;
-        auto shiftBB = [&](Bitboard bb)
-        {
-          Bitboard r;
-          Bitboard b = bb;
-          while (b)
-          {
-            int i = b.pop() + shift;
-            if (i >= 0 && i < 64)
-              r.set(i);
-          }
-          return r;
-        };
+Bitboard ownPawns = board.pieces(PieceType::PAWN, us);
 
-        Bitboard ownPawns = board.pieces(PieceType::PAWN, us);
-        Bitboard oneStep = shiftBB(ownPawns) & ~occ;
-        Bitboard thirdRank = (us == Color::WHITE) ? attacks::MASK_RANK[2] : attacks::MASK_RANK[5];
-        Bitboard twoStep = shiftBB(oneStep & thirdRank) & ~occ;
-        Bitboard pushes = (oneStep | twoStep) & ~theirs.byType[idx(PieceType::PAWN)] & safe;
+// Move all pawns forward by one square simultaneously.
+Bitboard oneStep =
+    (us == Color::WHITE ? (ownPawns << 8) : (ownPawns >> 8)) & ~occ;
 
-        Bitboard attacked = pawnAttacksBB(pushes, us) & nonPawnEnemies;
+Bitboard thirdRank =
+    (us == Color::WHITE) ? attacks::MASK_RANK[2]
+                         : attacks::MASK_RANK[5];
+
+// Only pawns on their starting rank can make the second push.
+Bitboard twoStep =
+    (us == Color::WHITE
+         ? ((oneStep & thirdRank) << 8)
+         : ((oneStep & thirdRank) >> 8)) & ~occ;
+
+Bitboard pushes =
+    (oneStep | twoStep) &
+    ~theirs.byType[attack::idx(PieceType::PAWN)] & safe;
+        // Bitboard ownPawns = board.pieces(PieceType::PAWN, us);
+        // Bitboard oneStep = shiftBB(ownPawns) & ~occ;
+        // Bitboard thirdRank = (us == Color::WHITE) ? attacks::MASK_RANK[2] : attacks::MASK_RANK[5];
+        // Bitboard twoStep = shiftBB(oneStep & thirdRank) & ~occ;
+        // Bitboard pushes = (oneStep | twoStep) & ~theirs.byType[attack::idx(PieceType::PAWN)] & safe;
+
+        Bitboard attacked = attack::pawnAttacksBB(pushes, us) & nonPawnEnemies;
         score += ThreatByPawnPush * attacked.count();
       }
 
@@ -876,9 +904,12 @@ namespace eval::threats
 
   } // namespace
 
-  Score evaluate(const Board &board)
+  Score evaluate(const Board& board, const attack::AttackMap att[2])
   {
-    return evaluateSide(board, Color::WHITE) - evaluateSide(board, Color::BLACK);
+    return evaluateSide(board, Color::WHITE,
+                        att[int(Color::WHITE)], att[int(Color::BLACK)])
+         - evaluateSide(board, Color::BLACK,
+                        att[int(Color::BLACK)], att[int(Color::WHITE)]);
   }
 
 } // namespace eval::threats
@@ -903,15 +934,6 @@ namespace eval::space
 
     inline Bitboard rankMask(int rank) { return attacks::MASK_RANK[rank]; }
 
-    inline Bitboard pawnAttacksBB(Bitboard pawns, Color side)
-    {
-      if (side == Color::WHITE)
-        return attacks::pawnLeftAttacks<Color::underlying::WHITE>(pawns) |
-               attacks::pawnRightAttacks<Color::underlying::WHITE>(pawns);
-      return attacks::pawnLeftAttacks<Color::underlying::BLACK>(pawns) |
-             attacks::pawnRightAttacks<Color::underlying::BLACK>(pawns);
-    }
-
     int nonPawnMaterialTotal(const Board &board)
     {
       int npm = 0;
@@ -922,62 +944,53 @@ namespace eval::space
       return npm;
     }
 
-    Score evaluateSide(const Board &board, Color us)
+    Score evaluateSide(const Board &board, Color us, const attack::AttackMap att[2])
     {
       Color them = ~us;
       Bitboard spaceMask = centerFilesMask() &
                             (us == Color::WHITE ? (rankMask(1) | rankMask(2) | rankMask(3))
                                                  : (rankMask(6) | rankMask(5) | rankMask(4)));
 
-      Bitboard theirPawnAttacks = pawnAttacksBB(board.pieces(PieceType::PAWN, them), them);
+      Bitboard theirPawnAttacks =
+          att[int(them)].byType[attack::idx(PieceType::PAWN)];
       Bitboard safe = spaceMask & ~board.pieces(PieceType::PAWN, us) & ~theirPawnAttacks;
 
       // Squares up to 2 squares behind a friendly pawn (toward home).
+      // Bitboard ownPawns = board.pieces(PieceType::PAWN, us);
+      // int back = (us == Color::WHITE) ? -8 : 8;
+      // auto shiftBack = [&](Bitboard bb)
+      // {
+      //   Bitboard r;
+      //   Bitboard b = bb;
+      //   while (b)
+      //   {
+      //     int i = b.pop() + back;
+      //     if (i >= 0 && i < 64)
+      //       r.set(i);
+      //   }
+      //   return r;
+      // };
+      // Bitboard behind = ownPawns;
+      // behind |= shiftBack(behind);
+      // behind |= shiftBack(shiftBack(ownPawns));
       Bitboard ownPawns = board.pieces(PieceType::PAWN, us);
-      int back = (us == Color::WHITE) ? -8 : 8;
-      auto shiftBack = [&](Bitboard bb)
-      {
-        Bitboard r;
-        Bitboard b = bb;
-        while (b)
-        {
-          int i = b.pop() + back;
-          if (i >= 0 && i < 64)
-            r.set(i);
-        }
-        return r;
-      };
-      Bitboard behind = ownPawns;
-      behind |= shiftBack(behind);
-      behind |= shiftBack(shiftBack(ownPawns));
 
-      // "Attacked by any enemy piece" — a fresh union, kept local to this
-      // section rather than shared via a cross-section attack-map struct.
-      Bitboard occ = board.occ();
-      Bitboard theirAttacks = theirPawnAttacks;
-      {
-        Bitboard bb = board.pieces(PieceType::KNIGHT, them);
-        while (bb)
-          theirAttacks |= attacks::knight(bb.pop());
-      }
-      {
-        Bitboard bb = board.pieces(PieceType::BISHOP, them);
-        while (bb)
-          theirAttacks |= attacks::bishop(bb.pop(), occ);
-      }
-      {
-        Bitboard bb = board.pieces(PieceType::ROOK, them);
-        while (bb)
-          theirAttacks |= attacks::rook(bb.pop(), occ);
-      }
-      {
-        Bitboard bb = board.pieces(PieceType::QUEEN, them);
-        while (bb)
-          theirAttacks |= attacks::queen(bb.pop(), occ);
-      }
-      theirAttacks |= attacks::king(board.kingSq(them));
+Bitboard behind = ownPawns;
 
-      int bonus = safe.count() + (behind & safe & ~theirAttacks).count();
+if (us == Color::WHITE)
+{
+    behind |= ownPawns >> 8;
+    behind |= ownPawns >> 16;
+}
+else
+{
+    behind |= ownPawns << 8;
+    behind |= ownPawns << 16;
+}
+
+      Bitboard theirAttacks = att[int(them)].all;
+
+      int bonus = safe.count() +(behind & safe & ~theirAttacks).count();
       int weight = board.us(us).count() - 1;
 
       return make_score(scale(bonus * weight * weight / 16), 0);
@@ -985,12 +998,13 @@ namespace eval::space
 
   } // namespace
 
-  Score evaluate(const Board &board)
+  Score evaluate(const Board& board, const attack::AttackMap att[2])
   {
     if (nonPawnMaterialTotal(board) < SPACE_THRESHOLD)
       return SCORE_ZERO;
 
-    return evaluateSide(board, Color::WHITE) - evaluateSide(board, Color::BLACK);
+    return evaluateSide(board, Color::WHITE, att) -
+           evaluateSide(board, Color::BLACK, att);
   }
 
 } // namespace eval::space
@@ -1090,29 +1104,25 @@ namespace eval
     // Sum of material + piece-square bonus for every piece on the board,
     // from White's perspective
     Score psqtScore(const Board& board)
-{
-    pst::bonus(PieceType::PAWN, Square(0));
-
-    const auto& psq = pst::detail::table();
-    Score score = 0;
-
-    for (int t = 0; t < 6; ++t)
     {
-        const PieceType pt(
-            static_cast<PieceType::underlying>(t)
-        );
+      pst::bonus(PieceType::PAWN, Square(0));
+      const auto& psq = pst::detail::table();
+      Score score = 0;
 
-        Bitboard w = board.pieces(pt, Color::WHITE);
-        while (w)
-            score += psq[t][static_cast<int>(w.pop())];
+      for (int t = 0; t < 6; ++t)
+      {
+        const PieceType pt(static_cast<PieceType::underlying>(t));
+        Bitboard white = board.pieces(pt, Color::WHITE);
+        while (white)
+          score += psq[t][static_cast<int>(white.pop())];
 
-        Bitboard b = board.pieces(pt, Color::BLACK);
-        while (b)
-            score -= psq[t][static_cast<int>(b.pop()) ^ 56];
+        Bitboard black = board.pieces(pt, Color::BLACK);
+        while (black)
+          score -= psq[t][static_cast<int>(black.pop()) ^ 56];
+      }
+
+      return score;
     }
-
-    return score;
-}
 
     // a second-order
     // bonus/malus that rewards the side who can create winning chances
@@ -1185,9 +1195,16 @@ namespace eval
   {
     pawn_structure::Info pawnInfo = pawn_structure::evaluate(board);
 
+    const attack::AttackMap att[2] = {
+        attack::build(board, Color::WHITE),
+        attack::build(board, Color::BLACK)
+    };
+
     Score score = psqtScore(board) + material::imbalance(board) + pawnInfo.score +
-                  mobility::evaluate(board) + king_safety::evaluate(board) +
-                  threats::evaluate(board) + space::evaluate(board);
+                  mobility::evaluate(board, att) +
+                  king_safety::evaluate(board, att) +
+                  threats::evaluate(board, att) +
+                  space::evaluate(board, att);
 
     score += initiative(board, pawnInfo, score);
 
