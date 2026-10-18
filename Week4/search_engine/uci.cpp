@@ -293,6 +293,30 @@ namespace
 
         return nodes;
     }
+    std::uint64_t evalSum = 0;
+
+void evalSumWalk(chess::Board& b, int depth)
+{
+    if (depth == 0)
+    {
+        evalSum =
+            evalSum * 1315423911ULL +
+            static_cast<std::uint64_t>(
+                eval::evaluate(b) + 100000
+            );
+        return;
+    }
+
+    chess::Movelist ml;
+    chess::movegen::legalmoves(ml, b);
+
+    for (const auto& m : ml)
+    {
+        b.makeMove(m);
+        evalSumWalk(b, depth - 1);
+        b.unmakeMove(m);
+    }
+}
         // ========================================================
     // BENCH -- fixed-depth search benchmark
     // ========================================================
@@ -755,7 +779,9 @@ else
     }
     else
     {
-        runBench(board, stats);
+         stats.stop = false;
+    stats.table.clear();
+    runBench(board, stats);
     }
 }
         // ====================================================
@@ -1182,7 +1208,47 @@ else
         // ====================================================
         // EVAL -- static evaluation of the current position.
         // ====================================================
+        else if (command == "evalsum")
+{
+    if (searching.load())
+    {
+        printLine(
+            "info string cannot run evalsum while searching"
+        );
+    }
+    else
+    {
+        std::string depthText;
+        std::int64_t requestedDepth = 0;
 
+        if (!(iss >> depthText) ||
+            !parseInt64(depthText, requestedDepth) ||
+            requestedDepth < 0 ||
+            requestedDepth > 4)
+        {
+            printLine(
+                "info string evalsum requires depth 0-4"
+            );
+        }
+        else
+        {
+            evalSum = 0;
+            chess::Board checksumBoard = board;
+
+            evalSumWalk(
+                checksumBoard,
+                static_cast<int>(requestedDepth)
+            );
+
+            printLine(
+                "info string evalsum depth " +
+                std::to_string(requestedDepth) +
+                " value " +
+                std::to_string(evalSum)
+            );
+        }
+    }
+}
         else if (command == "eval")
         {
             if (searching.load())

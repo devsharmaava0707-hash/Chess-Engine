@@ -1089,21 +1089,30 @@ namespace eval
 
     // Sum of material + piece-square bonus for every piece on the board,
     // from White's perspective
-    Score psqtScore(const Board &board)
-    {
-      Score score = 0;
-      for (int i = 0; i < 64; ++i)
-      {
-        Square sq(i);
-        Piece p = board.at(sq);
-        if (p == Piece::NONE)
-          continue;
+    Score psqtScore(const Board& board)
+{
+    pst::bonus(PieceType::PAWN, Square(0));
 
-        Score s = pst::pieceSquareScore(p.type(), p.color(), sq);
-        score += (p.color() == Color::WHITE) ? s : -s;
-      }
-      return score;
+    const auto& psq = pst::detail::table();
+    Score score = 0;
+
+    for (int t = 0; t < 6; ++t)
+    {
+        const PieceType pt(
+            static_cast<PieceType::underlying>(t)
+        );
+
+        Bitboard w = board.pieces(pt, Color::WHITE);
+        while (w)
+            score += psq[t][static_cast<int>(w.pop())];
+
+        Bitboard b = board.pieces(pt, Color::BLACK);
+        while (b)
+            score -= psq[t][static_cast<int>(b.pop()) ^ 56];
     }
+
+    return score;
+}
 
     // a second-order
     // bonus/malus that rewards the side who can create winning chances
