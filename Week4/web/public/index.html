@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Darinda Dev — Play Chess</title>
+  <meta name="description" content="Play against Darinda Dev, a chess engine written in C++ that runs in your browser via WebAssembly.">
+  <meta name="theme-color" content="#262522">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%99%9E%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="app">
+    <header class="head">
+      <div class="brand-mark" aria-hidden="true">♞</div>
+      <div><h1>Darinda Dev</h1><p class="sub">Play against your C++ chess engine</p></div>
+    </header>
+
+    <section class="game" aria-label="Chess game">
+      <div class="board-col">
+        <div class="player" id="top-player" aria-label="Opponent"></div>
+        <div id="board" class="board" aria-label="Chess board"></div>
+        <div class="player" id="bottom-player" aria-label="You"></div>
+      </div>
+
+      <aside class="panel">
+        <div class="panel-heading"><span class="bot-avatar" aria-hidden="true">♞</span><div><strong>Play Darinda Dev</strong><small>Computer game</small></div></div>
+        <div id="status" class="status" role="status" aria-live="polite">Loading engine…</div>
+        <div id="engine-info" class="info" aria-live="polite">&nbsp;</div>
+
+        <div class="settings-grid">
+          <label class="setting"><span>Time control</span><select id="time-control">
+            <option value="bullet1">1 + 0 · Bullet</option>
+            <option value="bullet2">2 + 1 · Bullet</option>
+            <option value="blitz3" selected>3 + 2 · Blitz</option>
+            <option value="blitz5">5 + 0 · Blitz</option>
+            <option value="rapid10">10 + 0 · Rapid</option>
+            <option value="unlimited">Unlimited</option>
+          </select></label>
+          <label class="setting"><span>Move input</span><select id="move-mode">
+            <option value="drag" selected>Drag and drop</option>
+            <option value="click">Select, then click destination</option>
+          </select></label>
+        </div>
+
+        <div class="new-game-actions">
+          <button id="new-white" class="btn primary" type="button" disabled>Play as White</button>
+          <button id="new-black" class="btn primary" type="button" disabled>Play as Black</button>
+        </div>
+        <div class="utility-actions">
+          <button id="undo" class="btn" type="button" disabled>↶ <span>Undo</span></button>
+          <button id="flip" class="btn" type="button">⇅ <span>Flip board</span></button>
+          <button id="copy-pgn" class="btn" type="button">↗ <span>Copy PGN</span></button>
+        </div>
+
+        <div class="moves-heading"><span>Moves</span><span class="moves-caption">Game notation</span></div>
+        <ol id="moves" class="moves" aria-label="Moves"></ol>
+        <div id="empty-moves" class="empty-moves">Your game moves will appear here.</div>
+      </aside>
+    </section>
+
+    <footer class="foot">Darinda Dev and its opening book run locally in your browser.</footer>
+  </main>
+
+  <dialog id="promo" aria-label="Choose promotion piece">
+    <p>Promote to</p><div class="promo-choices" id="promo-choices"></div>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

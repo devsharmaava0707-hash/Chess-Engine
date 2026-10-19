@@ -40,3 +40,4 @@ Thumbs.db
 *.obj
 # Syzygy tablebases
 tablebases/
+Week4/web/.tools/emsdk/
