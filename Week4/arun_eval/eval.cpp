@@ -4,7 +4,8 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-
+#include <cstddef>
+#include <cstdint>
 using namespace chess;
 
 // Material imbalance
@@ -317,19 +318,74 @@ inline Bitboard ranksBehindOrLevelMask(int rank, Color side)
   // to cache this against, but it's a
   // handful of bitboard ops per pawn, so that's fine.
   Info evaluate(const Board &board)
-  {
-    Bitboard whitePawns = board.pieces(PieceType::PAWN, Color::WHITE);
-    Bitboard blackPawns = board.pieces(PieceType::PAWN, Color::BLACK);
+{
+    Bitboard whitePawns =
+        board.pieces(PieceType::PAWN, Color::WHITE);
+    Bitboard blackPawns =
+        board.pieces(PieceType::PAWN, Color::BLACK);
 
-    SideResult white = evaluateSide(whitePawns, blackPawns, Color::WHITE);
-    SideResult black = evaluateSide(blackPawns, whitePawns, Color::BLACK);
+    constexpr std::size_t CACHE_SIZE = 1024;
+
+    struct CacheEntry
+    {
+        std::uint64_t whiteBits = 0;
+        std::uint64_t blackBits = 0;
+        Info info{};
+        bool valid = false;
+    };
+
+    // A separate cache per thread; no locking is required.
+    static thread_local CacheEntry cache[CACHE_SIZE]{};
+
+    const std::uint64_t whiteBits = whitePawns.getBits();
+    const std::uint64_t blackBits = blackPawns.getBits();
+
+    // Hash both pawn bitboards to choose a cache slot.
+    std::uint64_t key =
+        whiteBits ^
+        (blackBits + 0x9e3779b97f4a7c15ULL +
+         (whiteBits << 6) + (whiteBits >> 2));
+
+    // Mix the key before selecting the cache slot.
+    key ^= key >> 30;
+    key *= 0xbf58476d1ce4e5b9ULL;
+    key ^= key >> 27;
+    key *= 0x94d049bb133111ebULL;
+    key ^= key >> 31;
+
+    const std::size_t index =
+        static_cast<std::size_t>(key) & (CACHE_SIZE - 1);
+
+    CacheEntry &entry = cache[index];
+
+    // Verify both complete bitboards to prevent false cache hits.
+    if (entry.valid &&
+        entry.whiteBits == whiteBits &&
+        entry.blackBits == blackBits)
+    {
+        return entry.info;
+    }
+
+    // Cache miss: calculate pawn structure normally.
+    SideResult white =
+        evaluateSide(whitePawns, blackPawns, Color::WHITE);
+
+    SideResult black =
+        evaluateSide(blackPawns, whitePawns, Color::BLACK);
 
     Info info;
     info.score = white.score - black.score;
     info.passed[int(Color::WHITE)] = white.passed;
     info.passed[int(Color::BLACK)] = black.passed;
+
+    // Save the exact position key and its complete result.
+    entry.whiteBits = whiteBits;
+    entry.blackBits = blackBits;
+    entry.info = info;
+    entry.valid = true;
+
     return info;
-  }
+}
 
 } // namespace eval::pawn_structure
 

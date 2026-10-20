@@ -161,3 +161,28 @@ dialog p { margin:0 0 10px; font-weight:650; }
   .empty-moves { padding: 8px 0; }
   .foot { display: none; }
 }
+/* ---- Append to the end of your stylesheet ---- */
+
+/* Pointer-event drag needs the browser to stop scrolling/zooming when a finger is on the board. */
+.board { touch-action: none; -webkit-touch-callout: none; }
+.sq { touch-action: none; -webkit-user-select: none; user-select: none; }
+
+/* Dim only the piece being dragged, not the whole square. */
+.board.drag-mode .sq.dragging { opacity: 1; }
+.sq.dragging .piece { opacity: .28; }
+
+/* Floating piece that follows the finger / mouse. */
+.drag-ghost {
+  position: fixed;
+  z-index: 50;
+  pointer-events: none;
+  line-height: 1;
+  transform: translate(-50%, -52%) scale(1.08);
+  font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "DejaVu Sans", sans-serif;
+  filter: drop-shadow(0 4px 5px #0006);
+}
+.drag-ghost.w { color: #fff; -webkit-text-stroke: 1.15px #25251f; paint-order: stroke fill; }
+.drag-ghost.b { color: #25251f; text-shadow: 0 1px 0 #fff5; }
+
+/* Queued premove highlight (red tint, like chess.com / lichess). */
+.sq.premove::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: rgba(214, 60, 60, .5); }

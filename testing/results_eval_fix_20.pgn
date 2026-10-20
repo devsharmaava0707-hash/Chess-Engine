@@ -1,0 +1,1111 @@
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "1"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:21"]
+[GameStartTime "2026-10-01T15:29:34 +0530"]
+[GameEndTime "2026-10-01T15:29:55 +0530"]
+[PlyCount "62"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D12"]
+[Opening "Slav Defense: Quiet Variation, Schallopp Defense"]
+
+1. d4 {book} d5 {book} 2. c4 {book} c6 {book} 3. Nf3 {book} Nf6 {book}
+4. e3 {book} Bf5 {book} 5. Bd3 {book} Bxd3 {book} 6. Qxd3 {book} e6 {book}
+7. O-O {book} Nbd7 {book} 8. Nbd2 {book} Bd6 {book} 9. c5 {-0.65/6 1.646s}
+Bc7 {-0.09/13 0.791s} 10. Rb1 {-0.73/6 0.611s} O-O {-0.07/11 0.392s}
+11. Ra1 {+0.28/5 0.697s} Re8 {+0.69/10 0.604s} 12. Kh1 {-0.56/6 0.602s}
+e5 {+1.56/10 0.747s} 13. Qb3 {-0.08/5 0.359s} e4 {+2.19/12 0.700s}
+14. Nc4 {+0.35/5 0.635s} dxc4 {+10.92/12 0.410s} 15. Qa4 {+5.95/5 0.600s}
+exf3 {+13.29/12 0.382s} 16. Rd1 {0.00/7 0.554s} fxg2+ {+17.24/11 0.381s}
+17. Kg1 {-1.68/8 0.547s} Ng4 {+17.58/10 0.332s} 18. h3 {-0.55/7 0.469s}
+Nh2 {+17.38/8 0.630s} 19. f4 {+2.98/6 0.500s} Nf3+ {+18.70/11 0.297s}
+20. Kf2 {-2.14/8 0.481s} Nh4 {+20.14/9 0.247s} 21. Qa3 {-0.01/6 0.425s}
+Nf6 {+23.55/11 0.545s} 22. b3 {-2.40/7 0.368s} c3 {+26.65/10 0.346s}
+23. Kg1 {-2.83/7 0.247s} c2 {+31.19/12 0.360s} 24. Rd3 {-4.55/7 0.336s}
+Nf3+ {+32.75/13 0.243s} 25. Kxg2 {-4.84/7 0.393s} Ne1+ {+33.66/13 0.350s}
+26. Kh2 {-8.47/7 0.378s} Nxd3 {+33.78/11 0.301s} 27. b4 {-9.47/6 0.355s}
+Bxf4+ {+41.02/12 0.341s} 28. Kg2 {-0.53/6 0.341s} Qd5+ {+57.33/12 0.437s}
+29. e4 {-2.74/6 0.321s} Qxe4+ {+M5/11 0.296s} 30. Kg1 {-M4/13 0.174s}
+Qg6+ {+M3/10 0.451s} 31. Kf1 {-M2/16 0.128s} Re1# {+M1/13 0.417s, Black mates}
+0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "1"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:29:55 +0530"]
+[GameEndTime "2026-10-01T15:30:15 +0530"]
+[PlyCount "55"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D12"]
+[Opening "Slav Defense: Quiet Variation, Schallopp Defense"]
+
+1. d4 {book} d5 {book} 2. c4 {book} c6 {book} 3. Nf3 {book} Nf6 {book}
+4. e3 {book} Bf5 {book} 5. Bd3 {book} Bxd3 {book} 6. Qxd3 {book} e6 {book}
+7. O-O {book} Nbd7 {book} 8. Nbd2 {book} Bd6 {book} 9. e4 {+0.76/11 1.452s}
+Nc5 {+1.59/6 1.486s} 10. dxc5 {+6.05/11 0.314s} Nxe4 {+1.21/7 0.743s}
+11. cxd6 {+11.65/10 0.361s} Nxd2 {-0.29/8 0.701s} 12. Bxd2 {+12.29/11 0.461s}
+Qxd6 {+5.82/9 0.676s} 13. cxd5 {+12.29/9 0.703s} O-O {+3.10/9 0.639s}
+14. Rac1 {+12.09/7 0.789s} Qa3 {+4.56/8 0.653s} 15. Qxa3 {+35.19/9 0.527s}
+Rad8 {-18.63/11 0.579s} 16. Bb4 {+38.19/9 0.259s} Rfe8 {-21.99/11 0.557s}
+17. d6 {+38.76/11 0.348s} Rf8 {-1.25/12 0.425s} 18. d7 {+45.38/11 0.245s}
+Rxd7 {+1.13/12 0.508s} 19. Bxf8 {+46.85/12 0.299s} f6 {-33.38/11 0.482s}
+20. Rfd1 {+49.35/11 0.282s} Rf7 {-42.19/13 0.426s} 21. Rd8 {+51.04/12 0.474s}
+h5 {-41.69/11 0.441s} 22. Be7+ {+54.22/12 0.392s} Kh7 {-36.63/12 0.362s}
+23. Qd3+ {+54.22/12 0.370s} f5 {-43.64/11 0.403s} 24. Ng5+ {+54.22/11 0.530s}
+Kg6 {-55.16/12 0.394s} 25. Nxf7 {+M11/11 0.416s} Kxf7 {-M10/11 0.371s}
+26. Qd7 {+M5/10 0.268s} Kg6 {-M4/13 0.228s} 27. Rh8 {+M3/11 0.441s}
+c5 {-M2/13 0.216s} 28. Qxe6# {+M1/10 0.186s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "2"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:18"]
+[GameStartTime "2026-10-01T15:30:15 +0530"]
+[GameEndTime "2026-10-01T15:30:33 +0530"]
+[PlyCount "54"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A37"]
+[Opening "English Opening: Symmetrical Variation, Three Knights, Fianchetto Variation"]
+
+1. Nf3 {book} c5 {book} 2. c4 {book} Nc6 {book} 3. g3 {book} g6 {book}
+4. Bg2 {book} Bg7 {book} 5. Nc3 {book} Nh6 {book} 6. d4 {book} cxd4 {book}
+7. Nxd4 {book} Nxd4 {book} 8. Bxh6 {book} Bxh6 {book} 9. e3 {+0.11/6 1.647s}
+Nc6 {+7.00/11 1.306s} 10. O-O {+3.70/5 0.731s} O-O {+7.02/11 0.612s}
+11. b3 {+4.85/5 0.691s} Bg7 {+7.66/11 0.462s} 12. Na4 {-2.98/6 0.667s}
+Bxa1 {+9.36/11 0.309s} 13. Qc2 {+2.99/6 0.620s} Bg7 {+17.40/10 0.316s}
+14. Rd1 {+13.90/5 0.607s} d6 {+17.68/9 0.387s} 15. c5 {+3.41/5 0.572s}
+Bg4 {+17.69/10 0.347s} 16. Qe2 {+0.12/6 0.497s} Bxe2 {+40.16/13 0.369s}
+17. Rd2 {-8.80/6 0.525s} Bg4 {+41.08/12 0.656s} 18. Rd1 {0.00/6 0.506s}
+Bxd1 {+53.49/11 0.399s} 19. cxd6 {-29.34/6 0.476s} Qxd6 {+55.32/12 0.297s}
+20. a3 {-30.17/6 0.457s} Bxb3 {+62.88/11 0.345s} 21. Bf1 {+16.65/7 0.294s}
+Bxa4 {+63.41/10 0.244s} 22. Kg2 {-40.02/6 0.426s} Qxa3 {+64.79/10 0.392s}
+23. Ba6 {-52.80/6 0.401s} bxa6 {+73.31/10 0.255s} 24. h3 {+48.76/7 0.382s}
+Ne5 {+76.94/9 0.357s} 25. f4 {-67.31/6 0.363s} Qb2+ {+M5/10 0.546s}
+26. Kg1 {-M4/12 0.182s} Rac8 {+M3/10 0.380s} 27. e4 {-M2/12 0.342s}
+Rc1# {+M1/9 0.500s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "2"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:20"]
+[GameStartTime "2026-10-01T15:30:33 +0530"]
+[GameEndTime "2026-10-01T15:30:54 +0530"]
+[PlyCount "57"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A37"]
+[Opening "English Opening: Symmetrical Variation, Three Knights, Fianchetto Variation"]
+
+1. Nf3 {book} c5 {book} 2. c4 {book} Nc6 {book} 3. g3 {book} g6 {book}
+4. Bg2 {book} Bg7 {book} 5. Nc3 {book} Nh6 {book} 6. d4 {book} cxd4 {book}
+7. Nxd4 {book} Nxd4 {book} 8. Bxh6 {book} Bxh6 {book} 9. Qxd4 {+0.24/14 0.790s}
+Bg7 {+0.46/8 1.647s} 10. Qxg7 {+10.19/12 0.578s} Rf8 {-0.06/9 0.657s}
+11. O-O {+10.19/10 0.755s} Qa5 {+0.77/8 0.696s} 12. Nd5 {+10.55/10 0.521s}
+Qxd5 {+1.38/8 0.670s} 13. cxd5 {+24.51/11 0.524s} d6 {+0.58/9 0.308s}
+14. Qxh7 {+24.78/11 0.312s} Bg4 {+0.13/9 0.631s} 15. e4 {+24.94/11 0.642s}
+Rc8 {-14.53/9 0.603s} 16. Rfc1 {+25.72/10 0.465s} Bd7 {+0.63/10 0.575s}
+17. Rxc8+ {+28.59/13 0.364s} Bxc8 {+0.58/10 0.510s} 18. Rc1 {+29.38/13 0.351s}
+Bd7 {-9.48/12 0.438s} 19. Rc7 {+29.68/13 0.282s} a6 {-14.75/12 0.498s}
+20. Bh3 {+32.49/13 0.349s} Bxh3 {-21.30/13 0.480s} 21. Qxh3 {+40.81/14 0.250s}
+e6 {-M16/17 0.378s} 22. dxe6 {+52.73/12 0.383s} Kd8 {-M16/16 0.373s}
+23. e7+ {+M13/13 0.256s} Kxc7 {-M12/15 0.417s} 24. exf8=Q {+M11/12 0.236s}
+f5 {-M10/14 0.401s} 25. Qh7+ {+M9/10 0.548s} Kc6 {-M8/13 0.380s}
+26. Qc8+ {+M7/10 0.523s} Kb5 {-M6/12 0.363s} 27. Qhxb7+ {+M5/10 0.458s}
+Ka5 {-M4/12 0.342s} 28. Qxa6+ {+M3/9 0.470s} Kb4 {-M2/12 0.146s}
+29. Qc3# {+M1/9 0.441s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "3"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:15"]
+[GameStartTime "2026-10-01T15:30:54 +0530"]
+[GameEndTime "2026-10-01T15:31:09 +0530"]
+[PlyCount "46"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A42"]
+[Opening "Modern Defense: Averbakh System"]
+
+1. d4 {book} g6 {book} 2. c4 {book} Bg7 {book} 3. Nc3 {book} d6 {book}
+4. e4 {book} e5 {book} 5. Be3 {book} exd4 {book} 6. Bxd4 {book} Nf6 {book}
+7. Nf3 {book} Nc6 {book} 8. Be3 {book} O-O {book} 9. Kd2 {-0.57/6 1.460s}
+Re8 {+2.99/12 1.005s} 10. a3 {+0.51/5 0.434s} Nxe4+ {+3.43/10 0.332s}
+11. Nxe4 {-2.01/7 0.721s} Rxe4 {+3.17/10 0.320s} 12. Kc2 {-0.94/6 0.573s}
+Bf5 {+3.64/8 0.755s} 13. g3 {+1.37/5 0.665s} Rd4+ {+15.98/12 0.641s}
+14. Bd3 {-3.51/8 0.519s} Rxd3 {+17.41/11 0.692s} 15. Qxd3 {-7.40/7 0.613s}
+Qf6 {+23.41/11 0.384s} 16. Bd4 {-7.94/8 0.588s} Nxd4+ {+29.75/12 0.391s}
+17. Nxd4 {-8.82/8 0.454s} Bxd3+ {+30.85/13 0.351s} 18. Kxd3 {-4.61/7 0.541s}
+Qxd4+ {+38.16/13 0.520s} 19. Ke2 {-3.19/7 0.511s} Qxc4+ {+38.16/12 0.593s}
+20. Kd1 {-3.28/8 0.490s} Bxb2 {+M7/12 0.497s} 21. Kd2 {-M6/10 0.354s}
+Re8 {+M5/12 0.344s} 22. Rae1 {-M4/15 0.330s} Qc3+ {+M3/11 0.249s}
+23. Kd1 {-M2/16 0.215s} Qd3# {+M1/12 0.270s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "3"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:21"]
+[GameStartTime "2026-10-01T15:31:09 +0530"]
+[GameEndTime "2026-10-01T15:31:31 +0530"]
+[PlyCount "63"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A42"]
+[Opening "Modern Defense: Averbakh System"]
+
+1. d4 {book} g6 {book} 2. c4 {book} Bg7 {book} 3. Nc3 {book} d6 {book}
+4. e4 {book} e5 {book} 5. Be3 {book} exd4 {book} 6. Bxd4 {book} Nf6 {book}
+7. Nf3 {book} Nc6 {book} 8. Be3 {book} O-O {book} 9. Bd3 {+0.21/11 0.978s}
+Bh3 {+0.95/5 1.645s} 10. gxh3 {+5.72/10 0.427s} Nxe4 {+1.01/7 0.640s}
+11. Bxe4 {+11.26/9 0.646s} Bxc3+ {+1.06/7 0.699s} 12. bxc3 {+12.24/10 0.570s}
+Re8 {+0.82/9 0.630s} 13. Nd2 {+12.27/9 0.334s} Qh4 {+16.53/9 0.274s}
+14. Qf3 {+12.58/9 0.414s} Ne5 {+2.69/9 0.539s} 15. Qg3 {+12.68/9 0.609s}
+Qxe4 {+3.07/7 0.609s} 16. Nxe4 {+25.37/9 0.288s} Nxc4 {-2.15/9 0.586s}
+17. Nf6+ {+27.82/12 0.316s} Kf8 {+0.74/10 0.552s} 18. Nxe8 {+28.22/11 0.273s}
+Rxe8 {0.00/12 0.466s} 19. Ke2 {+28.75/12 0.596s} b6 {+3.05/10 0.505s}
+20. Qf4 {+28.88/12 0.271s} Nb2 {+2.26/11 0.485s} 21. Rab1 {+37.01/11 0.301s}
+Nd3 {+1.30/12 0.258s} 22. Kxd3 {+38.70/11 0.387s} Kg8 {-21.78/13 0.452s}
+23. Qa4 {+40.06/13 0.272s} Re5 {-18.42/14 0.322s} 24. Qxa7 {+42.29/11 0.567s}
+Re7 {-30.30/13 0.417s} 25. Bh6 {+49.18/12 0.534s} Re8 {-47.39/16 0.231s}
+26. Rhe1 {+53.09/14 0.319s} Rf8 {-47.39/14 0.392s} 27. Bxf8 {+52.91/12 0.492s}
+Kxf8 {-34.97/12 0.207s} 28. Qxc7 {+55.01/12 0.220s} d5 {-53.08/12 0.334s}
+29. Qe5 {+M13/11 0.225s} Kg8 {-M6/14 0.243s} 30. Qf6 {+M5/12 0.393s}
+h6 {-M4/15 0.268s} 31. Re8+ {+M3/12 0.349s} Kh7 {-M2/15 0.172s}
+32. Qxf7# {+M1/12 0.377s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "4"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:10"]
+[GameStartTime "2026-10-01T15:31:31 +0530"]
+[GameEndTime "2026-10-01T15:31:41 +0530"]
+[PlyCount "36"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D11"]
+[Opening "Slav Defense: Quiet Variation, Pin Defense"]
+
+1. Nf3 {book} d5 {book} 2. c4 {book} c6 {book} 3. d4 {book} Nf6 {book}
+4. e3 {book} Bg4 {book} 5. Qb3 {book} Qb6 {book} 6. Nc3 {book} e6 {book}
+7. Ne5 {book} Bf5 {book} 8. Be2 {book} Qxb3 {book} 9. h3 {-0.74/7 1.345s}
+Qb6 {+20.08/12 0.693s} 10. Na4 {+0.70/5 0.751s} Bb4+ {+21.73/11 0.392s}
+11. Bd2 {-1.12/5 0.496s} Bxd2+ {+28.41/13 0.329s} 12. Kd1 {-0.77/6 0.696s}
+Qb4 {+29.92/10 0.544s} 13. a3 {-10.84/4 0.658s} Qxa4+ {+32.97/12 0.468s}
+14. b3 {+6.01/5 0.305s} Qxb3+ {+M9/13 0.427s} 15. Kxd2 {-12.03/6 0.621s}
+Ne4+ {+M7/13 0.369s} 16. Ke1 {-8.14/7 0.596s} Qc3+ {+M5/14 0.366s}
+17. Kf1 {-M4/16 0.281s} Qxa1+ {+M3/15 0.637s} 18. Bd1 {-M2/18 0.228s}
+Qxd1# {+M1/15 0.378s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "4"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:21"]
+[GameStartTime "2026-10-01T15:31:41 +0530"]
+[GameEndTime "2026-10-01T15:32:02 +0530"]
+[PlyCount "65"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D11"]
+[Opening "Slav Defense: Quiet Variation, Pin Defense"]
+
+1. Nf3 {book} d5 {book} 2. c4 {book} c6 {book} 3. d4 {book} Nf6 {book}
+4. e3 {book} Bg4 {book} 5. Qb3 {book} Qb6 {book} 6. Nc3 {book} e6 {book}
+7. Ne5 {book} Bf5 {book} 8. Be2 {book} Qxb3 {book} 9. axb3 {+0.05/12 0.886s}
+Ne4 {+1.00/7 1.202s} 10. g4 {+1.27/10 0.778s} Nd2 {+1.35/5 0.755s}
+11. Kxd2 {+10.08/13 0.570s} Bxg4 {+0.53/7 0.718s} 12. Bxg4 {+13.68/10 0.387s}
+Bb4 {+0.67/9 0.691s} 13. c5 {+14.60/10 0.316s} Nd7 {+0.59/9 0.653s}
+14. Nd3 {+15.32/11 0.284s} Nxc5 {+1.71/9 0.628s} 15. dxc5 {+20.68/12 0.688s}
+Ba3 {+3.67/10 0.592s} 16. bxa3 {+27.30/11 0.366s} g6 {-9.89/13 0.570s}
+17. Bb2 {+27.51/10 0.312s} h5 {-7.80/11 0.540s} 18. Ne2 {+27.58/11 0.361s}
+d4 {-2.04/11 0.517s} 19. Bxd4 {+29.67/11 0.254s} hxg4 {+1.53/11 0.491s}
+20. Bxh8 {+34.10/12 0.448s} b6 {+22.15/12 0.285s} 21. Bf6 {+35.69/14 0.406s}
+bxc5 {-17.28/13 0.370s} 22. Nxc5 {+36.87/13 0.326s} Rb8 {-24.86/13 0.445s}
+23. Rhg1 {+40.86/13 0.515s} Rb5 {+21.27/12 0.303s} 24. Rac1 {+42.34/14 0.428s}
+g3 {-11.73/11 0.410s} 25. hxg3 {+43.67/14 0.227s} a5 {-41.48/16 0.370s}
+26. Nd4 {+44.80/13 0.215s} Rxc5 {-45.25/15 0.373s} 27. Rxc5 {+47.48/13 0.367s}
+Kd7 {-45.83/14 0.351s} 28. Rxa5 {+47.48/11 0.246s} Kc7 {-M14/14 0.329s}
+29. Rc1 {+M17/11 0.496s} Kb7 {-M10/14 0.278s} 30. Nxc6 {+M9/11 0.199s}
+Kc7 {-M6/14 0.179s} 31. Ra7+ {+M5/11 0.265s} Kc8 {-M4/14 0.215s}
+32. Bd8 {+M3/11 0.326s} f5 {-M2/14 0.121s} 33. Rc7# {+M1/11 0.211s, White mates}
+1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "5"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:17"]
+[GameStartTime "2026-10-01T15:32:02 +0530"]
+[GameEndTime "2026-10-01T15:32:20 +0530"]
+[PlyCount "50"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B10"]
+[Opening "Caro-Kann Defense"]
+
+1. e4 {book} c6 {book} 2. Nc3 {book} d5 {book} 3. d3 {book} g6 {book}
+4. g3 {book} Bg7 {book} 5. Bg2 {book} dxe4 {book} 6. Nxe4 {book} Nf6 {book}
+7. Nxf6+ {book} Bxf6 {book} 8. Nf3 {book} O-O {book} 9. O-O {-3.49/9 0.805s}
+Bf5 {-0.32/12 0.787s} 10. Qd2 {-3.61/7 0.783s} Nd7 {+0.20/11 0.745s}
+11. Qd1 {-1.79/6 0.740s} Re8 {+0.32/9 0.407s} 12. Bd2 {-1.27/6 0.712s}
+Nb6 {+0.57/9 0.737s} 13. c3 {-2.65/6 0.570s} Qxd3 {+2.49/10 0.699s}
+14. Bc1 {-5.41/7 0.581s} Rad8 {+3.30/9 0.671s} 15. Qb3 {-2.85/7 0.552s}
+e5 {+3.10/9 0.355s} 16. Qxf7+ {+0.27/6 0.606s} Kxf7 {+22.28/10 0.315s}
+17. c4 {-0.18/6 0.571s} Nxc4 {+25.40/9 0.331s} 18. Rd1 {+1.98/5 0.313s}
+Qxd1+ {+49.76/10 0.296s} 19. Bf1 {-19.49/6 0.532s} Bd3 {+49.96/9 0.596s}
+20. Nxe5+ {-13.46/6 0.512s} Nxe5 {+M13/10 0.334s} 21. Bd2 {-17.69/7 0.339s}
+Nf3+ {+M9/12 0.498s} 22. Kh1 {-20.65/6 0.472s} Qxa1 {+M7/14 0.506s}
+23. Bc1 {+1.32/7 0.421s} Bxf1 {+M5/12 0.507s} 24. a4 {-M4/13 0.173s}
+Qxc1 {+M3/11 0.368s} 25. b3 {-M2/12 0.423s} Bh3# {+M1/9 0.466s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "5"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:16"]
+[GameStartTime "2026-10-01T15:32:20 +0530"]
+[GameEndTime "2026-10-01T15:32:37 +0530"]
+[PlyCount "51"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B10"]
+[Opening "Caro-Kann Defense"]
+
+1. e4 {book} c6 {book} 2. Nc3 {book} d5 {book} 3. d3 {book} g6 {book}
+4. g3 {book} Bg7 {book} 5. Bg2 {book} dxe4 {book} 6. Nxe4 {book} Nf6 {book}
+7. Nxf6+ {book} Bxf6 {book} 8. Nf3 {book} O-O {book} 9. O-O {+0.22/11 0.771s}
+Qb6 {+3.88/10 1.470s} 10. c3 {+0.77/9 0.786s} Qxf2+ {+11.48/8 0.364s}
+11. Rxf2 {+20.13/10 0.521s} Rd8 {+5.51/10 0.635s} 12. Ng5 {+20.27/10 0.297s}
+Nd7 {-7.90/9 0.705s} 13. Ne4 {+20.44/10 0.314s} Nf8 {-1.17/10 0.666s}
+14. Nxf6+ {+21.25/10 0.306s} exf6 {-6.79/11 0.640s} 15. a4 {+21.11/10 0.703s}
+Re8 {+7.37/10 0.378s} 16. Rxf6 {+21.44/10 0.307s} Kh8 {+8.90/10 0.597s}
+17. Rxf7 {+25.85/12 0.536s} Bg4 {-13.83/11 0.562s} 18. Qxg4 {+35.97/11 0.307s}
+Re1+ {-7.70/14 0.442s} 19. Kf2 {+38.00/14 0.418s} c5 {-26.20/13 0.517s}
+20. Kxe1 {+48.26/11 0.429s} Re8+ {-40.09/13 0.498s} 21. Kf2 {+49.88/12 0.273s}
+h5 {-18.03/12 0.468s} 22. Qf4 {+M11/10 0.334s} Kg8 {-M8/15 0.223s}
+23. Qf6 {+M7/13 0.492s} Re2+ {-M6/16 0.243s} 24. Kxe2 {+M5/14 0.295s}
+Ne6 {-M4/15 0.244s} 25. Qxe6 {+M3/13 0.414s} Kh8 {-M2/14 0.198s}
+26. Qe8# {+M1/10 0.531s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "6"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:14"]
+[GameStartTime "2026-10-01T15:32:37 +0530"]
+[GameEndTime "2026-10-01T15:32:52 +0530"]
+[PlyCount "42"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "C11"]
+[Opening "French Defense: Classical Variation, Burn Variation, Main Line"]
+
+1. e4 {book} e6 {book} 2. d4 {book} d5 {book} 3. Nc3 {book} Nf6 {book}
+4. Bg5 {book} dxe4 {book} 5. Nxe4 {book} Be7 {book} 6. Bxf6 {book} Bxf6 {book}
+7. Nf3 {book} O-O {book} 8. Qe2 {book} Be7 {book} 9. a4 {-0.49/6 1.651s}
+a6 {+1.12/8 0.776s} 10. Qd2 {-0.06/5 0.733s} b6 {+1.17/8 0.322s}
+11. Rg1 {+0.33/5 0.691s} Bb7 {+2.06/10 0.512s} 12. Ng3 {-0.06/5 0.666s}
+Nc6 {+2.05/8 0.727s} 13. O-O-O {-0.16/5 0.637s} Qd5 {+2.12/9 0.467s}
+14. Qf4 {-1.74/6 0.606s} Bd6 {+4.65/10 0.450s} 15. h3 {-2.17/6 0.563s}
+Bxf4+ {+23.53/11 0.352s} 16. Nd2 {-10.83/6 0.553s} Qxd4 {+28.07/9 0.445s}
+17. Bd3 {-4.00/6 0.521s} Qxa4 {+30.62/10 0.597s} 18. Kb1 {-5.33/6 0.502s}
+Nb4 {+42.40/12 0.384s} 19. Bxh7+ {-12.08/7 0.400s} Kxh7 {+M5/14 0.266s}
+20. Nh5 {-M4/8 0.191s} Qa2+ {+M3/13 0.580s} 21. Kc1 {-M2/16 0.182s}
+Qa1# {+M1/12 0.583s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "6"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:32:52 +0530"]
+[GameEndTime "2026-10-01T15:33:11 +0530"]
+[PlyCount "55"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "C11"]
+[Opening "French Defense: Classical Variation, Burn Variation, Main Line"]
+
+1. e4 {book} e6 {book} 2. d4 {book} d5 {book} 3. Nc3 {book} Nf6 {book}
+4. Bg5 {book} dxe4 {book} 5. Nxe4 {book} Be7 {book} 6. Bxf6 {book} Bxf6 {book}
+7. Nf3 {book} O-O {book} 8. Qe2 {book} Be7 {book} 9. O-O-O {-0.24/11 0.946s}
+Qxd4 {+7.78/10 1.645s} 10. Nxd4 {+19.06/9 0.352s} Kh8 {+1.75/10 0.730s}
+11. Nb5 {+19.81/8 0.463s} a6 {-1.17/11 0.690s} 12. Nxc7 {+19.97/11 0.685s}
+Rd8 {+1.01/11 0.556s} 13. Rxd8+ {+32.40/13 0.451s} Bxd8 {-7.00/11 0.639s}
+14. Nxa8 {+32.83/12 0.400s} Nc6 {-1.19/12 0.491s} 15. Nd6 {+33.36/11 0.443s}
+Nd4 {-22.74/13 0.478s} 16. Qc4 {+44.52/10 0.311s} Nc6 {-22.95/13 0.572s}
+17. Nxf7+ {+52.40/14 0.540s} Kg8 {-16.29/14 0.290s} 18. Nxd8 {+53.41/14 0.443s}
+Bd7 {-38.81/15 0.474s} 19. Nxc6 {+54.71/15 0.393s} bxc6 {-38.34/14 0.510s}
+20. Nb6 {+56.91/12 0.444s} Kf7 {-53.84/14 0.460s} 21. Nxd7 {+57.12/11 0.583s}
+h6 {-53.84/12 0.465s} 22. Ne5+ {+58.91/10 0.492s} Ke7 {-58.61/13 0.354s}
+23. Qb4+ {+58.91/9 0.530s} c5 {-M10/13 0.193s} 24. Qxc5+ {+60.49/10 0.445s}
+Kf6 {-M8/13 0.256s} 25. f4 {+M7/9 0.495s} Kf5 {-M6/11 0.204s}
+26. Bd3+ {+M5/9 0.461s} Kxf4 {-M4/12 0.304s} 27. Ng6+ {+M3/9 0.433s}
+Kg4 {-M2/12 0.192s} 28. Be2# {+M1/9 0.414s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "7"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:21"]
+[GameStartTime "2026-10-01T15:33:11 +0530"]
+[GameEndTime "2026-10-01T15:33:32 +0530"]
+[PlyCount "66"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A05"]
+[Opening "King's Indian Attack"]
+
+1. Nf3 {book} Nf6 {book} 2. g3 {book} d5 {book} 3. Bg2 {book} c5 {book}
+4. O-O {book} Nc6 {book} 5. d3 {book} e6 {book} 6. Nbd2 {book} Be7 {book}
+7. e4 {book} b6 {book} 8. e5 {book} Nd7 {book} 9. c3 {-1.30/6 1.646s}
+Ncxe5 {+2.38/13 1.054s} 10. d4 {+0.23/5 0.659s} Nc6 {+2.78/9 0.366s}
+11. Re1 {-0.01/5 0.307s} O-O {+2.79/9 0.400s} 12. h3 {+0.71/5 0.307s}
+Bb7 {+3.15/9 0.505s} 13. Kf1 {+2.65/5 0.682s} Bf6 {+3.87/10 0.518s}
+14. Qa4 {+1.31/5 0.365s} a6 {+4.12/10 0.364s} 15. Nb1 {+2.34/5 0.638s}
+cxd4 {+4.25/10 0.374s} 16. Re3 {+0.57/6 0.554s} dxe3 {+13.89/12 0.372s}
+17. Qd1 {+4.28/7 0.574s} exf2 {+17.21/9 0.270s} 18. Qe2 {+1.15/6 0.560s}
+Nc5 {+18.00/9 0.324s} 19. Nfd2 {+3.85/6 0.531s} a5 {+19.75/9 0.356s}
+20. Nc4 {+4.82/5 0.282s} dxc4 {+23.66/10 0.339s} 21. Be3 {+1.71/6 0.401s}
+Nd3 {+23.66/9 0.323s} 22. b3 {-18.91/4 0.483s} Be5 {+25.55/8 0.628s}
+23. Bxf2 {-10.29/4 0.454s} Nxf2 {+26.10/9 0.284s} 24. Kxf2 {+2.73/5 0.239s}
+Qd3 {+26.49/8 0.584s} 25. Be4 {+3.05/5 0.347s} Qxg3+ {+31.28/11 0.296s}
+26. Kf1 {-8.79/6 0.413s} cxb3 {+32.20/10 0.236s} 27. axb3 {+3.62/5 0.387s}
+Ba6 {+32.40/11 0.331s} 28. Bd3 {-5.36/6 0.371s} Bxd3 {+59.00/11 0.417s}
+29. Qxd3 {-2.20/7 0.177s} Qxd3+ {+58.96/11 0.209s} 30. Kg2 {0.00/7 0.323s}
+Rfd8 {+70.42/10 0.303s} 31. Na3 {-28.86/6 0.327s} Qg3+ {+M9/11 0.381s}
+32. Kf1 {-M4/10 0.221s} Rd2 {+M3/11 0.430s} 33. c4 {-M2/13 0.200s}
+Qf2# {+M1/9 0.181s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "7"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:18"]
+[GameStartTime "2026-10-01T15:33:32 +0530"]
+[GameEndTime "2026-10-01T15:33:51 +0530"]
+[PlyCount "55"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A05"]
+[Opening "King's Indian Attack"]
+
+1. Nf3 {book} Nf6 {book} 2. g3 {book} d5 {book} 3. Bg2 {book} c5 {book}
+4. O-O {book} Nc6 {book} 5. d3 {book} e6 {book} 6. Nbd2 {book} Be7 {book}
+7. e4 {book} b6 {book} 8. e5 {book} Nd7 {book} 9. Re1 {-1.17/11 0.983s}
+O-O {+0.86/6 1.585s} 10. c4 {-0.79/10 0.697s} Nb4 {+0.88/4 0.611s}
+11. cxd5 {-0.61/9 0.441s} Nc2 {+2.16/5 0.703s} 12. Qxc2 {+7.47/11 0.415s}
+exd5 {-1.56/9 0.678s} 13. d4 {+7.38/10 0.474s} g5 {+0.86/7 0.372s}
+14. Nf1 {+8.55/9 0.543s} Ba6 {+0.23/6 0.633s} 15. Ne3 {+10.15/11 0.472s}
+Bd3 {+1.59/7 0.398s} 16. Qxd3 {+18.41/12 0.410s} Nxe5 {-0.71/7 0.587s}
+17. Nxe5 {+25.29/9 0.346s} cxd4 {+0.04/7 0.251s} 18. Nc6 {+29.39/12 0.498s}
+dxe3 {-6.41/10 0.555s} 19. Nxd8 {+29.43/12 0.293s} exf2+ {+0.34/11 0.523s}
+20. Kxf2 {+29.71/13 0.337s} Rc8 {+0.54/11 0.251s} 21. Rxe7 {+38.64/10 0.581s}
+Rc5 {-8.63/12 0.493s} 22. Nb7 {+45.61/10 0.241s} Rc4 {+1.43/12 0.474s}
+23. Bxd5 {+48.24/8 0.546s} b5 {-36.36/11 0.445s} 24. Nd6 {+52.56/9 0.415s}
+Rc5 {-11.20/12 0.345s} 25. Bxf7+ {+M7/11 0.215s} Rxf7+ {-M6/16 0.235s}
+26. Rxf7 {+M5/13 0.318s} Rc2+ {-M4/15 0.186s} 27. Qxc2 {+M3/13 0.213s}
+a6 {-M2/14 0.244s} 28. Qc8# {+M1/10 0.483s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "8"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:14"]
+[GameStartTime "2026-10-01T15:33:51 +0530"]
+[GameEndTime "2026-10-01T15:34:06 +0530"]
+[PlyCount "46"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A00"]
+[Opening "Hungarian Opening"]
+
+1. g3 {book} d5 {book} 2. Bg2 {book} e5 {book} 3. d3 {book} c6 {book}
+4. Nf3 {book} Bd6 {book} 5. e4 {book} Ne7 {book} 6. O-O {book} Bg4 {book}
+7. h3 {book} Bh5 {book} 8. Qe1 {book} dxe4 {book} 9. Qe3 {-0.56/6 1.497s}
+exf3 {+8.89/13 0.781s} 10. g4 {+0.81/6 0.741s} fxg2 {+15.26/12 0.356s}
+11. Re1 {-0.22/7 0.696s} Bg6 {+16.78/9 0.309s} 12. Kxg2 {+8.09/5 0.675s}
+O-O {+16.37/9 0.473s} 13. Nc3 {+6.42/5 0.638s} f5 {+16.71/9 0.348s}
+14. Nb5 {+0.60/5 0.397s} cxb5 {+23.72/10 0.407s} 15. f4 {+3.52/5 0.319s}
+exf4 {+26.48/10 0.518s} 16. Qf3 {+3.72/5 0.361s} Nbc6 {+26.81/10 0.395s}
+17. Bxf4 {+0.54/5 0.310s} fxg4 {+33.55/11 0.489s} 18. Rg1 {+7.90/5 0.567s}
+gxf3+ {+58.75/11 0.314s} 19. Kf1 {+21.41/7 0.526s} Bxf4 {+61.20/11 0.381s}
+20. Rxg6 {-21.63/7 0.442s} Nxg6 {+73.73/11 0.350s} 21. a4 {+23.06/7 0.490s}
+Qg5 {+M5/12 0.316s} 22. h4 {-M4/15 0.257s} Qg2+ {+M3/11 0.459s}
+23. Ke1 {-M2/14 0.457s} Qg1# {+M1/10 0.608s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "8"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:34:06 +0530"]
+[GameEndTime "2026-10-01T15:34:25 +0530"]
+[PlyCount "57"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A00"]
+[Opening "Hungarian Opening"]
+
+1. g3 {book} d5 {book} 2. Bg2 {book} e5 {book} 3. d3 {book} c6 {book}
+4. Nf3 {book} Bd6 {book} 5. e4 {book} Ne7 {book} 6. O-O {book} Bg4 {book}
+7. h3 {book} Bh5 {book} 8. Qe1 {book} dxe4 {book} 9. dxe4 {+0.51/11 1.232s}
+Bc7 {+1.02/7 1.510s} 10. Nc3 {+1.11/9 0.441s} Qd3 {+6.09/8 0.740s}
+11. cxd3 {+21.57/10 0.568s} Bb6 {+1.09/9 0.702s} 12. g4 {+24.77/11 0.712s}
+Nf5 {+2.59/10 0.569s} 13. exf5 {+36.23/11 0.369s} Kf8 {-13.53/11 0.645s}
+14. Qxe5 {+38.68/10 0.438s} Nd7 {-9.66/11 0.623s} 15. Qd6+ {+40.60/11 0.376s}
+Kg8 {0.00/12 0.403s} 16. Qxd7 {+45.84/12 0.319s} Rd8 {-18.07/13 0.575s}
+17. Qxb7 {+47.03/13 0.514s} Bxg4 {-26.38/13 0.542s} 18. hxg4 {+47.76/13 0.603s}
+h5 {-11.73/14 0.449s} 19. g5 {+48.21/12 0.277s} h4 {-24.98/13 0.497s}
+20. Ne5 {+50.50/9 0.369s} Rf8 {-40.11/14 0.272s} 21. g6 {+54.36/12 0.262s}
+Rh5 {-32.92/13 0.211s} 22. gxf7+ {+74.11/14 0.341s} Kh7 {-M16/18 0.398s}
+23. Qxc6 {+M17/14 0.221s} Bxf2+ {-M12/18 0.178s} 24. Rxf2 {+M13/16 0.392s}
+Rg5 {-M10/18 0.244s} 25. Bxg5 {+M11/14 0.517s} Rxf7 {-M8/17 0.309s}
+26. Qg6+ {+M7/14 0.496s} Kh8 {-M6/16 0.343s} 27. Qxf7 {+M5/13 0.466s}
+a5 {-M4/15 0.245s} 28. Bd5 {+M3/11 0.256s} Kh7 {-M2/15 0.231s}
+29. Qh5# {+M1/11 0.212s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "9"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:14"]
+[GameStartTime "2026-10-01T15:34:25 +0530"]
+[GameEndTime "2026-10-01T15:34:39 +0530"]
+[PlyCount "42"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D11"]
+[Opening "Slav Defense: Quiet Variation"]
+
+1. d4 {book} d5 {book} 2. c4 {book} c6 {book} 3. Nf3 {book} Nf6 {book}
+4. e3 {book} a6 {book} 5. Qc2 {book} Bg4 {book} 6. Ne5 {book} Bh5 {book}
+7. Qb3 {book} Qc7 {book} 8. cxd5 {book} cxd5 {book} 9. Qc3 {-0.88/9 1.443s}
+Nc6 {+0.52/13 0.751s} 10. Nxc6 {-0.75/6 0.743s} e6 {+0.62/13 0.786s}
+11. Ne5 {-0.01/7 0.702s} Bb4 {+6.38/14 0.434s} 12. Nf3 {-1.00/7 0.677s}
+Bxc3+ {+7.38/12 0.360s} 13. Bd2 {-4.28/8 0.516s} Bxb2 {+26.24/13 0.474s}
+14. Bc3 {-1.82/7 0.625s} Bxc3+ {+35.75/13 0.338s} 15. Nbd2 {-2.58/8 0.591s}
+Bxa1 {+35.99/12 0.692s} 16. Nb3 {+7.67/7 0.411s} Qc2 {+42.62/11 0.665s}
+17. Bd3 {+4.09/7 0.309s} Bc3+ {+M9/14 0.360s} 18. Nbd2 {-44.61/8 0.542s}
+Qc1+ {+M7/16 0.335s} 19. Ke2 {-2.78/8 0.465s} Qxd2+ {+M5/17 0.535s}
+20. Kf1 {-M4/17 0.231s} Qd1+ {+M3/17 0.465s} 21. Ne1 {-M2/21 0.302s}
+Qxe1# {+M1/18 0.511s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "9"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:17"]
+[GameStartTime "2026-10-01T15:34:39 +0530"]
+[GameEndTime "2026-10-01T15:34:57 +0530"]
+[PlyCount "51"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D11"]
+[Opening "Slav Defense: Quiet Variation"]
+
+1. d4 {book} d5 {book} 2. c4 {book} c6 {book} 3. Nf3 {book} Nf6 {book}
+4. e3 {book} a6 {book} 5. Qc2 {book} Bg4 {book} 6. Ne5 {book} Bh5 {book}
+7. Qb3 {book} Qc7 {book} 8. cxd5 {book} cxd5 {book} 9. Bd2 {+0.05/12 0.899s}
+Nbd7 {+3.19/8 0.799s} 10. Nxd7 {+0.44/11 0.777s} Nxd7 {+1.03/9 0.406s}
+11. Qxd5 {+1.78/13 0.521s} Qc2 {+1.93/9 0.765s} 12. Qxh5 {+7.40/13 0.297s}
+g6 {+14.15/10 0.735s} 13. Qd1 {+9.10/12 0.376s} Qxb2 {+2.18/9 0.695s}
+14. Nc3 {+9.31/12 0.457s} Rd8 {+12.61/10 0.671s} 15. Rb1 {+11.23/12 0.434s}
+Nc5 {-0.25/9 0.634s} 16. Rxb2 {+34.69/11 0.565s} Rxd4 {+0.46/10 0.609s}
+17. exd4 {+44.60/10 0.279s} Nd3+ {-18.38/11 0.573s} 18. Bxd3 {+52.21/11 0.398s}
+b5 {-45.06/11 0.551s} 19. Nxb5 {+55.91/11 0.409s} e6 {-46.82/11 0.522s}
+20. Nc7+ {+55.91/10 0.609s} Ke7 {-48.48/11 0.497s} 21. Qa4 {+60.29/11 0.296s}
+Bh6 {-53.14/11 0.470s} 22. Bxh6 {+71.50/10 0.541s} Rd8 {-56.67/11 0.452s}
+23. Rb7 {+66.11/10 0.539s} Kf6 {-M6/13 0.180s} 24. Ne8+ {+M5/11 0.448s}
+Rxe8 {-M4/14 0.218s} 25. Qxe8 {+M3/12 0.415s} e5 {-M2/13 0.374s}
+26. dxe5# {+M1/9 0.473s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "10"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:16"]
+[GameStartTime "2026-10-01T15:34:57 +0530"]
+[GameEndTime "2026-10-01T15:35:13 +0530"]
+[PlyCount "50"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B15"]
+[Opening "Caro-Kann Defense: Main Line"]
+
+1. e4 {book} c6 {book} 2. d4 {book} d5 {book} 3. Nc3 {book} dxe4 {book}
+4. Nxe4 {book} Nf6 {book} 5. Ng3 {book} e5 {book} 6. Nf3 {book} exd4 {book}
+7. Qxd4 {book} Qxd4 {book} 8. Nxd4 {book} Bc5 {book} 9. Nb3 {-0.48/7 1.645s}
+Bb6 {-0.56/12 1.076s} 10. Bc4 {-0.68/7 0.555s} Na6 {-0.40/12 0.597s}
+11. Be2 {-0.25/7 0.541s} Nb4 {+1.39/12 0.405s} 12. c3 {-1.06/6 0.688s}
+Nc2+ {+5.17/14 0.352s} 13. Kf1 {-2.34/9 0.651s} Nxa1 {+5.17/14 0.448s}
+14. Ke1 {+4.09/5 0.625s} Nxb3 {+12.63/12 0.358s} 15. Bg5 {+1.61/7 0.590s}
+Nc5 {+18.66/11 0.284s} 16. b4 {-5.97/7 0.451s} Nce4 {+20.40/12 0.323s}
+17. Bxf6 {+0.67/5 0.543s} Nxf6 {+20.88/12 0.377s} 18. Nf5 {-2.75/7 0.505s}
+Bxf5 {+28.55/10 0.315s} 19. f4 {-6.91/7 0.416s} Nd5 {+30.63/10 0.317s}
+20. Ba6 {-22.08/7 0.395s} bxa6 {+39.15/12 0.327s} 21. Ke2 {-19.72/7 0.335s}
+O-O-O {+48.83/12 0.282s} 22. Ra1 {-27.10/7 0.450s} Rhe8+ {+50.93/12 0.321s}
+23. Kd2 {-21.28/8 0.425s} Nxb4+ {+M5/11 0.288s} 24. Kc1 {0.00/7 0.198s}
+Re2 {+M3/12 0.511s} 25. a3 {-M2/15 0.192s} Be3# {+M1/11 0.243s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "10"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:35:13 +0530"]
+[GameEndTime "2026-10-01T15:35:33 +0530"]
+[PlyCount "59"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B15"]
+[Opening "Caro-Kann Defense: Main Line"]
+
+1. e4 {book} c6 {book} 2. d4 {book} d5 {book} 3. Nc3 {book} dxe4 {book}
+4. Nxe4 {book} Nf6 {book} 5. Ng3 {book} e5 {book} 6. Nf3 {book} exd4 {book}
+7. Qxd4 {book} Qxd4 {book} 8. Nxd4 {book} Bc5 {book} 9. Nb3 {+0.40/12 0.894s}
+Bb4+ {+0.96/7 1.645s} 10. c3 {+0.60/11 0.639s} Bg4 {+0.87/7 0.672s}
+11. cxb4 {+7.01/12 0.371s} Kd8 {+0.22/8 0.695s} 12. f3 {+9.31/10 0.461s}
+g6 {+1.55/10 0.670s} 13. fxg4 {+15.93/12 0.292s} Kc8 {+2.06/11 0.632s}
+14. Be2 {+17.46/12 0.287s} Rd8 {-0.05/11 0.611s} 15. O-O {+18.96/13 0.344s}
+Rd1 {+2.30/10 0.576s} 16. Bxd1 {+32.07/15 0.508s} Nbd7 {-9.82/14 0.361s}
+17. Bg5 {+32.63/15 0.493s} a5 {-19.13/13 0.536s} 18. Bxf6 {+35.74/14 0.490s}
+axb4 {-24.97/13 0.516s} 19. Be7 {+36.00/14 0.436s} Ne5 {-27.03/13 0.486s}
+20. Bd6 {+38.58/13 0.400s} f6 {-24.89/13 0.468s} 21. Bxe5 {+45.27/11 0.347s}
+fxe5 {-28.90/14 0.440s} 22. Rf8+ {+47.32/13 0.401s} Kd7 {-39.25/14 0.211s}
+23. Rxa8 {+47.76/12 0.329s} g5 {-41.10/13 0.415s} 24. Rh8 {+48.49/9 0.373s}
+b6 {-44.86/11 0.397s} 25. Rxh7+ {+51.66/10 0.319s} Ke8 {-M10/14 0.214s}
+26. Be2 {+M13/12 0.297s} Kf8 {-M8/15 0.261s} 27. Ne4 {+M7/12 0.525s}
+Kg8 {-M6/15 0.160s} 28. Nf6+ {+M5/12 0.500s} Kf8 {-M4/15 0.195s}
+29. Rd1 {+M3/12 0.229s} c5 {-M2/15 0.245s} 30. Rd8# {+M1/11 0.468s, White mates}
+1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "1"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:18"]
+[GameStartTime "2026-10-01T15:57:12 +0530"]
+[GameEndTime "2026-10-01T15:57:31 +0530"]
+[PlyCount "56"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B22"]
+[Opening "Sicilian Defense: Alapin Variation"]
+
+1. e4 {book} c5 {book} 2. c3 {book} Nf6 {book} 3. e5 {book} Nd5 {book}
+4. g3 {book} Nc6 {book} 5. Nf3 {book} b6 {book} 6. Bg2 {book} Ba6 {book}
+7. d3 {book} g6 {book} 8. O-O {book} Bg7 {book} 9. Bf4 {-1.36/6 1.647s}
+Nxf4 {+1.27/13 0.806s} 10. gxf4 {-3.37/4 0.730s} O-O {+1.22/12 0.418s}
+11. Qa4 {-0.96/5 0.553s} Bxd3 {+2.32/11 0.318s} 12. Re1 {-0.34/5 0.675s}
+b5 {+2.75/10 0.375s} 13. Qd1 {+1.09/5 0.638s} c4 {+2.66/10 0.351s}
+14. Na3 {+0.60/5 0.294s} Rb8 {+2.92/9 0.332s} 15. Qd2 {+0.41/5 0.603s}
+b4 {+3.30/9 0.730s} 16. Kh1 {-1.30/4 0.578s} bxa3 {+10.32/12 0.406s}
+17. bxa3 {-2.16/5 0.456s} Qa5 {+10.47/11 0.369s} 18. Qc1 {-8.42/4 0.531s}
+d5 {+10.81/10 0.400s} 19. Nd2 {-2.99/5 0.246s} g5 {+12.13/11 0.422s}
+20. Bxd5 {-7.08/4 0.499s} Qxd5+ {+19.88/12 0.337s} 21. Nf3 {-4.59/5 0.471s}
+Qxf3+ {+30.84/13 0.318s} 22. Kg1 {-8.70/7 0.284s} gxf4 {+31.25/13 0.274s}
+23. Qd1 {-4.25/6 0.438s} Nxe5 {+32.06/13 0.381s} 24. Qd2 {-14.72/7 0.420s}
+Rb6 {+53.29/12 0.332s} 25. Qxd3 {-9.86/8 0.395s} cxd3 {+M7/13 0.389s}
+26. Rxe5 {-M6/10 0.248s} Rg6+ {+M5/13 0.291s} 27. Rg5 {-M4/16 0.164s}
+Rxg5+ {+M3/13 0.431s} 28. Kf1 {-M2/16 0.230s} Qh1# {+M1/12 0.543s, Black mates}
+0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "1"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:18"]
+[GameStartTime "2026-10-01T15:57:31 +0530"]
+[GameEndTime "2026-10-01T15:57:49 +0530"]
+[PlyCount "53"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B22"]
+[Opening "Sicilian Defense: Alapin Variation"]
+
+1. e4 {book} c5 {book} 2. c3 {book} Nf6 {book} 3. e5 {book} Nd5 {book}
+4. g3 {book} Nc6 {book} 5. Nf3 {book} b6 {book} 6. Bg2 {book} Ba6 {book}
+7. d3 {book} g6 {book} 8. O-O {book} Bg7 {book} 9. Re1 {+0.35/10 0.850s}
+Nf4 {+2.10/7 1.260s} 10. Bxf4 {+8.13/11 0.357s} Nd4 {+0.73/8 0.664s}
+11. cxd4 {+15.34/11 0.491s} Bxd3 {+0.19/8 0.721s} 12. Qxd3 {+22.82/11 0.515s}
+O-O {-0.08/8 0.692s} 13. Nc3 {+22.82/10 0.727s} Qc7 {-0.04/8 0.538s}
+14. e6 {+24.82/9 0.335s} Qxf4 {-0.11/8 0.639s} 15. gxf4 {+29.75/11 0.460s}
+fxe6 {+0.55/10 0.602s} 16. dxc5 {+31.83/11 0.310s} bxc5 {-15.31/11 0.581s}
+17. Qxd7 {+32.59/11 0.415s} Rxf4 {-19.23/11 0.547s} 18. Ng5 {+35.96/10 0.284s}
+Rxf2 {+0.82/12 0.500s} 19. Bxa8 {+42.43/11 0.289s} Rf8 {-23.14/13 0.497s}
+20. Nxe6 {+43.84/10 0.636s} Rf5 {+1.32/12 0.478s} 21. Nxg7 {+62.35/11 0.399s}
+Rg5+ {-18.90/12 0.451s} 22. Kf2 {+68.74/11 0.333s} e5 {-64.33/13 0.378s}
+23. Ne4 {+73.86/11 0.259s} Rg4 {-65.91/12 0.413s} 24. Ne6 {+M7/12 0.571s}
+Rf4+ {-M6/14 0.213s} 25. Ke2 {+M5/13 0.280s} Rf2+ {-M4/15 0.324s}
+26. Kxf2 {+M3/14 0.329s} h6 {-M2/14 0.246s}
+27. Qg7# {+M1/10 0.387s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "2"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:57:49 +0530"]
+[GameEndTime "2026-10-01T15:58:08 +0530"]
+[PlyCount "58"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D02"]
+[Opening "Queen's Pawn Game: Symmetrical Variation, Pseudo-Catalan"]
+
+1. d4 {book} d5 {book} 2. Nf3 {book} Nf6 {book} 3. g3 {book} c6 {book}
+4. Bg2 {book} Bg4 {book} 5. O-O {book} Nbd7 {book} 6. c4 {book} e6 {book}
+7. h3 {book} Bh5 {book} 8. Qb3 {book} Qb6 {book} 9. Nbd2 {-1.17/6 1.646s}
+Be7 {+0.29/11 1.186s} 10. Re1 {-0.81/5 0.730s} O-O {+0.68/9 0.395s}
+11. Rb1 {-0.98/4 0.690s} Bg6 {+1.76/10 0.426s} 12. Ra1 {-0.99/5 0.281s}
+Qxb3 {+2.04/11 0.415s} 13. Nxb3 {-0.76/5 0.657s} a5 {+1.48/9 0.713s}
+14. g4 {-0.92/4 0.631s} dxc4 {+2.35/10 0.289s} 15. Bd2 {+1.22/5 0.387s}
+cxb3 {+7.93/12 0.409s} 16. Ne5 {+5.75/5 0.453s} Nxe5 {+9.63/11 0.406s}
+17. dxe5 {+3.91/5 0.260s} Ne4 {+9.75/12 0.412s} 18. Bh1 {-2.19/6 0.562s}
+Nxd2 {+19.59/12 0.543s} 19. Red1 {0.00/7 0.476s} Rfd8 {+20.21/11 0.341s}
+20. e4 {-0.15/5 0.366s} bxa2 {+20.50/10 0.333s} 21. Rxd2 {+2.08/6 0.493s}
+Rxd2 {+26.35/13 0.266s} 22. Rxa2 {-10.56/5 0.472s} a4 {+26.35/11 0.584s}
+23. f3 {-6.88/6 0.446s} Bc5+ {+32.47/13 0.252s} 24. Kf1 {-4.50/7 0.211s}
+Rf2+ {+32.81/14 0.254s} 25. Kg1 {-9.61/6 0.417s} Rxb2+ {+50.10/14 0.338s}
+26. Kf1 {-9.09/8 0.402s} Rxa2 {+M11/14 0.330s} 27. Bg2 {-20.67/7 0.375s}
+Rd8 {+M5/14 0.271s} 28. Ke1 {-M4/16 0.241s} Bb4+ {+M3/14 0.424s}
+29. Kf1 {-M2/17 0.258s} Rd1# {+M1/15 0.424s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "2"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:22"]
+[GameStartTime "2026-10-01T15:58:08 +0530"]
+[GameEndTime "2026-10-01T15:58:31 +0530"]
+[PlyCount "73"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "D02"]
+[Opening "Queen's Pawn Game: Symmetrical Variation, Pseudo-Catalan"]
+
+1. d4 {book} d5 {book} 2. Nf3 {book} Nf6 {book} 3. g3 {book} c6 {book}
+4. Bg2 {book} Bg4 {book} 5. O-O {book} Nbd7 {book} 6. c4 {book} e6 {book}
+7. h3 {book} Bh5 {book} 8. Qb3 {book} Qb6 {book} 9. cxd5 {+0.45/10 0.673s}
+Nc5 {+1.32/8 0.736s} 10. dxc5 {+7.22/12 0.413s} Qxb3 {+1.67/8 0.441s}
+11. axb3 {+7.36/13 0.517s} Bxf3 {+0.68/7 0.766s} 12. Bxf3 {+8.43/12 0.356s}
+exd5 {-0.06/9 0.737s} 13. b4 {+8.71/11 0.375s} Rg8 {+0.33/9 0.698s}
+14. Nc3 {+10.13/10 0.472s} Bd6 {+0.12/8 0.670s} 15. cxd6 {+17.21/12 0.637s}
+Kd8 {-9.43/11 0.633s} 16. Bf4 {+18.40/10 0.694s} Re8 {-9.64/11 0.610s}
+17. Na4 {+19.93/11 0.299s} h6 {-9.04/11 0.576s} 18. Nc5 {+20.17/12 0.407s}
+b6 {-12.81/11 0.552s} 19. Na6 {+20.50/12 0.260s} Re4 {+0.83/10 0.522s}
+20. Bxe4 {+23.58/12 0.280s} Nxe4 {-1.68/12 0.297s} 21. Nc7 {+24.54/13 0.424s}
+g5 {-16.58/13 0.428s} 22. Nxa8 {+27.95/14 0.390s} gxf4 {-13.20/14 0.382s}
+23. Rxa7 {+28.48/14 0.314s} fxg3 {-18.02/14 0.284s} 24. Nxb6 {+36.12/15 0.467s}
+Nxd6 {-20.27/14 0.406s} 25. Rd7+ {+36.84/14 0.344s} Ke8 {-20.79/14 0.181s}
+26. Rxd6 {+37.55/13 0.472s} d4 {-30.71/13 0.421s} 27. fxg3 {+37.60/10 0.271s}
+Kf8 {-32.83/13 0.285s} 28. Rxh6 {+39.02/9 0.290s} c5 {-35.16/13 0.387s}
+29. bxc5 {+41.75/11 0.441s} Kg8 {-38.57/14 0.268s} 30. Nd5 {+42.22/10 0.207s}
+Kg7 {-40.55/13 0.331s} 31. Rh4 {+49.68/10 0.209s} d3 {-41.09/14 0.267s}
+32. exd3 {+M15/11 0.470s} Kf8 {-M10/14 0.325s} 33. c6 {+M15/11 0.336s}
+f5 {-M8/14 0.235s} 34. Rxf5+ {+M7/11 0.213s} Kg7 {-M6/14 0.125s}
+35. Rg5+ {+M5/11 0.241s} Kf8 {-M4/14 0.143s} 36. Rf4+ {+M3/11 0.167s}
+Ke8 {-M2/14 0.296s} 37. Rg8# {+M1/11 0.278s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "3"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:15"]
+[GameStartTime "2026-10-01T15:58:31 +0530"]
+[GameEndTime "2026-10-01T15:58:47 +0530"]
+[PlyCount "46"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B06"]
+[Opening "Modern Defense: Standard Line"]
+
+1. e4 {book} g6 {book} 2. d4 {book} Bg7 {book} 3. Nc3 {book} c6 {book}
+4. f4 {book} d5 {book} 5. e5 {book} Nh6 {book} 6. Nf3 {book} Bg4 {book}
+7. h3 {book} Bxf3 {book} 8. Qxf3 {book} f6 {book} 9. Qd3 {-0.38/6 1.362s}
+e6 {-0.95/11 1.097s} 10. exf6 {+0.28/5 0.748s} Qxf6 {+0.05/11 0.448s}
+11. Qe2 {-0.51/6 0.709s} Nf5 {+1.35/10 0.420s} 12. Qxe6+ {+0.17/6 0.682s}
+Qxe6+ {+22.67/13 0.396s} 13. Kd1 {-2.21/7 0.418s} Ng3 {+26.99/12 0.419s}
+14. f5 {-7.01/7 0.636s} Qf6 {+27.23/11 0.339s} 15. Ba6 {-3.43/5 0.318s}
+Qxd4+ {+31.37/12 0.564s} 16. Ke1 {-8.15/8 0.596s} Nxa6 {+40.21/10 0.375s}
+17. Bg5 {-9.87/7 0.234s} Nxh1 {+45.02/11 0.326s} 18. fxg6 {-16.33/7 0.562s}
+Qg1+ {+52.80/11 0.657s} 19. Kd2 {-1.51/7 0.359s} Qxg2+ {+59.63/12 0.477s}
+20. Kd1 {-21.55/8 0.523s} Rf8 {+M13/11 0.603s} 21. Bd2 {-23.07/6 0.493s}
+Bh6 {+M5/12 0.245s} 22. Bf4 {-M4/13 0.236s} Qf1+ {+M3/12 0.549s}
+23. Kd2 {-M2/14 0.464s} Bxf4# {+M1/12 0.491s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "3"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:58:47 +0530"]
+[GameEndTime "2026-10-01T15:59:06 +0530"]
+[PlyCount "57"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "B06"]
+[Opening "Modern Defense: Standard Line"]
+
+1. e4 {book} g6 {book} 2. d4 {book} Bg7 {book} 3. Nc3 {book} c6 {book}
+4. f4 {book} d5 {book} 5. e5 {book} Nh6 {book} 6. Nf3 {book} Bg4 {book}
+7. h3 {book} Bxf3 {book} 8. Qxf3 {book} f6 {book} 9. Be3 {+2.56/11 0.933s}
+fxe5 {/0 0.000s} 10. fxe5 {+1.33/9 0.499s} Qb6 {+1.52/7 1.574s}
+11. O-O-O {+1.82/10 0.440s} Nf5 {+3.03/7 0.550s} 12. Bf2 {+1.96/11 0.440s}
+Qb3 {+15.59/10 0.694s} 13. axb3 {+22.39/11 0.721s} Bxe5 {+8.00/8 0.688s}
+14. dxe5 {+28.61/10 0.471s} a6 {-21.12/11 0.663s} 15. Bd3 {+29.65/9 0.593s}
+Rf8 {-19.52/11 0.626s} 16. Qe2 {+29.47/10 0.420s} Nd7 {-0.34/9 0.601s}
+17. e6 {+29.97/11 0.365s} Nf6 {+0.73/10 0.306s} 18. Bxf5 {+31.12/12 0.366s}
+gxf5 {-17.86/11 0.563s} 19. Qe5 {+32.16/12 0.602s} O-O-O {-21.12/11 0.506s}
+20. Bb6 {+32.75/13 0.285s} Rd6 {-15.14/9 0.513s} 21. Bc5 {+33.19/14 0.296s}
+Ne4 {+1.87/10 0.436s} 22. Nxe4 {+37.79/13 0.290s} dxe4 {+0.89/10 0.235s}
+23. Bxd6 {+39.00/11 0.548s} exd6 {-M10/14 0.312s} 24. e7 {+48.65/12 0.524s}
+Rf6 {-M10/14 0.248s} 25. e8=Q+ {+M9/12 0.383s} Kc7 {-M8/14 0.207s}
+26. Qa5+ {+M7/12 0.408s} b6 {-M6/15 0.433s} 27. Qe7+ {+M5/12 0.400s}
+Kc8 {-M4/15 0.223s} 28. Qxa6+ {+M3/12 0.261s} Kb8 {-M2/14 0.407s}
+29. Qab7# {+M1/11 0.427s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "4"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:14"]
+[GameStartTime "2026-10-01T15:59:06 +0530"]
+[GameEndTime "2026-10-01T15:59:21 +0530"]
+[PlyCount "44"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A44"]
+[Opening "Benoni Defense: Semi-Benoni"]
+
+1. d4 {book} c5 {book} 2. d5 {book} e5 {book} 3. e4 {book} d6 {book}
+4. Nc3 {book} Be7 {book} 5. f4 {book} exf4 {book} 6. Bxf4 {book} Nf6 {book}
+7. Bb5+ {book} Nbd7 {book} 8. a4 {book} O-O {book} 9. Bg3 {+0.38/5 1.646s}
+Qa5 {+1.63/10 0.847s} 10. Rb1 {-0.06/5 0.731s} Nxe4 {+3.71/11 0.347s}
+11. Qf3 {+0.29/5 0.397s} Nxg3 {+4.70/10 0.438s} 12. Kf2 {-0.31/6 0.688s}
+Nxh1+ {+19.74/11 0.385s} 13. Kf1 {-1.13/7 0.563s} Ne5 {+19.87/11 0.549s}
+14. Qe4 {+0.34/7 0.526s} Qb4 {+20.13/10 0.726s} 15. Ke1 {+7.78/5 0.601s}
+a6 {+22.53/10 0.411s} 16. Bd3 {+3.51/5 0.578s} f5 {+22.42/9 0.300s}
+17. Qh4 {+1.48/5 0.547s} Qxh4+ {+52.58/11 0.324s} 18. g3 {+7.14/7 0.425s}
+Qxh2 {+54.53/12 0.658s} 19. b3 {+3.72/7 0.392s} Qxg1+ {+M7/11 0.383s}
+20. Bf1 {-M6/14 0.219s} Qf2+ {+M5/12 0.606s} 21. Kd1 {-M4/17 0.340s}
+Qxf1+ {+M3/13 0.388s} 22. Kd2 {-M2/17 0.246s} Bg5# {+M1/13 0.406s, Black mates}
+0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "4"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:20"]
+[GameStartTime "2026-10-01T15:59:21 +0530"]
+[GameEndTime "2026-10-01T15:59:41 +0530"]
+[PlyCount "63"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A44"]
+[Opening "Benoni Defense: Semi-Benoni"]
+
+1. d4 {book} c5 {book} 2. d5 {book} e5 {book} 3. e4 {book} d6 {book}
+4. Nc3 {book} Be7 {book} 5. f4 {book} exf4 {book} 6. Bxf4 {book} Nf6 {book}
+7. Bb5+ {book} Nbd7 {book} 8. a4 {book} O-O {book} 9. Nf3 {+0.19/12 0.682s}
+Qa5 {+2.81/7 0.760s} 10. O-O {+0.45/11 0.458s} Ne5 {+5.30/8 0.658s}
+11. Bxe5 {+3.45/12 0.334s} Qxc3 {+7.79/8 0.750s} 12. Bxc3 {+21.06/15 0.451s}
+Nxe4 {-3.63/9 0.723s} 13. Qe2 {+21.24/15 0.518s} Bh4 {+3.13/10 0.606s}
+14. Qxe4 {+29.34/12 0.503s} Bd7 {-2.40/9 0.662s} 15. Bxd7 {+37.17/11 0.352s}
+Bf6 {-24.23/13 0.557s} 16. Bxf6 {+41.59/14 0.447s} gxf6 {-32.27/13 0.607s}
+17. Qg4+ {+41.59/13 0.681s} Kh8 {-15.10/14 0.277s} 18. Qf4 {+41.59/11 0.653s}
+Rg8 {-22.34/14 0.555s} 19. Qxd6 {+42.22/11 0.421s} Rg7 {-27.17/13 0.538s}
+20. Qxc5 {+42.53/10 0.603s} Rag8 {+17.43/14 0.456s} 21. Bh3 {+41.82/7 0.271s}
+h6 {+18.35/12 0.446s} 22. Qxa7 {+44.63/9 0.239s} Rxg2+ {+39.11/12 0.423s}
+23. Bxg2 {+54.33/10 0.317s} f5 {-37.24/13 0.380s} 24. Qxb7 {+56.25/10 0.269s}
+f6 {-47.24/13 0.438s} 25. Nd4 {+58.50/11 0.324s} Rg7 {-40.01/13 0.413s}
+26. Qc8+ {+60.86/12 0.276s} Kh7 {-60.39/15 0.321s} 27. Qxf5+ {+M19/12 0.337s}
+Kg8 {-M10/15 0.170s} 28. Qxf6 {+M11/12 0.268s} h5 {-M8/15 0.200s}
+29. Ne6 {+M7/11 0.299s} Rg4 {-M6/15 0.210s} 30. Qf7+ {+M5/11 0.340s}
+Kh8 {-M4/16 0.279s} 31. Qxh5+ {+M3/11 0.212s} Kg8 {-M2/15 0.143s}
+32. Rf8# {+M1/11 0.424s, White mates} 1-0
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "5"]
+[White "Previous"]
+[Black "Current"]
+[Result "0-1"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:19"]
+[GameStartTime "2026-10-01T15:59:41 +0530"]
+[GameEndTime "2026-10-01T16:00:01 +0530"]
+[PlyCount "54"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A29"]
+[Opening "English Opening: King's English Variation, Four Knights Variation, Fianchetto Line"]
+
+1. c4 {book} Nf6 {book} 2. Nc3 {book} e5 {book} 3. Nf3 {book} Nc6 {book}
+4. g3 {book} Bb4 {book} 5. Nd5 {book} Be7 {book} 6. Bg2 {book} O-O {book}
+7. O-O {book} d6 {book} 8. Ne1 {book} Be6 {book} 9. d3 {-0.07/6 1.484s}
+a5 {-0.19/9 1.646s} 10. Qa4 {+0.85/5 0.349s} Nd4 {+0.74/10 0.534s}
+11. f4 {-0.19/4 0.658s} Nxe2+ {+4.02/10 0.669s} 12. Kf2 {+3.79/3 0.676s}
+Nxc1 {+4.93/9 0.576s} 13. Nc3 {+11.96/1 0.665s} d5 {+9.88/9 0.368s}
+14. Rxc1 {+5.69/3 0.641s} Bd7 {+8.53/9 0.420s} 15. Nb5 {+1.49/4 0.605s}
+c6 {+10.31/10 0.374s} 16. Nc3 {+5.38/3 0.583s} b5 {+11.87/9 0.398s}
+17. Qd1 {+4.63/3 0.550s} Bc5+ {+11.08/7 0.619s} 18. Ke2 {+4.36/3 0.532s}
+exf4 {+9.16/7 0.365s} 19. Nxd5 {-4.63/2 0.499s} cxd5 {+15.18/8 0.550s}
+20. Qb3 {+8.35/3 0.478s} bxc4 {+21.31/6 0.531s} 21. dxc4 {-3.70/4 0.396s}
+Rb8 {+21.13/7 0.274s} 22. Qf3 {+1.03/3 0.438s} Bg4 {+25.76/9 0.297s}
+23. Nd3 {-1.83/4 0.413s} dxc4 {+33.27/10 0.289s} 24. Rxc4 {-4.83/7 0.346s}
+Rxb2+ {+59.39/10 0.231s} 25. Rc2 {-4.41/7 0.352s} Rxc2+ {+M5/11 0.291s}
+26. Ke1 {-M4/14 0.197s} Bb4+ {+M3/11 0.458s} 27. Nxb4 {-M2/15 0.188s}
+Qd2# {+M1/11 0.423s, Black mates} 0-1
+
+[Event "Fastchess Tournament"]
+[Site "?"]
+[Date "2026.10.01"]
+[Round "5"]
+[White "Current"]
+[Black "Previous"]
+[Result "1-0"]
+[EngineWhiteName "NeuralGambit"]
+[EngineWhiteAuthor "Dev"]
+[EngineBlackName "NeuralGambit"]
+[EngineBlackAuthor "Dev"]
+[GameDuration "00:00:20"]
+[GameStartTime "2026-10-01T16:00:01 +0530"]
+[GameEndTime "2026-10-01T16:00:22 +0530"]
+[PlyCount "63"]
+[Termination "normal"]
+[TimeControl "10+0.1"]
+[ECO "A29"]
+[Opening "English Opening: King's English Variation, Four Knights Variation, Fianchetto Line"]
+
+1. c4 {book} Nf6 {book} 2. Nc3 {book} e5 {book} 3. Nf3 {book} Nc6 {book}
+4. g3 {book} Bb4 {book} 5. Nd5 {book} Be7 {book} 6. Bg2 {book} O-O {book}
+7. O-O {book} d6 {book} 8. Ne1 {book} Be6 {book} 9. d3 {+0.28/11 0.931s}
+Ne4 {+0.45/7 0.752s} 10. dxe4 {+7.34/9 0.581s} Nd4 {+1.08/8 0.785s}
+11. e3 {+7.76/9 0.447s} Ne2+ {+2.63/8 0.743s} 12. Qxe2 {+14.65/11 0.360s}
+Bg5 {+0.20/10 0.576s} 13. Nf3 {+14.92/11 0.441s} Bg4 {+0.34/10 0.602s}
+14. h3 {+15.26/11 0.344s} c6 {+1.15/9 0.666s} 15. hxg4 {+17.03/13 0.410s}
+cxd5 {-4.28/11 0.510s} 16. exd5 {+17.12/12 0.521s} Kh8 {+2.23/11 0.613s}
+17. Nxg5 {+17.58/11 0.386s} Qxg5 {+2.18/11 0.577s} 18. Bd2 {+17.61/11 0.269s}
+Rac8 {-1.31/11 0.556s} 19. Rac1 {+17.79/10 0.641s} Qh6 {+23.65/12 0.435s}
+20. e4 {+18.06/10 0.285s} Qf4 {+25.71/10 0.509s} 21. gxf4 {+40.77/11 0.304s}
+exf4 {-27.58/11 0.482s} 22. Bxf4 {+41.26/11 0.240s} g5 {-24.28/11 0.460s}
+23. Bxd6 {+44.69/11 0.298s} Rfe8 {-33.70/13 0.382s} 24. Qf3 {+48.16/12 0.476s}
+Kg7 {-19.57/12 0.382s} 25. e5 {+51.25/13 0.369s} Kg8 {-22.01/12 0.296s}
+26. Qf6 {+50.84/12 0.545s} a5 {-43.50/12 0.388s} 27. Qxg5+ {+M11/12 0.255s}
+Kh8 {-M10/17 0.154s} 28. e6 {+M9/15 0.384s} Rxe6 {-M8/18 0.173s}
+29. dxe6 {+M7/14 0.331s} f6 {-M6/18 0.152s} 30. Qxf6+ {+M5/14 0.374s}
+Kg8 {-M4/18 0.186s} 31. Qg5+ {+M3/13 0.452s} Kh8 {-M2/19 0.185s}
+32. Be5# {+M1/13 0.432s, White mates} 1-0
+
